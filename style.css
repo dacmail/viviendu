@@ -1,0 +1,305 @@
+/*
+	Theme Name: VIVIENDU
+	Theme URI: http://www.ungrynerd.com
+	Version: 1.0
+	Author: Daniel Aguilar
+	Author URI: http://www.soydac.com
+	Description: HTML5 wordpress theme;
+	License: GNU General Public License v2 or later
+	License URI: http://www.gnu.org/licenses/gpl-2.0.html
+	Tags: one-column, light
+	Text Domain: ungrynerd
+*/
+/* FIXES */
+
+*, html { margin:0; padding:0; }
+body, input, textarea {
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+    -moz-osx-font-smoothing: grayscale;
+}
+/* END FIXES */
+/* GENERAL */
+*,
+*:before,
+*:after {
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+}
+input:focus {outline:0px;}
+
+a {
+	text-decoration:none;
+	color:#76C0A5;
+}
+a:hover {
+	text-decoration:underline;
+}
+a img, :link img, :visited img {border: 0;}
+body {
+	font-family:"Roboto";
+    color:#7F7F7F;
+    font-size: 14px;
+}
+h1,h2,h3,h4,h5,h6 {
+    font-family: "Roboto Condensed";
+    font-weight: 400;
+    color:#333;
+}
+h1 a,h2 a,h3 a,h4 a,h5 a,h6 a {color:#333;}
+img {
+    max-width: 100%;
+    height: auto;
+}
+/* HEADER */
+#header {
+    height: 52px;
+    background-color: #323232;
+}
+    #header .logo {
+        display: block;
+        float: left;
+        margin:13px 0px;
+        width: 10%;
+    }
+    #header .menu {
+        float: right;
+        display: table;
+        width: 90%;
+    }
+        #header .menu-item {
+            display: table-cell;
+            line-height: 52px;
+            text-align: center;
+            border-right:1px solid #52747A;
+            min-width: 75px;
+            list-style: none;
+        }
+            #header .menu > .menu-item:last-child {border:0px;}
+            #header .menu-item a {
+                display: block;
+                color:#fff;
+                font-size: 14px;
+                font-family: "Roboto Condensed";
+                text-transform: uppercase;
+            }
+            #header .menu-item.menu-item-has-children > a {
+                background:url('images/submenu.png') center right no-repeat;
+            }
+            #header .menu-item .sub-menu {
+                position: absolute;
+                background-color: #F1F1F1;
+                display: none;
+                z-index: 999;
+            }
+                #header .menu-item:hover .sub-menu {display: block;}
+
+                #header .menu-item .sub-menu .menu-item {
+                    display: block;
+                    border-right: 0px;
+                    border-bottom: 1px solid #fff;
+                    padding:16px;
+                    line-height: 17px;
+                }
+                    #header .menu-item .sub-menu .menu-item a {color:#7F7F7F;}
+/* SLIDESHOW */
+.cycle-slideshow {
+    margin-bottom: 10px;
+}
+    .cycle-slideshow .nav {
+        position: absolute;
+        top: 50%;
+        left: 0px;
+        width: 20px;
+        line-height: 40px;
+        height: 40px;
+        background: #FFFFFF;
+        margin-top:-20px;
+        z-index:101;
+        color: #75C0A5;
+        text-align: center;
+        font-size: 14px;
+        opacity: 0;
+        -webkit-transition: opacity 0.3s ease-in;
+        -o-transition: opacity 0.3s ease-in;
+        transition: opacity 0.3s ease-in;
+    }
+        .cycle-slideshow:hover .nav {opacity: 1;}
+        .cycle-slideshow .nav.cycle-next {
+            right: 0px;
+            left: auto;
+        }
+        .cycle-slideshow .nav:hover {
+            text-decoration: none;
+            background-color: #75C0A5;
+            color:#fff;
+        }
+/* BLOQUES GENERICOS */
+.section {
+    padding-top:20px;
+    padding-bottom: 10px;
+}
+    .section .title {
+        text-transform: uppercase;
+        font-size: 35px;
+    }  
+        .section .title.mini {font-size: 25px;}
+    .section .subtitle {
+        margin:0px;
+        margin-bottom: 35px;
+        position: relative;
+    }
+        .section .subtitle p {margin:0px;}
+        .section .subtitle:after {
+            display: block;
+            position: absolute;
+            content:" ";
+            bottom:-17px;
+            left: 0px;
+            width: 51px;
+            height: 5px;
+            background-color: #675A5E;
+        }
+/* LISTADOS DE CATALOGOS */
+.catalogo-list {margin-bottom:20px;}
+.catalogo .title {
+    font-size: 19px;
+    text-transform: uppercase;
+}
+.catalogo .category {
+    text-transform: uppercase;
+    color:#76C0A5;
+    font-size: 13px;
+    margin-bottom: 10px;
+}
+    .catalogo .category a {color:#76C0A5;}
+.catalogo-list .cycle-slideshow {
+    max-height: 170px;
+    overflow: hidden;
+}
+
+/* ENLACES DE PORTADA */
+#links .link {margin-bottom:20px;}
+    #links .link .link-title {
+        font-size: 19px;
+        font-weight: 300;
+    }
+    #links .link .more {}
+
+/* LISTADOS DE TAXONOMÍAS */
+.list-terms {}
+    .list-terms li {
+        list-style: none;
+        font-weight: 300;
+        margin-bottom: 2px;
+    }
+    .list-terms li .fa {
+        font-size: 11px;
+      top: -1px;
+      position: relative;
+      margin-right: 5px;
+      color: #7F7F7F;
+    }
+
+#container {
+    width: 100%;
+}
+	#content {}
+	p {
+		margin:10px 0px;
+	}
+	#content .post-content ul, #content .post-content ol {
+		margin:10px;
+	}
+	#sidebar {}
+#footer {}
+
+/* =WordPress Core
+-------------------------------------------------------------- */
+.alignnone {
+    margin: 5px 20px 20px 0;
+}
+
+.aligncenter,
+div.aligncenter {
+    display: block;
+    margin: 5px auto 5px auto;
+}
+
+.alignright {
+    float:right;
+    margin: 5px 0 20px 20px;
+}
+
+.alignleft {
+    float: left;
+    margin: 5px 20px 20px 0;
+}
+
+.aligncenter {
+    display: block;
+    margin: 5px auto 5px auto;
+}
+
+a img.alignright {
+    float: right;
+    margin: 5px 0 20px 20px;
+}
+
+a img.alignnone {
+    margin: 5px 20px 20px 0;
+}
+
+a img.alignleft {
+    float: left;
+    margin: 5px 20px 20px 0;
+}
+
+a img.aligncenter {
+    display: block;
+    margin-left: auto;
+    margin-right: auto
+}
+
+.wp-caption {
+    background: #fff;
+    border: 1px solid #f0f0f0;
+    max-width: 96%; /* Image does not overflow the content area */
+    padding: 5px 3px 10px;
+    text-align: center;
+}
+
+.wp-caption.alignnone {
+    margin: 5px 20px 20px 0;
+}
+
+.wp-caption.alignleft {
+    margin: 5px 20px 20px 0;
+}
+
+.wp-caption.alignright {
+    margin: 5px 0 20px 20px;
+}
+
+.wp-caption img {
+    border: 0 none;
+    height: auto;
+    margin: 0;
+    max-width: 98.5%;
+    padding: 0;
+    width: auto;
+}
+
+.wp-caption p.wp-caption-text {
+    font-size: 11px;
+    line-height: 17px;
+    margin: 0;
+    padding: 0 4px 5px;
+}
+.bypostauthor {}
+.gallery-caption {}
+.sticky {}
+
+@media only screen and  (max-width : 1024px) {}
+@media only screen and  (max-width : 768px) {}

@@ -1,0 +1,77 @@
+<?php 
+	define('LIMIT_WORDS', 10);
+
+	function viviendu_tax_link($post_id, $tax) {
+		$terms = get_the_terms( $post_id, $tax );
+		$term = array_pop($terms);
+		if (!is_wp_error($term)) {
+			return get_term_link($term->slug, $tax);
+		}
+	}
+
+	function viviendu_tax_anchor($post_id, $tax, $anchor_text='') {
+		$terms = get_the_terms( $post_id, $tax );
+		$term = array_pop($terms);
+		if (!is_wp_error($term)) {
+			$anchor_text = empty($anchor_text) ? $term->name : $anchor_text;
+			return '<a href="'. get_term_link($term->slug, $tax).'">'. $anchor_text .'</a>';
+		}
+	}
+
+	function viviendu_tax_name($post_id, $tax) {
+		$terms = get_the_terms( $post_id, $tax );
+		$term = array_pop($terms);
+		if (!is_wp_error($term)) {
+			return $term->name;
+		}
+	}
+
+	function viviendu_tax_desc($post_id, $tax, $excerpt=true) {
+		$terms = get_the_terms( $post_id, $tax );
+		$term = array_pop($terms);
+		if (!is_wp_error($term)) {
+			$desc = $excerpt ? wp_trim_words($term->description, LIMIT_WORDS) : $term->description;
+			return $desc;
+		}
+	}
+
+	function viviendu_slideshow($size='full', $link='', $limit=0) {
+		$images = rwmb_meta('_ungrynerd_images', 'type=image&size=' . $size);
+		$return = '';
+		if (!empty($images)) {
+			if ($limit) {$images = array_slice($images, 0, $limit); }
+			$options = empty($link) ? '' : ' data-cycle-slides="> .slide"';
+			$return .= '<div class="cycle-slideshow"' . $options .'>';
+			foreach ( $images as $image ) {
+				$return .= empty($link) ? '' : "<a class='slide' href='{$link}'>";
+			    $return .=  "<img src='{$image['url']}' width='{$image['width']}' height='{$image['height']}' alt='{$image['alt']}'/>";
+			    $return .= empty($link) ? '' : "</a>";
+			}
+			$return .= '<a href="#" class="nav cycle-prev"><i class="fa fa-angle-left"></i></a>
+	    				<a href="#" class="nav cycle-next"><i class="fa fa-angle-right"></i></a>
+						</div>';
+		}
+
+		return $return;
+	}
+
+	/**
+	* Muestra el texto correspondiente a un catálogo
+	*
+	* param int $post_id ID del artículo del que se quiere mostrar el texto
+	* param array $priority Define la prioridad del texto que se mostrará
+	*/
+	function viviendu_the_text($post_id, $excerpt=true, $priority = array('comercio_seccion', 'comercio', 'post', 'category')) {
+		foreach ($priority as $type) {
+			if ($type=='post') {
+				$post = get_post($post_id);
+				$text = $excerpt ? wp_trim_words($post->post_content, LIMIT_WORDS) : $post->post_content;
+				if (!empty($text)) { return $text; }
+			} else {
+				$text = viviendu_tax_desc($post_id, $type, $excerpt);
+				if (!empty($text)) { return $text; }
+			}
+		}
+	}
+
+?>
