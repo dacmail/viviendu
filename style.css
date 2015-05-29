@@ -41,11 +41,13 @@ body {
 	font-family:"Roboto";
     color:#7F7F7F;
     font-size: 14px;
+    line-height: 1.8;
 }
 h1,h2,h3,h4,h5,h6 {
     font-family: "Roboto Condensed";
     font-weight: 400;
     color:#333;
+    line-height: 1.1;
 }
 h1 a,h2 a,h3 a,h4 a,h5 a,h6 a {color:#333;}
 img {
@@ -56,6 +58,7 @@ img {
 #header {
     height: 52px;
     background-color: #323232;
+    width: 100%;
 }
     #header .nav-toggle {display: none;}
     #header .logo {
@@ -68,6 +71,7 @@ img {
         float: right;
         display: table;
         width: 90%;
+        margin: 0px;
     }
         #header .menu-item {
             display: table-cell;
@@ -241,6 +245,19 @@ img {
             background-color: #75C0A5;
             color:#fff;
         }
+    .cycle-slideshow img {
+        width: 100%;
+        height: 100%;
+    }
+    .cycle-slideshow .cycle-caption {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        z-index: 99999;
+        color: #fff;
+        background-color: rgba(0,0,0,0.2);
+        padding: 3px 10px;
+    }
 /* BLOQUES GENERICOS */
 .section {
     padding-top:20px;
@@ -307,13 +324,16 @@ img {
       margin-right: 5px;
       color: #7F7F7F;
     }
-
+/* COMERCIO-SECCION */
+.section iframe {
+    max-width: 100%;
+}
 #container {
     width: 100%;
 }
 	#content {}
 	p {
-		margin:10px 0px;
+		margin:20px 0px;
 	}
 	#content .post-content ul, #content .post-content ol {
 		margin:10px;

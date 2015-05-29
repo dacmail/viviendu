@@ -35,7 +35,28 @@
 		}
 	}
 
-	function viviendu_slideshow($size='full', $link='', $limit=0) {
+	function viviendu_comercio_seccion_content($tax_id) {
+		$comercio_seccion_desc = term_description($tax_id);
+		if (empty($comercio_seccion_desc)) {
+			$comercio_id = get_tax_meta($tax_id, 'viviendu_comercio_seccion_comercio'); 
+			$comercio = get_term( $comercio_id, 'comercio');
+			return $comercio->description;
+		} else {
+			return $comercio_seccion_desc;
+		}
+	}
+
+	function viviendu_location_info($comercio_id) {
+		return array(
+			'url' => get_tax_meta($comercio_id, 'viviendu_comercio_url'),
+			'address' => get_tax_meta($comercio_id, 'viviendu_comercio_address'),
+			'phone' => get_tax_meta($comercio_id, 'viviendu_comercio_phone'),
+			'email' => get_tax_meta($comercio_id, 'viviendu_comercio_email'),
+			'logo' => get_tax_meta($comercio_id, 'viviendu_comercio_logo')
+		);
+	}
+
+	function viviendu_slideshow($size='full', $link='', $limit=0, $counter=false) {
 		$images = rwmb_meta('_ungrynerd_images', 'type=image&size=' . $size);
 		$return = '';
 		if (!empty($images)) {
@@ -47,6 +68,9 @@
 			    $return .=  "<img src='{$image['url']}' width='{$image['width']}' height='{$image['height']}' alt='{$image['alt']}'/>";
 			    $return .= empty($link) ? '' : "</a>";
 			}
+			if ($counter) {
+				$return .= '<div class="cycle-caption"></div>';
+			}
 			$return .= '<a href="#" class="nav cycle-prev"><i class="fa fa-angle-left"></i></a>
 	    				<a href="#" class="nav cycle-next"><i class="fa fa-angle-right"></i></a>
 						</div>';
@@ -55,6 +79,22 @@
 		return $return;
 	}
 
+	/**
+	* Devuelve el primer párrafo de un texto
+	*
+	* param string $text Texto formateado en html con etiquetas <p>
+	* param bool $first Deveulve solo el primero o el resto de etiquetas <p>
+	*/
+	function viviendu_get_paragraph($text, $first=true) {
+		preg_match("/<p>(.*)<\/p>/",$text,$matches);
+		$first_p = '<p>'.array_pop($matches).'</p>';
+		if ($first) {
+			return $first_p;
+		} else {
+			return str_replace($first_p,'', $text);
+		}
+		
+	}
 	/**
 	* Muestra el texto correspondiente a un catálogo
 	*

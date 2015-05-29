@@ -108,7 +108,7 @@
 				$tag_exists = get_term_by('slug', $tag_slug, 'comercio_seccion');
 				if (!$tag_exists) {
 					$term = wp_insert_term(
-						$com->name . " en " . $cat->name, //Empresa en Sección
+						$cat->name . " en " . $com->name, //Sección en Empresa
 						'comercio_seccion',
 						array('slug' => $tag_slug)
 					);

@@ -30,7 +30,7 @@
 			</ul>
 		</section>
 	<?php endif ?>
-	<header id="header">
+	<header id="header" class="clearfix">
 		<div class="container">
 			<a class="logo" href="<?php echo home_url(); ?>"><img src="<?php echo get_template_directory_uri(); ?>/images/logo-mini.png" alt="<?php bloginfo('name'); ?>" /></a>
 			<?php wp_nav_menu(array('container' => 'nav', 'container_id' => 'main-menu', 'container_class' => '', 'theme_location' => 'main')); ?>
