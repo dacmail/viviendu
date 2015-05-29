@@ -76,7 +76,6 @@
 		foreach ($provincias as $prov) :
 			foreach ($comercios as $com) :
 					$tag_slug = $com->slug . "-" . $prov->slug;
-					var_dump($tag_slug);
 					$tag_exists = get_term_by('slug', $tag_slug, 'comercio_provincia');
 					if (!$tag_exists) {
 						$term = wp_insert_term(
@@ -84,7 +83,6 @@
 							'comercio_provincia',
 							array('slug' => $tag_slug)
 						);
-						var_dump($term);
 						$term_id = $term['term_id']; 
 					} else {
 						$term_id = $tag_exists->term_id;
