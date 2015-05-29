@@ -276,7 +276,6 @@
 	}
 
 	function kws_add_form_media($form_fields, $post) {
-		
 		$form_fields['post_content']['input'] = 'html';
 		
 		// We remove the ' and " from the $name so it works for tinyMCE.
@@ -335,8 +334,8 @@
 		} 
 		// This is a taxonomy
 		else {
+
 			$content = is_object($object) && isset($object->description) ? html_entity_decode($object->description) : '';
-			
 			if( in_array($pagenow, array('edit-tags.php')) ) {
 				$editor_id = 'tag_description';
 				$editor_selector = 'description';

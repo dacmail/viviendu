@@ -57,6 +57,7 @@ img {
     height: 52px;
     background-color: #323232;
 }
+    #header .nav-toggle {display: none;}
     #header .logo {
         display: block;
         float: left;
@@ -103,6 +104,111 @@ img {
                     line-height: 17px;
                 }
                     #header .menu-item .sub-menu .menu-item a {color:#7F7F7F;}
+/* JUMBO */
+
+.jumbo {
+    width: 100%;
+    height: 700px;
+    overflow: hidden;
+    position: relative;
+}
+    .jumbo .slide {
+        margin:0px;
+        padding:0px;
+        list-style: none;
+        position: relative;
+        width: 100%;
+        height: 700px;
+    }
+        .jumbo .slide:after {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            content: " ";
+            z-index: 100;
+            top:0px;
+            left: 0px;
+            background: rgba(0,0,0,0.2) url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAAECAYAAACp8Z5+AAAAGklEQVQIW2NkYGD4D8SMQAwGcAY2AbBKDBUAVuYCBQPd34sAAAAASUVORK5CYII=) repeat;
+        }
+        .jumbo .slide .item {
+            width: 100%;
+            height: 700px;
+            background-position: center center;
+            background-repeat: no-repeat;
+            background-size:100% auto;
+            background-attachment: fixed;
+       }
+    .top-header {
+        position: absolute;
+        top: 50px;
+        left: 0px;
+        width: 100%;
+        z-index:9999;
+    }
+        .top-header .logo {
+            float: left;
+        }
+        .top-header .top-menu {
+            float: right;
+            padding:10px 0px;
+        }
+            .top-header .top-menu .menu {display: table;}
+            .top-header .top-menu .menu-item {
+                display: table-cell;
+                list-style: none;
+                border-right: 1px solid #fff;
+            }
+                .top-header .top-menu .menu-item:last-child {border:0px;}
+                .top-header .top-menu .menu-item a {
+                    display: block;
+                    padding:0px 15px;
+                    color:#fff;
+                    font-family: "Roboto Condensed";
+                }
+    .main-search {
+        position: absolute;
+        top:50%;
+        width: 100%;
+        z-index: 9999;
+        margin-top:-25px;
+    }
+        .main-search .container {
+            max-width: 750px;
+        }
+        .main-search .term {
+            font-size: 17px;
+            color:#B2B2B2;
+            height: 50px;
+            line-height: 50px;
+            padding:0px 20px;
+            width: 70%;
+            border:0px;
+            background-color: #fff;
+            border-radius: 0px;
+            border-bottom-left-radius:5px;
+            border-top-left-radius:5px;
+            float: left;
+        }
+        .main-search .btn {
+            border:0px;
+            border-radius: 0px;
+            background-color: #F15940;
+            color: #fff;
+            font-size: 21px;
+            font-weight: bold;
+            height: 50px;
+            line-height: 50px;
+            width: 30%;
+            font-family: "Roboto Condensed";
+            border-bottom-right-radius:5px;
+            border-top-right-radius:5px;
+            float: left;
+            cursor: pointer;
+            -webkit-transition: all 0.2s ease-in;
+            -o-transition: all 0.2s ease-in;
+            transition: all 0.2s ease-in;
+        } 
+            .main-search .btn:hover {background-color: #76C0A5;}
 /* SLIDESHOW */
 .cycle-slideshow {
     margin-bottom: 10px;
@@ -302,4 +408,45 @@ a img.aligncenter {
 .sticky {}
 
 @media only screen and  (max-width : 1024px) {}
-@media only screen and  (max-width : 768px) {}
+@media only screen and  (max-width : 768px) {
+    #header .nav-toggle {
+        display: block;
+        float: right;
+        font-size: 30px;
+        line-height: 30px;
+        padding:10px;
+        color:#fff;
+    }
+    #header .menu {
+        display: block;
+        position: absolute;
+        top: 0px;
+        left: -100%;
+        width: 80%;
+        height: 100%;
+        z-index: 9999;
+        background-color:#323232;
+        -webkit-transition: left 0.3s ease-in;
+        -o-transition: left 0.3s ease-in;
+        transition: left 0.3s ease-in;
+    }
+        #header.open .menu {
+            left: 0px;
+        }
+        #header .menu-item {
+            display: block;
+            border-right: 0px;
+        }
+        #header .menu-item .sub-menu {
+            display: block;
+            position: relative;
+        }
+    .jumbo, .jumbo .slide, .jumbo .slide .item {height: 350px;} 
+    .jumbo .slide .item {background-size: auto 100%;}
+    .main-search {top:60%;}
+    .top-header  {text-align: center;}
+    .top-header .logo, .top-header .top-menu {
+        display: inline-block;
+        float: none;
+    }
+}
