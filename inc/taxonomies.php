@@ -323,6 +323,7 @@
 		<table class="form-table rich-text-tags">
 		<tr>
 			<th><label for="description"><?php _e('Biographical Info'); ?></label></th>
+
 			<td><?php wp_editor($content, $editor_id, 
 				array(
 					'textarea_name' => $editor_selector, 
@@ -334,19 +335,18 @@
 		} 
 		// This is a taxonomy
 		else {
-
-			$content = is_object($object) && isset($object->description) ? html_entity_decode($object->description) : '';
+			$content = is_object($object) && isset($object->description) ? html_entity_decode(htmlentities(trim(stripslashes($object->description)))) : '';
 			if( in_array($pagenow, array('edit-tags.php')) ) {
 				$editor_id = 'tag_description';
 				$editor_selector = 'description';
 			} else {
 				$editor_id = $editor_selector = 'category_description';
 			}
-			
 			?>
 	<tr class="form-field">
 		<th scope="row" valign="top"><label for="description"><?php _ex('Description', 'Taxonomy Description'); ?></label></th>
-		<td><?php wp_editor($content, $editor_id, array(
+		
+		<td><?php wp_editor(htmlspecialchars_decode($content), $editor_id, array(
 					'textarea_name' => $editor_selector, 
 					'editor_css' => kws_rtt_get_css(),
 		)); ?><br />

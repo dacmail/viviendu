@@ -14,9 +14,9 @@ function kwsTriggerSave() {
 jQuery(document).ready(function($) {
 
 	// Remove the non-rich fields
-	/*$('.form-field').has('#tag-description').remove();
+	$('.form-field').has('#tag-description').remove();
 	$('.form-field').has('#category-description').remove();
-	$('.form-field').has('#description').remove();*/
+	$('.form-field').has('#description').remove();
 	
 	
 	var profileTable = $('.user-edit-php .form-table, .profile-php .form-table').not('.rich-text-tags').has('textarea#description');
