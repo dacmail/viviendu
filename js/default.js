@@ -53,5 +53,15 @@
 		//JS
 	});
 
+	//Sticky header on scroll
+	var headerOffsetTop = $('#header').offset().top;
+	$(window).scroll(function() {
+		if ($(window).scrollTop() > headerOffsetTop) {
+			$('body').addClass('sticky');
+		} else {
+			$('body').removeClass('sticky');
+		}
+	});
+
 
 })(jQuery);

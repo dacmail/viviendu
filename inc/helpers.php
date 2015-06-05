@@ -114,4 +114,27 @@
 		}
 	}
 
+	/**
+	* Devuelve el ID del primer post dados un tipo taxonomía y su term_id
+	*
+	* param string $taxonomy  tipo de taxonomía
+	* param int $term_id term id referente a la taxonomía
+	*/
+	function viviendu_post_id($taxonomy, $term_id) {
+		$post = new WP_Query(array(
+					'post_type' => 'post',
+					'tax_query' => array(
+						array(
+							'taxonomy' => $taxonomy,
+							'field'    => 'ID',
+							'terms'    => $term_id,
+						),
+					'posts_per_page' => 1,
+					'order' => 'DESC',
+					'orderby' => 'ID'
+					),
+				));
+		return $post->post->ID;
+	}
+
 ?>

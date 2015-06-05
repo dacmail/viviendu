@@ -54,17 +54,34 @@ img {
     max-width: 100%;
     height: auto;
 }
+input[type=text] {
+    background-color: transparent;
+    border:1px solid #E5E5E5;
+    border-radius: 10px;
+    height: 40px;
+    line-height: 40px;
+    padding:0px 10px;
+    font-size: 14px;
+}
 /* HEADER */
 #header {
     height: 52px;
     background-color: #323232;
     width: 100%;
 }
+.sticky #header{
+    position: fixed;
+    top: 0px;
+    left: 0px;
+    width: 100%;
+    z-index:999999;
+}
+.sticky #container {margin-top:52px;}
     #header .nav-toggle {display: none;}
     #header .logo {
         display: block;
         float: left;
-        margin:13px 0px;
+        margin:13px 0px 0px 0px;
         width: 10%;
     }
     #header .menu {
@@ -137,7 +154,7 @@ img {
         .jumbo .slide .item {
             width: 100%;
             height: 700px;
-            background-position: center center;
+            background-position: top center;
             background-repeat: no-repeat;
             background-size:100% auto;
             background-attachment: fixed;
@@ -262,11 +279,15 @@ img {
 .section {
     padding-top:20px;
     padding-bottom: 10px;
+    margin-bottom: 30px;
 }
+    .section .text.main {margin-bottom: 60px;}
     .section .title {
         text-transform: uppercase;
         font-size: 35px;
+        margin-bottom: 20px;
     }  
+        .section .title.nm {margin-bottom: 0px;}
         .section .title.mini {font-size: 25px;}
     .section .subtitle {
         margin:0px;
@@ -284,6 +305,34 @@ img {
             height: 5px;
             background-color: #675A5E;
         }
+#whatis {
+    background-color: #D3DEC0;
+    color:#675A5F;
+    padding-bottom: 0px;
+}
+    #whatis .title {
+        color:#675A5F;
+    }
+    #whatis img {
+        display: block;
+    }
+#howto {
+    background: url('images/howto-bg.jpg') repeat #766A6E;
+    color:#fff;
+}
+    #howto .title {
+        color:#fff;
+    }
+    #howto .howto-item {
+        padding-top: 20px;
+        text-align: center;
+        padding-left: 60px;
+        padding-right: 60px;
+        margin-bottom: 30px;
+    }
+    #howto .howto-item img {
+        margin-bottom: 10px;
+    }
 /* LISTADOS DE CATALOGOS */
 .catalogo-list {margin-bottom:20px;}
 .catalogo .title {
@@ -306,8 +355,9 @@ img {
 #links .link {margin-bottom:20px;}
     #links .link .link-title {
         font-size: 19px;
-        font-weight: 300;
+        font-weight: 400;
     }
+    #links .link p {margin:5px 0px;}
     #links .link .more {}
 
 /* LISTADOS DE TAXONOMÍAS */
@@ -328,8 +378,25 @@ img {
 .section iframe {
     max-width: 100%;
 }
+.more {
+    text-align: right;
+    text-transform: uppercase;
+}
+
+/* STARS RATING */
+.kk-star-ratings.lft {
+    margin-top:10px;
+    float: none;
+    margin-bottom:20px;
+    width: 100%;
+    height: 20px;
+}
+    .kk-star-ratings .kksr-star.gray,.kk-star-ratings .kksr-legend {
+        float: left;
+    }
 #container {
     width: 100%;
+    padding-top:40px;
 }
 	#content {}
 	p {
@@ -338,7 +405,62 @@ img {
 	#content .post-content ul, #content .post-content ol {
 		margin:10px;
 	}
-	#sidebar {}
+	.sidebar {}
+        .sidebar .widget {
+            margin-bottom: 35px;
+        }
+            .sidebar .widget ul {
+                padding-left: 20px;
+                margin:10px 0px;
+                list-style: square;
+            }
+            .sidebar .widget .title {
+                font-size: 25px;
+                position: relative;
+                margin-bottom: 30px;
+            }
+            .sidebar .widget .title:after {
+                display: block;
+                position: absolute;
+                content:" ";
+                bottom:-17px;
+                left: 0px;
+                width: 51px;
+                height: 5px;
+                background-color: #675A5E;
+            }
+            .sidebar .widget .company-data {
+                list-style: none;
+                padding:0px;
+            }
+            .sidebar .widget .company-data .fa {
+                margin-right: 10px;
+                font-size: 13px;
+                color:#76C0A5;
+            }
+            .sidebar .widget .search-wrap {
+                position: relative;
+            }
+            .sidebar .widget .search-wrap:after {
+                content: "\f002"; 
+                font-family: FontAwesome;
+                font-style: normal;
+                font-weight: normal;
+                text-decoration: inherit;
+                position: absolute;
+                font-size: 15px;
+                line-height: 16px;
+                color: #CCCCCC;
+                top: 50%;
+                right: 10px;
+                margin: -8px 0 0 0px;
+                z-index: 1;
+            }
+            .sidebar .widget .search-wrap input {
+                display: block;
+                width: 100%;
+            }
+
 #footer {}
 
 /* =WordPress Core
