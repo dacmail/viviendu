@@ -46,6 +46,18 @@
 		}
 	}
 
+	function viviendu_tag_content($tax_id) {
+		$tag_desc = term_description($tax_id);
+		if (empty($tag_desc)) {
+			$comercio = get_term(get_tax_meta($tax_id, 'viviendu_comercio'), 'comercio'); 
+			$seccion = get_term(get_tax_meta($tax_id, 'viviendu_seccion'), 'category'); 
+			$comercio_seccion = get_term_by('slug', $comercio->slug . "-" . $seccion->slug, 'comercio_seccion');
+
+			return viviendu_comercio_seccion_content($comercio_seccion->term_id);
+		}
+		return $tag_desc;
+	}
+
 	function viviendu_location_info($comercio_id) {
 		return array(
 			'url' => get_tax_meta($comercio_id, 'viviendu_comercio_url'),
