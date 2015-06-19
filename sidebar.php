@@ -3,7 +3,11 @@
 		<?php get_search_form(true); ?>
 	</div>
 	<div class="widget location">
-		<?php $location_info = viviendu_location_info(get_tax_meta(get_queried_object()->term_id, 'viviendu_comercio_seccion_comercio'));  ?>
+		<?php if (is_tax('comercio_seccion')): ?>
+			<?php $location_info = viviendu_location_info(get_tax_meta(get_queried_object()->term_id, 'viviendu_comercio_seccion_comercio'));  ?>
+		<?php elseif (is_tax('comercio')) : ?>
+			<?php $location_info = viviendu_location_info(get_queried_object()->term_id);  ?>
+		<?php endif ?>
 		<?php if (!empty($location_info['address'])): ?>
 			<iframe
 			    width="100%"
