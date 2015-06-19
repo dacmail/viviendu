@@ -19,7 +19,7 @@
 													'field'    => 'ID',
 													'terms'    => $comercio->term_id
 												),
-											'posts_per_archive_page' => 3,
+											'posts_per_archive_page' => -1,
 											'orderby' => 'rand'
 											),
 										)); ?>

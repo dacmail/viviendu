@@ -383,6 +383,7 @@ input[type=text] {
       margin-right: 5px;
       color: #7F7F7F;
     }
+    .list-terms.provincias {margin-bottom: 50px;}
 /* COMERCIO-SECCION */
 .section iframe {
     max-width: 100%;

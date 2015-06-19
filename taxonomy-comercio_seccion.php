@@ -5,6 +5,7 @@
 			<div id="content" class="col-sm-7">
 				<?php while ( have_posts() ) : the_post(); ?>
 					<h1 class="title"><?php echo single_term_title(); ?></h1>
+					<?php $comercio = get_term(get_tax_meta(get_queried_object()->term_id, 'viviendu_comercio_seccion_comercio'), 'comercio' ); ?>
 					<div class="row">
 						<div class="col-sm-6 title-category main"><?php echo viviendu_tax_anchor(get_the_ID(), 'category'); ?></div>
 						<div class="col-sm-6 ratings-wrap"><?php if(function_exists("kk_star_ratings")) : echo kk_star_ratings(viviendu_post_id('comercio_seccion',get_queried_object()->term_id)); endif; ?></div>
@@ -15,7 +16,11 @@
 						<?php echo viviendu_get_paragraph(apply_filters('the_content',viviendu_comercio_seccion_content(get_queried_object()->term_id)), false); ?>
 					</div>
 					<div class="row">
-						<?php $comercio = get_term(get_tax_meta(get_queried_object()->term_id, 'viviendu_comercio_seccion_comercio'), 'comercio' ); ?>
+						<div class="col-sm-12"><h2 class="title mini"><?php echo $comercio->name; ?> en tu provincia</h2></div>
+						<?php $cities = get_the_terms( get_the_ID(), 'post_tag' ); ?>
+						<?php include(locate_template('templates/list-provincias.php')); ?>
+					</div>
+					<div class="row">
 						<?php $related = new WP_Query(array(
 										'posts_per_page' => 3,
 										'tax_query' => array(
@@ -37,6 +42,7 @@
 				<?php endwhile; ?>
 			</div>
 			<?php get_sidebar('comercio'); ?>
+
 		</div>
 	</div>
 </div>
