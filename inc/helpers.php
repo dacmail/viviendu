@@ -91,6 +91,16 @@
 		return $return;
 	}
 
+	function viviendu_set_post_thumb($post_id) {
+		$images = rwmb_meta('_ungrynerd_images', 'type=image', $post_id);
+		if (!empty($images)) {
+			foreach ( $images as $image ) {
+				set_post_thumbnail($post_id, $image['ID']);
+				break;
+			}
+		}
+	}
+
 	/**
 	* Devuelve el primer párrafo de un texto
 	*

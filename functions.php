@@ -86,6 +86,7 @@
 	add_theme_support( 'post-thumbnails' );
 	if ( function_exists( 'add_image_size' ) ) {
 		add_image_size( 'featured', 600, 400, true );
+		add_image_size( 'square', 300, 300, true );
 	}
 
 	// Redirección para no logueados

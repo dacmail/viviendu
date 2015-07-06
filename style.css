@@ -359,6 +359,43 @@ input[type=text] {
     max-height: 170px;
     overflow: hidden;
 }
+/* LISTADO SECCIONES */
+.seccion-list {
+    position: relative;
+}
+    .seccion-list .wp-post-image {
+        display: block;
+    }
+    .seccion-list .title {
+        position: absolute;
+        bottom: 0px;
+        left: 0px;
+        padding:10px;
+        width: 100%;
+        background: #76C0A5;
+        background:rgba(118, 192, 165, 0.9);
+        margin-bottom:0px;
+
+    }
+        .seccion-list:hover .title {
+            height: 100%;
+            background: #76C0A5;
+            background:rgba(118, 192, 165, 1);
+        }
+    .seccion-list .title a {
+        height: 100%;
+        display: table;
+        width: 100%;
+    }
+    .seccion-list .title-category {
+        color:#fff;
+        margin-bottom: 0px;
+        font-weight: bold;
+        text-align: center;
+        display: table-cell;
+        vertical-align: middle;
+    }
+
 
 /* ENLACES DE PORTADA */
 #links .link {margin-bottom:20px;}
