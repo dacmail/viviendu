@@ -1,6 +1,14 @@
 <?php 
 	define('LIMIT_WORDS', 10);
 
+	function viviendu_term_combi_link($type, $tax1, $tax2, $tax3='') {
+		$slug = $tax1 . "-" . $tax2;
+		if (!empty($tax3)) {
+			$slug .= '-' . $tax3;
+		}
+		return get_term_link($slug, $type);
+	}
+
 	function viviendu_tax_link($post_id, $tax) {
 		$terms = get_the_terms( $post_id, $tax );
 		$term = array_pop($terms);

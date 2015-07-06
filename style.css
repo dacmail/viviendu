@@ -362,6 +362,7 @@ input[type=text] {
 /* LISTADO SECCIONES */
 .seccion-list {
     position: relative;
+    margin-bottom: 30px;
 }
     .seccion-list .wp-post-image {
         display: block;

@@ -1,36 +1,25 @@
 <?php get_header() ?>
-<div id="container" class="comercio-seccion section">
+<div id="container" class="provincia-seccion section">
 	<div class="container">
 		<div class="row">
 			<div id="content" class="col-sm-7">
 				<?php while ( have_posts() ) : the_post(); ?>
-					<?php $comercio = get_term(get_queried_object()->term_id, 'comercio' ); ?>
+					<?php $provincia = get_term(get_queried_object()->term_id, 'provincia' ); ?>
 					<h1 class="title nm"><?php echo single_term_title(); ?></h1>
-					<?php if(function_exists("kk_star_ratings")) : echo kk_star_ratings(viviendu_post_id('comercio',get_queried_object()->term_id)); endif; ?>
+					<?php if(function_exists("kk_star_ratings")) : echo kk_star_ratings(viviendu_post_id('provincia',get_queried_object()->term_id)); endif; ?>
 					<div class="text main">
-						<?php echo viviendu_get_paragraph(apply_filters('the_content',$comercio->description)); ?>
+						<?php echo viviendu_get_paragraph(apply_filters('the_content',$provincia->description)); ?>
 						<h2 class="title">Secciones</h2>
 						<div class="row">
-							<?php $related = new WP_Query(array(
-											'posts_per_page' => -1,
-											'tax_query' => array(
-												array(
-													'taxonomy' => 'comercio',
-													'field'    => 'ID',
-													'terms'    => $comercio->term_id
-												),
-											'posts_per_archive_page' => -1,
-											'orderby' => 'rand'
-											),
-										)); ?>
-							<?php include(locate_template('templates/sections.php')); ?>
+							
+							<?php include(locate_template('templates/sections-provincias.php')); ?>
 						</div>
-						<?php echo viviendu_get_paragraph(apply_filters('the_content',$comercio->description), false); ?>
+						<?php echo viviendu_get_paragraph(apply_filters('the_content',$provincia->description), false); ?>
 					</div>
 					<?php break; ?>
 				<?php endwhile; ?>
 			</div>
-			<?php get_sidebar('comercio'); ?>
+			<?php get_sidebar('provincia'); ?>
 		</div>
 	</div>
 </div>
