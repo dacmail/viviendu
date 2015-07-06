@@ -295,20 +295,23 @@ input[type=text] {
         .section .title.mini {font-size: 25px;}
     .section .subtitle {
         margin:0px;
-        margin-bottom: 35px;
-        position: relative;
+        margin-bottom:20px;
     }
         .section .subtitle p {margin:0px;}
-        .section .subtitle:after {
-            display: block;
-            position: absolute;
-            content:" ";
-            bottom:-17px;
-            left: 0px;
-            width: 51px;
-            height: 5px;
-            background-color: #675A5E;
-        }
+    .section .tit-sep {
+        position: relative;
+        margin-bottom: 35px;
+    }
+    .section .tit-sep:after {
+        display: block;
+        position: absolute;
+        content:" ";
+        bottom:-17px;
+        left: 0px;
+        width: 51px;
+        height: 5px;
+        background-color: #675A5E;
+    }
 #whatis {
     background-color: #D3DEC0;
     color:#675A5F;
