@@ -63,7 +63,12 @@ $meta_boxes[] = array(
 	                'name' =>  __('Destacar en portada'),
 	                'id' => $prefix . 'featured',
 	                'type' => 'checkbox',
-	            )
+	            ),
+            array(
+                    'name' =>  __('Destacar en seccion'),
+                    'id' => $prefix . 'section_featured',
+                    'type' => 'checkbox',
+                )
         ),
     );
 $meta_boxes[] = array(

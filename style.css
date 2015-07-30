@@ -402,13 +402,13 @@ input[type=text] {
 
 
 /* ENLACES DE PORTADA */
-#links .link {margin-bottom:20px;}
-    #links .link .link-title {
+.link {margin-bottom:20px;}
+    .link .link-title {
         font-size: 19px;
         font-weight: 400;
     }
-    #links .link p {margin:5px 0px;}
-    #links .link .more {}
+    .link p {margin:5px 0px;}
+    .link .more {}
 
 /* LISTADOS DE TAXONOMÍAS */
 .list-terms {}
