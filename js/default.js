@@ -58,6 +58,7 @@
 	$(window).load(function() {
 		//JS
 		$('.catalogo.catalogo-list').setAllToMaxHeight();
+		$('.link').setAllToMaxHeight();
 	});
 
 	//Sticky header on scroll
