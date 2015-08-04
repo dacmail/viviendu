@@ -3,7 +3,7 @@
 	$texts = get_post_meta(get_the_ID(), '_ungrynerd_link_text', true ); 
 	$hrefs = get_post_meta(get_the_ID(), '_ungrynerd_link_href', true ); 
 ?>
-<h2 class="title"><?php echo get_post_meta(get_the_ID(), '_ungrynerd_main_title', true ); ?></h2>
+<h2 class="title nm"><?php echo get_post_meta(get_the_ID(), '_ungrynerd_main_title', true ); ?></h2>
 <div class="subtitle"><?php echo get_post_meta(get_the_ID(), '_ungrynerd_subtitle', true ); ?></div>
 <div class="row">
 	<?php foreach ($titles as $key => $title) : ?>

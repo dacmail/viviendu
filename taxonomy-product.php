@@ -9,9 +9,7 @@
 					<?php echo viviendu_get_paragraph(apply_filters('the_content',$seccion->description)); ?>
 					<div class="row">
 						<?php $related = new WP_Query(array(
-									'posts_per_page' => -1,
-									'meta_key' => '_ungrynerd_section_featured', 
-									'meta_value' => 1,
+									'posts_per_page' => 3,
 									'tax_query' => array(
 										array(
 											'taxonomy' => 'product',
@@ -31,6 +29,7 @@
 				<div class="row">
 					<?php $links = new WP_Query(array(
 									'posts_per_page' => 6,
+									'offset' => 3,
 									'tax_query' => array(
 										array(
 											'taxonomy' => 'product',

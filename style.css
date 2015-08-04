@@ -58,7 +58,7 @@ img {
     max-width: 100%;
     height: auto;
 }
-input[type=text] {
+input[type=text], input[type=email] {
     background-color: transparent;
     border:1px solid #E5E5E5;
     border-radius: 10px;
@@ -67,6 +67,27 @@ input[type=text] {
     padding:0px 10px;
     font-size: 14px;
 }
+textarea {
+    padding:0px 10px;
+    font-size: 14px;
+    background-color: transparent;
+    border:1px solid #E5E5E5;
+    border-radius: 10px;
+}
+.wpcf7-submit {
+    border:0px;
+    border-radius: 10px;
+    line-height: 40px;
+    height: 40px;
+    padding:0px 15px;
+    background: #323232;
+    color:#fff;
+    font-size: 15px;
+    text-transform: uppercase;
+}
+.wpcf7 textarea, .wpcf7 input[type=text], .wpcf7 input[type=email] {
+    width: 100%;
+} 
 /* HEADER */
 #header {
     height: 52px;
@@ -251,7 +272,7 @@ input[type=text] {
         color: #75C0A5;
         text-align: center;
         font-size: 14px;
-        opacity: 0;
+        opacity: 0.3;
         -webkit-transition: opacity 0.3s ease-in;
         -o-transition: opacity 0.3s ease-in;
         transition: opacity 0.3s ease-in;
@@ -518,7 +539,36 @@ input[type=text] {
                 display: block;
                 width: 100%;
             }
-
+/*PAGE*/
+.page .post-title {
+    font-size: 40px;
+    text-transform: uppercase;
+    margin-bottom: 40px;
+}
+    .page h2 {
+        font-size: 30px;
+    }
+/*PAGINATION*/
+.page-numbers {
+    display: inline-block;
+    width: 30px;
+    height: 30px;
+    line-height: 26px;
+    background: #76C0A5;
+    border:2px solid #76C0A5;;
+    color:#fff;
+    font-size: 17px;
+    text-align: center;
+    margin:2px;
+}
+.page-numbers.current {
+    color:#76C0A5;
+    background: #fff;
+}
+.page-numbers.prev, .page-numbers.next {
+    width: auto;
+    padding:0px 10px;
+}
 #footer {}
 
 /* =WordPress Core

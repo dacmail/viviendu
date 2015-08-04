@@ -1,5 +1,11 @@
 
 (function($) {
+	//Max equal height
+	$.fn.setAllToMaxHeight = function(){
+		return this.height( Math.max.apply(this, $.map( this , function(e){ return $(e).height() }) ) );
+	}
+
+	//Cycle defaults
 	$.fn.cycle.log = $.noop;
 	$.fn.cycle.speed = 0;
 	$.fn.cycle.defaults.timeout = 0;
@@ -51,6 +57,7 @@
 	});
 	$(window).load(function() {
 		//JS
+		$('.catalogo.catalogo-list').setAllToMaxHeight();
 	});
 
 	//Sticky header on scroll
