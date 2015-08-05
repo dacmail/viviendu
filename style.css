@@ -217,9 +217,20 @@ textarea {
         width: 100%;
         z-index: 9999;
         margin-top:-25px;
+        color:#fff;
     }
         .main-search .container {
             max-width: 750px;
+        }
+        .page .main-search h1 {
+            color:#fff;
+            font-size: 55px;
+            line-height: 55px;
+        }
+        .page .main-search h2 {
+            color:#fff;
+            font-size: 20px;
+            line-height: 60px;
         }
         .main-search .term {
             font-size: 17px;
@@ -238,7 +249,7 @@ textarea {
         .main-search .btn {
             border:0px;
             border-radius: 0px;
-            background-color: #F15940;
+            background-color: #76C0A4;
             color: #fff;
             font-size: 21px;
             font-weight: bold;

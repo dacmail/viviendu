@@ -4,7 +4,7 @@
 	<link href='http://fonts.googleapis.com/css?family=Roboto:400,300,700,900|Roboto+Condensed:400,700,300' rel='stylesheet' type='text/css'>
 	<meta charset="<?php bloginfo( 'charset' ); ?>">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<link rel="shortcut icon" href="<?php echo get_template_directory_uri(); ?>/favicon.ico" />
+	<link rel="shortcut icon" href="<?php echo get_template_directory_uri(); ?>/favicon.png" />
 	<?php wp_head(); ?>
 </head>
 <body <?php body_class(); ?>>
@@ -17,7 +17,9 @@
 				</div>
 			</div>
 			<div class="main-search">
-				<div class="container">
+				<div class="container text-center">
+					<h1>Encuentra la casa de tus sueños</h1>
+					<h2>Busca y compara entre las mejores propuestas de casas prefabricadas y viviendas móviles.</h2>
 					<form action="<?php echo home_url(); ?>" method="get">
 					<input type="text" id="s" name="s" class="term" placeholder="¿Qué buscas?">
 					<button type="submit" class="btn">Buscar</button>
