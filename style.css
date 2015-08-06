@@ -755,6 +755,9 @@ a img.aligncenter {
     }
 
     .section .title {
+        font-size: 25px;
+    }
+    .section .title.mini {
         font-size: 20px;
     }
     .list-terms li {
