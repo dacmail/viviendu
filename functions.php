@@ -77,7 +77,9 @@
 		register_nav_menus(
 			array(
 			  'main' => 'Menu principal',
-			  'top' => 'Menu slider'
+			  'top' => 'Menu slider',
+			  'footer' => 'Menu footer',
+			  'footer-social' => 'Menu footer 2'
 			)
 		);
 	}

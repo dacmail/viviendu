@@ -1,5 +1,18 @@
-	<footer id="footer">
-
+	<footer id="footer" class="clearfix">
+		<div class="container">
+			<div class="row">
+				<div class="col-sm-4">
+					<a href="<?php echo home_url(); ?>" class="logo"><img src="<?php echo get_template_directory_uri(); ?>/images/logo-foot.png" alt="<?php bloginfo('name'); ?>"></a>
+				</div>
+				<div class="col-sm-8 menu-wrap">
+					<?php wp_nav_menu(array('container' => 'nav', 'container_id' => 'footer-menu', 'container_class' => 'footer-menu', 'theme_location' => 'footer-social')); ?>
+					<?php wp_nav_menu(array('container' => 'nav', 'container_id' => 'footer-menu', 'container_class' => 'footer-menu', 'theme_location' => 'footer')); ?>
+				</div>
+				<div class="col-sm-12">
+					<p class="copy">&copy;2015 Viviendu.es</p>
+				</div>
+			</div>
+		</div>
 	</footer>
 	<script>
 		(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){

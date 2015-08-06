@@ -15,11 +15,18 @@
 						<?php echo viviendu_slideshow('featured','', 0, true); ?>
 						<?php echo viviendu_get_paragraph(apply_filters('the_content',viviendu_comercio_seccion_content(get_queried_object()->term_id)), false); ?>
 					</div>
-					<?php $cities = get_the_terms( get_the_ID(), 'post_tag' ); ?>
+					<?php /* $cities = get_the_terms( get_the_ID(), 'post_tag' ); ?>
 					<?php if (!empty($cities)): ?>
 						<div class="row">
 							<div class="col-sm-12"><h2 class="title mini"><?php echo $comercio->name; ?> en tu provincia</h2></div>
 							<?php include(locate_template('templates/list-provincias.php')); ?>
+						</div>
+					<?php endif */ ?>
+					<?php $products = get_the_terms( get_the_ID(), 'product' ); ?>
+					<?php if (!empty($products)): ?>
+						<div class="row">
+							<div class="col-sm-12"><h2 class="title mini">Mejores ofertas en <?php echo $comercio->name; ?></h2></div>
+							<?php include(locate_template('templates/list-products.php')); ?>
 						</div>
 					<?php endif ?>
 					<div class="row">

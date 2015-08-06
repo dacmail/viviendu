@@ -9,7 +9,7 @@
 					<?php echo viviendu_get_paragraph(apply_filters('the_content',$seccion->description)); ?>
 					<div class="row">
 						<?php $related = new WP_Query(array(
-									'posts_per_page' => 3,
+									'posts_per_page' => 6,
 									'tax_query' => array(
 										array(
 											'taxonomy' => 'product',
@@ -20,7 +20,7 @@
 									),
 								)); ?>
 						<?php if ($related->post_count>0): ?>
-							<div class="col-sm-12"><h2 class="title mini tit-sep">Catálogos destacados en <?php echo $seccion->name; ?></h2></div>
+							<div class="col-sm-12"><h2 class="title mini tit-sep">Empresas destacadas en <?php echo $seccion->name; ?></h2></div>
 							<?php include(locate_template('templates/related.php')); ?>
 						<?php endif ?>
 					</div>
@@ -29,7 +29,7 @@
 				<div class="row">
 					<?php $links = new WP_Query(array(
 									'posts_per_page' => 6,
-									'offset' => 3,
+									'offset' => 6,
 									'tax_query' => array(
 										array(
 											'taxonomy' => 'product',
@@ -40,7 +40,7 @@
 									),
 								)); ?>
 					<?php if ($links->post_count>0): ?>
-						<div class="col-sm-12"><h2 class="title mini tit-sep">Catálogos destacados <?php echo $seccion->name; ?></h2></div>
+						<div class="col-sm-12"><h2 class="title mini tit-sep">Más empresas en <?php echo $seccion->name; ?></h2></div>
 						<?php include(locate_template('templates/links.php')); ?>
 					<?php endif ?>
 				</div>

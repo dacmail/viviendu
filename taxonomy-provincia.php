@@ -7,9 +7,8 @@
 				<h1 class="title nm"><?php echo single_term_title(); ?></h1>
 				<div class="text main">
 					<?php echo viviendu_get_paragraph(apply_filters('the_content',$provincia->description)); ?>
-					<h2 class="title mini tit-sep">En <?php echo single_term_title(); ?> puedes encontrar:</h2>
+					<h2 class="title mini tit-sep">Casas prefabricadas en <?php echo single_term_title(); ?></h2>
 					<div class="row">
-						
 						<?php include(locate_template('templates/sections-provincias.php')); ?>
 					</div>
 					<?php echo viviendu_get_paragraph(apply_filters('the_content',$provincia->description), false); ?>
@@ -28,7 +27,7 @@
 									),
 								)); ?>
 					<?php if ($related->post_count>0): ?>
-						<div class="col-sm-12"><h2 class="title mini tit-sep">Catálogos destacados <?php echo $provincia->name; ?></h2></div>
+						<div class="col-sm-12"><h2 class="title mini tit-sep">Empresas de casas prefabricadas en <?php echo $provincia->name; ?></h2></div>
 						<?php include(locate_template('templates/related.php')); ?>
 					<?php endif ?>
 				</div>

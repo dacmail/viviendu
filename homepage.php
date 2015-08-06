@@ -31,12 +31,12 @@
 			<div class="row">
 				<div class="col-md-12"><h2 class="title text-center">¿Cómo usar viviendu?</h2></div>
 				<div class="col-md-6 howto-item">
-					<img src="<?php echo get_template_directory_uri(); ?>/images/icon1.png" alt="Configura">
+					<img src="<?php echo get_template_directory_uri(); ?>/images/search.png" alt="Configura">
 					<h3 class="title mini">Viviendu para usuarios</h3>
 					<div class="text">Consulta en una sola web todas las opciones de casas prefabricadas y viviendas móviles que existen en el mercado. ¡Continuamente ampliamos nuestro directorio con nuevas propuestas!. <a href="<?php echo get_permalink(7478); ?>">Saber más</a></div>
 				</div>
 				<div class="col-md-6 howto-item">
-					<img src="<?php echo get_template_directory_uri(); ?>/images/icon1.png" alt="Configura">
+					<img src="<?php echo get_template_directory_uri(); ?>/images/statistic.png" alt="Configura">
 					<h3 class="title mini">Viviendu para empresas</h3>
 					<div class="text">Miles de usuarios usan Viviendu para localizar las mejores propuestas en casas prefabricadas y viviendas móviles. Te ponemos en contacto con potenciales compradores y aumentar tus ventas. <a href="<?php echo get_permalink(7476); ?>">Saber más</a></div>
 				</div>
