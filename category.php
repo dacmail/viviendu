@@ -22,7 +22,7 @@
 									),
 								)); ?>
 						<?php if ($related->post_count>0): ?>
-							<div class="col-sm-12"><h2 class="title mini tit-sep">Catálogos destacados en <?php echo $seccion->name; ?></h2></div>
+							<div class="col-sm-12"><h2 class="title mini tit-sep">Empresas destacadas en <?php echo $seccion->name; ?></h2></div>
 							<?php include(locate_template('templates/related.php')); ?>
 						<?php endif ?>
 					</div>
@@ -41,7 +41,7 @@
 									),
 								)); ?>
 					<?php if ($links->post_count>0): ?>
-						<div class="col-sm-12"><h2 class="title mini tit-sep">Catálogos destacados <?php echo $seccion->name; ?></h2></div>
+						<div class="col-sm-12"><h2 class="title mini tit-sep">Más empresas en <?php echo $seccion->name; ?></h2></div>
 						<?php include(locate_template('templates/links.php')); ?>
 					<?php endif ?>
 				</div>

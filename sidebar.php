@@ -21,7 +21,7 @@
 			<ul class="company-data">
 				<li class="address"><i class="fa fa-map-marker"></i> <?php echo $location_info['address']; ?></li>
 				<li class="phone"><i class="fa fa-phone"></i> <?php echo $location_info['phone']; ?></li>
-				<li class="url"><i class="fa fa-link"></i> <a rel="nofollow" href="<?php echo esc_url($location_info['url']); ?>"><?php echo esc_url($location_info['url']); ?></a></li>
+				<li class="url"><i class="fa fa-link"></i> <?php echo esc_url($location_info['url']); ?></li>
 			</ul>
 		<?php endif ?>
 		

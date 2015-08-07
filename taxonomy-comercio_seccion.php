@@ -25,7 +25,7 @@
 					<?php $products = get_the_terms( get_the_ID(), 'product' ); ?>
 					<?php if (!empty($products)): ?>
 						<div class="row">
-							<div class="col-sm-12"><h2 class="title mini">Mejores ofertas en <?php echo $comercio->name; ?></h2></div>
+							<div class="col-sm-12"><h2 class="title mini">Otras propuestas de casas prefabricadas y viviendas móviles</h2></div>
 							<?php include(locate_template('templates/list-products.php')); ?>
 						</div>
 					<?php endif ?>
