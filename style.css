@@ -88,6 +88,7 @@ textarea {
 .wpcf7 textarea, .wpcf7 input[type=text], .wpcf7 input[type=email] {
     width: 100%;
 } 
+.voffset30 {margin-bottom:30px;}
 /* HEADER */
 #header {
     height: 52px;
