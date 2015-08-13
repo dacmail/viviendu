@@ -175,14 +175,14 @@ textarea {
             z-index: 100;
             top:0px;
             left: 0px;
-            background: rgba(0,0,0,0.2) url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAAECAYAAACp8Z5+AAAAGklEQVQIW2NkYGD4D8SMQAwGcAY2AbBKDBUAVuYCBQPd34sAAAAASUVORK5CYII=) repeat;
+            /*background: rgba(0,0,0,0.2) url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAAECAYAAACp8Z5+AAAAGklEQVQIW2NkYGD4D8SMQAwGcAY2AbBKDBUAVuYCBQPd34sAAAAASUVORK5CYII=) repeat;*/
         }
         .jumbo .slide .item {
             width: 100%;
             height: 450px;
             background-position: top center;
             background-repeat: no-repeat;
-            background-size:100% auto;
+            background-size:cover;
             background-attachment: fixed;
        }
     .top-header {
@@ -374,7 +374,10 @@ textarea {
         margin-bottom: 10px;
     }
 /* LISTADOS DE CATALOGOS */
-.catalogo-list {margin-bottom:10px;}
+.catalogo-list {
+    margin-bottom:10px;
+    min-height: 250px;
+}
 .catalogo .title {
     font-size: 19px;
     text-transform: uppercase;

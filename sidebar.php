@@ -18,13 +18,18 @@
 			    src="https://www.google.com/maps/embed/v1/search?key=AIzaSyAS54wTsApQr8UcJjKUI2vMAWE8Op91sUo
 			      &q=<?php echo urlencode($location_info['address']) ?>">
 			</iframe>
+		<?php endif; ?>
 			<ul class="company-data">
+				<?php if (!empty($location_info['address'])): ?>
 				<li class="address"><i class="fa fa-map-marker"></i> <?php echo $location_info['address']; ?></li>
+				<?php endif ?>
+				<?php if (!empty($location_info['phone'])): ?>
 				<li class="phone"><i class="fa fa-phone"></i> <?php echo $location_info['phone']; ?></li>
+				<?php endif ?>
+				<?php if (!empty($location_info['url'])): ?>
 				<li class="url"><i class="fa fa-link"></i> <?php echo esc_url($location_info['url']); ?></li>
+				<?php endif; ?>
 			</ul>
-		<?php endif ?>
-		
 	</div>
 	<?php dynamic_sidebar("Barra Lateral"); ?>
 </div>
