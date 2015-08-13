@@ -43,7 +43,7 @@
 										),
 									)); ?>
 						<?php if ($related->post_count>0): ?>
-							<div class="col-sm-12"><h2 class="title mini">Otros catálogos de <?php echo $comercio->name; ?></h2></div>
+							<div class="col-sm-12"><h2 class="title mini">Catálogos de <?php echo $comercio->name; ?></h2></div>
 							<?php include(locate_template('templates/related.php')); ?>
 							<div class="col-sm-12 more"><a href="<?php echo get_term_link($comercio); ?>">Ver todos los catálogos de <?php echo $comercio->name; ?> <i class="fa fa-angle-right"></i></a></div>
 						<?php endif ?>

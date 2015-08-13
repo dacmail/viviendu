@@ -10,15 +10,15 @@
 	<section class="section" id="whatis">
 		<div class="container">
 			<div class="row">
-				<div class="col-md-8">
+				<div class="col-md-9">
 					<h2 class="title">¿Qué es Viviendu?</h2>
 					<p><strong>Viviendu</strong> es la web especializada en <strong>casas prefabricadas y viviendas móviles</strong>. Ponemos a tu disposición los catálogos de fotos e información de contacto de las principales empresas del sector para ayudarte a <strong>encontrar la casa de tus sueños</strong>. </p>
 					<p>Descubre en <strong>Viviendu</strong> todas las opciones de <strong>viviendas prefabricadas y casas móviles</strong> que existen en el mercado. <strong>Busca y compara</strong> entre la más amplia oferta en casas de madera, cabañas de madera, casetas de madera, casas modulares, caravanas, autocaravanas, casas ecológicas, cabañas en árboles, eco estructuras, pérgolas, porches, cenadores, casas increíbles...</p> 
 					<p>Ha llegado el momento de hacer realidad tu sueño. ¡Embárcate en el apasionante proyecto de <strong>comprar tu casa ideal</strong> y disfruta la experiencia!. </p>
 
 				</div>
-				<div class="col-md-4">
-					<img src="<?php echo get_template_directory_uri(); ?>/images/whatis.jpg" alt="¿Qué es viviendu?">
+				<div class="col-md-3">
+					<img src="<?php echo get_template_directory_uri(); ?>/images/icono_casa.jpg" alt="¿Qué es viviendu?">
 				</div>
 			</div>
 		</div>

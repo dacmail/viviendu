@@ -27,8 +27,10 @@
 				</div>
 			</div>
 			<ul class="slide cycle-slideshow" data-cycle-slides="> .item" data-cycle-timeout="30000">
-				<li class="item" style="background-image:url(<?php echo get_template_directory_uri(); ?>/images/slide1.jpg);"></li>
-				<li class="item" style="background-image:url(<?php echo get_template_directory_uri(); ?>/images/slide2.jpg);"></li>
+				<li class="item" style="background-image:url(<?php echo get_template_directory_uri(); ?>/images/cab_001.jpg);"></li>
+				<li class="item" style="background-image:url(<?php echo get_template_directory_uri(); ?>/images/cab_002.jpg);"></li>
+				<li class="item" style="background-image:url(<?php echo get_template_directory_uri(); ?>/images/cab_003.jpg);"></li>
+				<li class="item" style="background-image:url(<?php echo get_template_directory_uri(); ?>/images/cab_004.jpg);"></li>
 			</ul>
 		</section>
 	<?php endif ?>

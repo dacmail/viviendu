@@ -68,6 +68,11 @@ $meta_boxes[] = array(
                     'name' =>  __('Destacar en seccion'),
                     'id' => $prefix . 'section_featured',
                     'type' => 'checkbox',
+                ),
+            array(
+                    'name' =>  __('Destacar en etiqueta'),
+                    'id' => $prefix . 'product_featured',
+                    'type' => 'checkbox',
                 )
         ),
     );

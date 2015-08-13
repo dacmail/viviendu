@@ -373,7 +373,7 @@ textarea {
         margin-bottom: 10px;
     }
 /* LISTADOS DE CATALOGOS */
-.catalogo-list {margin-bottom:20px;}
+.catalogo-list {margin-bottom:10px;}
 .catalogo .title {
     font-size: 19px;
     text-transform: uppercase;
@@ -746,7 +746,7 @@ a img.aligncenter {
             position: relative;
         }
     .jumbo, .jumbo .slide, .jumbo .slide .item {height: 350px;} 
-    .jumbo .slide .item {background-size: auto 100%;}
+    .jumbo .slide .item {background-size: cover;}
     .main-search {top:60%;}
     .top-header  {text-align: center;}
     .top-header .logo, .top-header .top-menu {

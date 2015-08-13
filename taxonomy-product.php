@@ -10,6 +10,8 @@
 					<div class="row">
 						<?php $related = new WP_Query(array(
 									'posts_per_page' => 6,
+									'meta_key' => '_ungrynerd_product_featured', 
+									'meta_value' => 1,
 									'tax_query' => array(
 										array(
 											'taxonomy' => 'product',
