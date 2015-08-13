@@ -1,3 +1,4 @@
+<?php $exclude_posts = array(); ?>
 <?php while ($related->have_posts()) : $related->the_post(); ?>
 	<article class='catalogo catalogo-list col-sm-4' id="post-<?php the_ID(); ?>">
 		<?php echo viviendu_slideshow('featured', viviendu_tax_link(get_the_ID(), 'comercio_seccion'), 3); ?>
@@ -8,5 +9,6 @@
 			</a>
 		</h3>
 	</article>
+	<?php $exclude_posts[] = get_the_ID(); ?>
 <?php endwhile; ?>
 <?php wp_reset_query(); ?>

@@ -31,7 +31,7 @@
 				<div class="row">
 					<?php $links = new WP_Query(array(
 									'posts_per_page' => 6,
-									'offset' => 6,
+									'post__not_in' => $exclude_posts,
 									'tax_query' => array(
 										array(
 											'taxonomy' => 'product',

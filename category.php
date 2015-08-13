@@ -31,13 +31,14 @@
 				<div class="row">
 					<?php $links = new WP_Query(array(
 									'posts_per_page' => 6,
+									'post__not_in' => $exclude_posts,
 									'tax_query' => array(
 										array(
 											'taxonomy' => 'category',
 											'field'    => 'ID',
 											'terms'    => $seccion->term_id,
 										),
-									'orderby' => 'modified'
+									'orderby' => 'modified',
 									),
 								)); ?>
 					<?php if ($links->post_count>0): ?>
