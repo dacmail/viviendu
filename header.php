@@ -1,9 +1,10 @@
 <!DOCTYPE html>
-<html <?php language_attributes(); ?>
+<html <?php language_attributes(); ?>>
 <head>
 	<link href='http://fonts.googleapis.com/css?family=Roboto:400,300,700,900|Roboto+Condensed:400,700,300' rel='stylesheet' type='text/css'>
 	<meta charset="<?php bloginfo( 'charset' ); ?>">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta name="google-site-verification" content="1fXx-EMkArSR64VzTzdGzgelML8veS1ejluAGGO_9ts" />
 	<link rel="shortcut icon" href="<?php echo get_template_directory_uri(); ?>/favicon.png" />
 	<?php wp_head(); ?>
 </head>
@@ -26,11 +27,11 @@
 					</form>
 				</div>
 			</div>
-			<ul class="slide cycle-slideshow" data-cycle-slides="> .item" data-cycle-timeout="30000">
-				<li class="item" style="background-image:url(<?php echo get_template_directory_uri(); ?>/images/cab_001.jpg);"></li>
-				<li class="item" style="background-image:url(<?php echo get_template_directory_uri(); ?>/images/cab_002.jpg);"></li>
+			<ul class="slide cycle-slideshow" data-cycle-slides="> .item" data-cycle-timeout="15000">
 				<li class="item" style="background-image:url(<?php echo get_template_directory_uri(); ?>/images/cab_003.jpg);"></li>
+				<li class="item" style="background-image:url(<?php echo get_template_directory_uri(); ?>/images/cab_001.jpg);"></li>
 				<li class="item" style="background-image:url(<?php echo get_template_directory_uri(); ?>/images/cab_004.jpg);"></li>
+				<li class="item" style="background-image:url(<?php echo get_template_directory_uri(); ?>/images/cab_002.jpg);"></li>
 			</ul>
 		</section>
 	<?php endif ?>
