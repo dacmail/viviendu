@@ -27,7 +27,7 @@
 				<li class="phone"><i class="fa fa-phone"></i> <?php echo $location_info['phone']; ?></li>
 				<?php endif ?>
 				<?php if (!empty($location_info['url'])): ?>
-				<li class="url"><i class="fa fa-link"></i> <?php echo esc_url($location_info['url']); ?></li>
+				<li class="url"><i class="fa fa-link"></i> <?php echo $location_info['url']; ?></li>
 				<?php endif; ?>
 			</ul>
 	</div>
