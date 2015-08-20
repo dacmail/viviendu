@@ -49,7 +49,7 @@
 						<?php endif ?>
 					</div>
 					<div class="row">
-						<div class="col-sm-12"><h2 class="title mini">Comentarios en <?php echo $comercio->name; ?></h2></div>
+						<div class="col-sm-12"><h2 class="title mini">Opiniones en <?php echo $comercio->name; ?></h2></div>
 						<div class="col-sm-12">
 							<div id="fb-root"></div>
 							<script>(function(d, s, id) {
