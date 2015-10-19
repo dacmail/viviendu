@@ -9,7 +9,7 @@
 		register_taxonomy('provincia','post',array(
 			'label' => 'Provincias',
 			'hierarchical' => true,
-			'rewrite' => array('slug' => 'provincia')
+			'rewrite' => array('slug' => 'p')
 		));
 		register_taxonomy('comercio_provincia','post',array(
 			'label' => 'Empresas en provincias',
@@ -385,7 +385,10 @@
 		return $terms;
 	}
 
-
+	function custom_taxonomies_rewrite(){
+	    add_rewrite_rule('^p/casas-prefabricadas-en-([^/]*)/?','index.php?provincia=$matches[1]','top');
+	}
+	add_action('init','custom_taxonomies_rewrite');
 
 
 ?>

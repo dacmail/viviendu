@@ -66,8 +66,8 @@
 		 	'id' => 'sidebar-1',
 		    'before_widget' => '<div id="%1$s" class="widget %2$s">',
 		    'after_widget' => '</div>',
-		    'before_title' => '<h2 class="title">',
-		 	'after_title' => '</h2>',
+		    'before_title' => '<h4 class="title">',
+		 	'after_title' => '</h4>',
 		 	'name' => 'Barra Lateral'
 		 ));
 	}
@@ -119,4 +119,21 @@
 	     </article>
 	<?php
 	}
-?>
+
+	//Exclude pages from search
+	function search_filter($query) {
+		if ($query->is_search) {
+			$query->set('post_type', 'post');
+		}
+		return $query;
+	}
+	add_filter('pre_get_posts','search_filter');
+
+	//Cambiando URL provincias
+	add_filter('term_link', 'term_link_filter', 10, 3);
+	function term_link_filter( $url, $term, $taxonomy ) {
+		if ($taxonomy=="provincia") {
+			return site_url() . '/p/casas-prefabricadas-en-' . $term->slug;
+		}
+	    return $url;
+	}

@@ -4,7 +4,11 @@
 		<div class="row">
 			<div id="content" class="col-sm-7">
 				<h2 class="title">Estás buscando: <?php the_search_query(); ?></h2>
-				<p class="subtitle">Has hecho una búsqueda con las palabras <strong><?php the_search_query(); ?></strong> y a continuación te mostramos los resultados que encajan con esos términos en Viviedu.com</p>
+				<?php if (have_posts()): ?>
+					<p class="subtitle">Has hecho una búsqueda con las palabras <strong><?php the_search_query(); ?></strong> y a continuación te mostramos los resultados que encajan con esos términos en Viviedu.com</p>
+				<?php else: ?>
+					<p class="subtitle">Lo sentimos, no hay resultados para la búsqueda <strong><?php the_search_query(); ?></strong></p>
+				<?php endif ?>
 				<?php $class = 'col-sm-4'; ?>
 				<?php include(locate_template('templates/list-col-4.php')); ?>
 				<div class="pagination container">

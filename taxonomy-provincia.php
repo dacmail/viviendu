@@ -4,10 +4,10 @@
 		<div class="row">
 			<div id="content" class="col-sm-7">
 				<?php $provincia = get_term(get_queried_object()->term_id, 'provincia' ); ?>
-				<h1 class="title nm"><?php echo single_term_title(); ?></h1>
+				<h1 class="title nm">Casas prefabricadas en <?php echo single_term_title(); ?></h1>
 				<div class="text main">
 					<?php echo viviendu_get_paragraph(apply_filters('the_content',$provincia->description)); ?>
-					<h2 class="title mini tit-sep">Casas prefabricadas en <?php echo single_term_title(); ?></h2>
+					<h2 class="title mini tit-sep">Tipos de casas prefabricadas en <?php echo single_term_title(); ?></h2>
 					<div class="row">
 						<?php include(locate_template('templates/sections-provincias.php')); ?>
 					</div>

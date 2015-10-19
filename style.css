@@ -487,6 +487,14 @@ textarea {
     .kk-star-ratings .kksr-star.gray {
         float: right;
     }
+    .kk-star-ratings { width:95px; }
+    .kk-star-ratings .kksr-stars a { width:19px; }
+    .kk-star-ratings .kksr-stars, 
+    .kk-star-ratings .kksr-stars .kksr-fuel, 
+    .kk-star-ratings .kksr-stars a { height:17px; }
+    .kk-star-ratings .kksr-star.gray { background-image: url(http://viviendu.com/wp-content/uploads/2015/06/stars_r1_c3.jpg); }
+    .kk-star-ratings .kksr-star.yellow { background-image: url(http://viviendu.com/wp-content/uploads/2015/06/stars_r1_c1.jpg); }
+    .kk-star-ratings .kksr-star.orange { background-image: url(http://viviendu.com/wp-content/uploads/2015/06/stars_r1_c1.jpg); }
 #container {
     width: 100%;
     padding-top:40px;
@@ -786,3 +794,30 @@ a img.aligncenter {
         margin:0px -15px 10px -15px;
     }
 }
+section.menu .title.first {
+	margin-top: 130px;
+	display: -webkit-box;
+    display: -webkit-flex;
+    display: -ms-flexbox;
+    display: flex;
+}
+
+
+section.menu .title:before {
+content: url("../images/menu_title_line.png");
+margin-right: 20px;
+    -webkit-box-flex: 1;
+    -webkit-flex: 1;
+    -ms-flex: 1;
+    flex: 1;
+ }
+
+ section.menu .title:after {
+content: url("../images/menu_title_line.png");
+margin-left: 20px;
+-webkit-box-flex: 1;
+    -webkit-flex: 1;
+    -ms-flex: 1;
+    flex: 1;
+ }
+ 
