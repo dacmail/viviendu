@@ -31,7 +31,7 @@ input:focus {outline:0px;}
 
 a {
 	text-decoration:none;
-	color:#76C0A5;
+	color:#8da99f;
     -webkit-transition: opacity 0.3s ease-in;
     -o-transition: opacity 0.3s ease-in;
     transition: opacity 0.3s ease-in;
@@ -44,7 +44,7 @@ a img, :link img, :visited img {border: 0;}
 body {
 	font-family:"Roboto";
     color:#7F7F7F;
-    font-size: 14px;
+    font-size: 16px;
     line-height: 1.8;
 }
 h1,h2,h3,h4,h5,h6 {
@@ -451,6 +451,7 @@ textarea {
         list-style: none;
         font-weight: 300;
         margin-bottom: 2px;
+        text-transform: capitalize;
     }
     .list-terms li .fa {
         font-size: 11px;

@@ -48,7 +48,7 @@
 			<div class="col-sm-5">
 				<?php $list = array('term' => 'provincia', 'class' => 'col-sm-4', 'icon' => 'fa-map-marker', 'args' => array('hide_empty' => 0)); ?>
 				<h2 class="title mini nm">Casas prefabricadas en tu provincia</h2>
-				<p class="subtitle">Como norma general las empresas que venden casas prefabricadas y viviendas móviles ofrecen sus servicios en toda España. Consulta la dirección de las empresas para visitar sus instalaciones y zonas de exposición.</p>
+				<p class="subtitle">Como norma general las empresas que venden casas prefabricadas y viviendas móviles ofrecen sus servicios en toda España. Consulta a las empresas para visitar sus instalaciones y zonas de exposición.</p>
 				<?php include(locate_template('templates/list-terms.php')); ?>
 			</div>
 			<div class="col-sm-6 col-sm-offset-1">
