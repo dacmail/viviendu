@@ -39,10 +39,11 @@
 												'terms'    => $comercio->term_id,
 											),
 										'posts_per_archive_page' => 3,
-										'orderby' => 'rand'
+										'orderby' => 'rand', 
+										'post__not_in' => array(get_the_ID())
 										),
 									)); ?>
-						<?php if ($related->post_count>0): ?>
+						<?php if ($related->post_count>1): ?>
 							<div class="col-sm-12"><h2 class="title mini">Catálogos de <?php echo $comercio->name; ?></h2></div>
 							<?php include(locate_template('templates/related.php')); ?>
 							<div class="col-sm-12 more"><a href="<?php echo get_term_link($comercio); ?>">Ver todos los catálogos de <?php echo $comercio->name; ?> <i class="fa fa-angle-right"></i></a></div>
@@ -64,7 +65,7 @@
 					</div>
 				<?php endwhile; ?>
 			</div>
-			<?php get_sidebar('comercio'); ?>
+			<?php get_sidebar('comercio_seccion'); ?>
 
 		</div>
 	</div>

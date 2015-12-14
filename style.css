@@ -85,10 +85,40 @@ textarea {
     font-size: 15px;
     text-transform: uppercase;
 }
-.wpcf7 textarea, .wpcf7 input[type=text], .wpcf7 input[type=email] {
+.wpcf7 textarea, .wpcf7 input[type=text], .wpcf7 input[type=email], .input-block {
     width: 100%;
 } 
 .voffset30 {margin-bottom:30px;}
+p.legal {
+    font-size: 13px;
+}
+a.btn, input.btn {
+    border: 0px;
+    border-radius: 0px;
+    background-color: #76C0A4;
+    color: #fff;
+    font-size: 21px;
+    font-weight: bold;
+    font-family: "Roboto Condensed";
+    border-radius: 5px;
+    cursor: pointer;
+    -webkit-transition: all 0.2s ease-in;
+    -o-transition: all 0.2s ease-in;
+    transition: all 0.2s ease-in;
+    padding:5px 12px;
+    text-align: center;
+}
+    a.btn:hover, input.btn {background-color: #76C0A5;}
+    a.btn-block, input.btn-block {
+        display: block;
+        width: 100%;
+    }
+    .btn.btn-primary {
+        background-color:#323232;
+    }
+    .btn.btn-secondary {
+        background-color: rgba(118, 192, 164, 0.7);
+    }
 /* HEADER */
 #header {
     height: 52px;
@@ -508,6 +538,11 @@ textarea {
 		margin:10px;
 	}
 	.sidebar {}
+        .sidebar .list-terms li {
+            font-size: 13px;
+            float: none;
+            width: 100%;
+        }
         .sidebar .widget {
             margin-bottom: 35px;
         }
@@ -515,6 +550,10 @@ textarea {
                 padding-left: 20px;
                 margin:10px 0px;
                 list-style: square;
+            }
+            .sidebar .widget ul.list-terms {
+                margin:0px -15px;
+                padding:0px;
             }
             .sidebar .widget .title {
                 font-size: 25px;
@@ -716,7 +755,51 @@ a img.aligncenter {
     margin: 0;
     padding: 0 4px 5px;
 }
-
+/* POPUP */
+.popup-wrapper {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: rgba(0, 0, 0, 0.7);
+  transition: opacity 500ms;
+  visibility: hidden;
+  opacity: 0;
+  z-index:999999;
+}
+    .popup-wrapper:target {
+      visibility: visible;
+      opacity: 1;
+    }
+    .popup-content {
+      margin: 70px auto;
+      padding: 20px;
+      background: #fff;
+      border-radius: 5px;
+      width: 30%;
+      position: relative;
+      transition: all 5s ease-in-out;
+    }
+    .popup-content .close {
+        position: absolute;
+        top: 5px;
+        right: 5px;
+        transition: all 200ms;
+        font-size: 30px;
+        line-height: 16px;
+        font-weight: bold;
+        text-decoration: none;
+        color: #333;
+        padding:10px;
+    }
+        .popup-content .close:hover {
+            color: orange;
+        }
+    .section .popup-content .title {
+        font-size: 24px;
+        padding-right: 50px;
+    }
 @media only screen and  (max-width: 1220px) {
     .jumbo .slide .item {
         background: #000;

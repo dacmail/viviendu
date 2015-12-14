@@ -2,6 +2,9 @@
 	<div class="widget">
 		<?php get_search_form(true); ?>
 	</div>
+	<div class="widget share">
+		<div class="addthis_sharing_toolbox"></div>
+	</div>
 	<div class="widget location">
 		<?php if (is_tax('comercio_seccion')): ?>
 			<?php $location_info = viviendu_location_info(get_tax_meta(get_queried_object()->term_id, 'viviendu_comercio_seccion_comercio'));  ?>

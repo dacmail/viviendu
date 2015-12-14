@@ -45,6 +45,14 @@
 			});
 			// Kick off one resize to fix all videos on page load
 		}).resize();
+
+
+		//Legal checkbox
+		$('.button.btn-contact').on('click', function(event) {
+			event.preventDefault();
+			if ($(this).closest('form').find('#legal').is(':checked')) 
+				$(this).closest('form').submit();
+		});
 	});
 	$(window).load(function() {
 		//JS
@@ -111,6 +119,28 @@
 	$('.category .link a').each(function(index, el) {
 		$(el).on('click', function(event) {
 			ga('send', 'event', 'sección', window.location.href, $(el).attr('href'), index);
+		});
+	});
+
+	$('#btn-contact').on('click', function(event) {
+		ga('send', 'event', 'contacto_CTA', window.location.href);
+	});
+
+	$('.btn-visit').each(function(index, el) {
+		$(el).on('click', function(event) {
+			ga('send', 'event', 'visita_CTA', window.location.href, $(el).attr('href'));
+		});
+	});
+
+	$('.btn-newsletter').each(function(index, el) {
+		$(el).on('click', function(event) {
+			ga('send', 'event', 'newsletter_sidebar', window.location.href);
+		});
+	});
+
+	$('.text.main iframe').each(function(index, el) {
+		$(el).on('click', function(event) {
+			ga('send', 'event', 'video', window.location.href, $(el).attr('src'));
 		});
 	});
 })(jQuery);

@@ -47,6 +47,7 @@
 					<?php endif ?>
 				</div>
 				
+				<div class="addthis_recommended_horizontal"></div>
 					
 			</div>
 			<?php get_sidebar('provincia'); ?>
