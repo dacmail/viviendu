@@ -8,6 +8,7 @@
 
 	//Enqueue scripts and styles
 	function ungrynerd_scripts() {
+		wp_enqueue_style('viviendu-fonts', '//fonts.googleapis.com/css?family=Roboto:400,300,700,900|Roboto+Condensed:400,700,300');
 		wp_enqueue_style('viviendu-font-awesome', get_template_directory_uri() . '/css/font-awesome.min.css');
 		wp_enqueue_style('viviendu-grid', get_template_directory_uri() . '/css/grid.css');
 		wp_enqueue_style('viviendu-style', get_stylesheet_uri() );
@@ -93,7 +94,7 @@
 	}
 
 	// Redirección para no logueados
-	add_action('wp','proximamente');
+	// add_action('wp','proximamente');
 	function proximamente() {
 		if ( !is_user_logged_in()) { header("Location: http://google.com/"); }
 	}

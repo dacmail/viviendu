@@ -6,6 +6,9 @@
 			<div class="col-sm-7">
 				<section class="section">
 					<h2 class="title tit-sep">Tipos de casas prefabricadas</h2>
+					<?php while (have_posts()) : the_post(); ?>
+						<?php the_content( __('Leer m&aacute;s &raquo;', 'ungrynerd')); ?>
+					<?php endwhile; ?>
 					<?php $list = array('term' => 'product', 'class' => 'col-sm-6', 'icon' => 'fa-star', 'args' => array('hide_empty' => 0)); ?>
 					<?php include(locate_template('templates/list-terms.php')); ?>
 					<?php $list = array('term' => 'category', 'class' => 'col-sm-6', 'icon' => 'fa-star', 'args' => array('hide_empty' => 0)); ?>

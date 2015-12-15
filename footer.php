@@ -6,7 +6,7 @@
 				</div>
 				<div class="col-sm-8 menu-wrap">
 					<?php wp_nav_menu(array('container' => 'nav', 'container_id' => 'footer-menu', 'container_class' => 'footer-menu', 'theme_location' => 'footer-social')); ?>
-					<?php wp_nav_menu(array('container' => 'nav', 'container_id' => 'footer-menu', 'container_class' => 'footer-menu', 'theme_location' => 'footer')); ?>
+					<?php wp_nav_menu(array('container' => 'nav', 'container_id' => 'footer-menu1', 'container_class' => 'footer-menu', 'theme_location' => 'footer')); ?>
 				</div>
 				<div class="col-sm-12">
 					<p class="copy">&copy;2015 Viviendu.es</p>
@@ -24,5 +24,22 @@
 		ga('send', 'pageview');
 	</script>
 	<?php wp_footer(); ?>
+	<script>
+		window.fbAsyncInit = function() {
+		FB.init({
+		  appId      : '1099906436728878',
+		  xfbml      : true,
+		  version    : 'v2.5'
+		});
+		};
+
+		(function(d, s, id){
+		 var js, fjs = d.getElementsByTagName(s)[0];
+		 if (d.getElementById(id)) {return;}
+		 js = d.createElement(s); js.id = id;
+		 js.src = "//connect.facebook.net/es_ES/sdk.js";
+		 fjs.parentNode.insertBefore(js, fjs);
+		}(document, 'script', 'facebook-jssdk'));
+	</script>
 </body>
 </html>

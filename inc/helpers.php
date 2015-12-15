@@ -85,7 +85,7 @@
 			$return .= '<div class="cycle-slideshow"' . $options .'>';
 			foreach ( $images as $image ) {
 				$return .= empty($link) ? '' : "<a class='slide' href='{$link}'>";
-			    $return .=  "<img src='{$image['url']}' width='{$image['width']}' height='{$image['height']}' alt='{$image['alt']}'/>";
+			    $return .=  "<img src='{$image['url']}' width='{$image['width']}' height='{$image['height']}' alt='" . get_the_title() . " " .$image['ID'] . "'/>";
 			    $return .= empty($link) ? '' : "</a>";
 			}
 			if ($counter) {
