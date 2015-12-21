@@ -39,7 +39,7 @@
 	<div class="popup-content">
 		<a class="close" href="#">×</a>
 		<!-- Begin MailChimp Signup Form -->
-		<h3 class="title">Contactar con <?php the_title(); ?></h3>
+		<h3 class="title">Contactar con la empresa</h3>
 		<p>¡Muchas gracias por tu interés!. Aún no es posible contactar con empresas a através de Viviendu, para conocer el momento en el que esta funcionalidad estará disponible déjanos tu correo electrónico.</p>
 		<div id="mc_embed_signup1">
 		<form action="//viviendu.us11.list-manage.com/subscribe/post?u=6421e5c37cf26359595d46661&amp;id=e64548f3e5" method="post" id="mc-embedded-subscribe-form" name="mc-embedded-subscribe-form" class="validate" target="_blank" novalidate>

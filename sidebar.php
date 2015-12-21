@@ -34,5 +34,14 @@
 				<?php endif; ?>
 			</ul>
 	</div>
+	<?php global $related_categories; ?>
+	<?php if (!empty($related_categories)): ?>
+		<div class="widget">
+			<h3 class="title">Te puede interesar</h3>
+			<?php shuffle($related_categories); ?>
+			<?php $products = array_slice($related_categories,0,5); ?>
+			<?php include(locate_template('templates/list-products.php')); ?>
+		</div>
+	<?php endif ?>
 	<?php dynamic_sidebar("Barra Lateral"); ?>
 </div>

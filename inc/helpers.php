@@ -82,7 +82,9 @@
 		if (!empty($images)) {
 			if ($limit) {$images = array_slice($images, 0, $limit); }
 			$options = empty($link) ? '' : ' data-cycle-slides="> .slide"';
-			$return .= '<div class="cycle-slideshow"' . $options .'>';
+			$return .= '<div class="cycle-slideshow"' . $options .' 
+			data-cycle-swipe=true
+    		data-cycle-swipe-fx=scrollHorz>';
 			foreach ( $images as $image ) {
 				$return .= empty($link) ? '' : "<a class='slide' href='{$link}'>";
 			    $return .=  "<img src='{$image['url']}' width='{$image['width']}' height='{$image['height']}' alt='" . get_the_title() . " " .$image['ID'] . "'/>";

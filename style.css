@@ -41,6 +41,9 @@ a:hover {
     opacity: 0.7;
 }
 a img, :link img, :visited img {border: 0;}
+input, button {
+    -webkit-appearance:none;
+}
 body {
 	font-family:"Roboto";
     color:#7F7F7F;
@@ -538,8 +541,11 @@ a.btn, input.btn {
 		margin:10px;
 	}
 	.sidebar {}
+        .sidebar iframe, .sidebar .fb-page * {
+            max-width: 100% !important;
+        }
         .sidebar .list-terms li {
-            font-size: 13px;
+            font-size: 15px;
             float: none;
             width: 100%;
         }
@@ -800,13 +806,23 @@ a img.aligncenter {
         font-size: 24px;
         padding-right: 50px;
     }
+    .show-on-mobile {
+        display: none;
+    }
 @media only screen and  (max-width: 1220px) {
     .jumbo .slide .item {
         background: #000;
         background-size: auto auto;
     }
+    .cycle-slideshow .nav {
+        width: 40px;
+        opacity: 0.7;
+    }
 }
 @media only screen and  (max-width: 768px) {
+    .show-on-mobile {
+        display: block;
+    }
     .main-search h1, .main-search h2 {display: none;}
     #header .nav-toggle {
         display: block;
@@ -842,6 +858,9 @@ a img.aligncenter {
             display: block;
             position: relative;
         }
+    .top-header .top-menu .menu-item a {
+        padding:0px 10px;
+    }
     .jumbo, .jumbo .slide, .jumbo .slide .item {height: 350px;} 
     .jumbo .slide .item {background-size: cover;}
     .main-search {top:60%;}
@@ -876,6 +895,11 @@ a img.aligncenter {
     }
     .cycle-slideshow {
         margin:0px -15px 10px -15px;
+    }
+
+    .popup-content {
+        width: 100%;
+        margin:0px auto;
     }
 }
 section.menu .title.first {

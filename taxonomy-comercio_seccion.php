@@ -11,6 +11,7 @@
 						<div class="col-sm-6 ratings-wrap"><?php if(function_exists("kk_star_ratings")) : echo kk_star_ratings(viviendu_post_id('comercio_seccion',get_queried_object()->term_id)); endif; ?></div>
 					</div>
 					<div class="text main">
+						<div class="show-on-mobile"><p><a href="#popup_contacto" class="btn btn-block btn-contact btn-primary" id="btn-contact">Contactar</a></p></div>
 						<?php echo viviendu_get_paragraph(apply_filters('the_content',viviendu_comercio_seccion_content(get_queried_object()->term_id))); ?>
 						<?php echo viviendu_slideshow('featured','', 0, true); ?>
 						<?php echo viviendu_get_paragraph(apply_filters('the_content',viviendu_comercio_seccion_content(get_queried_object()->term_id)), false); ?>
