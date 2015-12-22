@@ -9,7 +9,7 @@
 ?>
 <?php while ($featured->have_posts()) : $featured->the_post(); ?>
 	<article class='catalogo catalogo-list <?php echo $class ?>' id="post-<?php the_ID(); ?>">
-		<?php echo viviendu_slideshow('featured', viviendu_tax_link(get_the_ID(), 'comercio_seccion'), 3); ?>
+		<?php echo viviendu_slideshow('featured', viviendu_tax_link(get_the_ID(), 'comercio_seccion'), 1); ?>
 		<<?php echo $htitle; ?> class="title nm">
 			<a href="<?php echo viviendu_tax_link(get_the_ID(), 'comercio_seccion'); ?>">
 				<?php echo viviendu_tax_name(get_the_ID(), 'comercio'); ?>

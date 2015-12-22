@@ -54,13 +54,6 @@
 						<div class="col-sm-12"><h2 class="title mini">Opiniones en <?php echo $comercio->name; ?></h2></div>
 						<div class="col-sm-12">
 							<div id="fb-root"></div>
-							<script>(function(d, s, id) {
-							  var js, fjs = d.getElementsByTagName(s)[0];
-							  if (d.getElementById(id)) return;
-							  js = d.createElement(s); js.id = id;
-							  js.src = "//connect.facebook.net/es_LA/sdk.js#xfbml=1&version=v2.4&appId=1099906436728878";
-							  fjs.parentNode.insertBefore(js, fjs);
-							}(document, 'script', 'facebook-jssdk'));</script>
 							<div class="fb-comments" data-href="<?php echo get_permalink(viviendu_post_id('comercio_seccion',get_queried_object()->term_id)); ?>" data-width="100%" data-numposts="10"></div>
 						</div>
 					</div>

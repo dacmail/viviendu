@@ -77,28 +77,38 @@
 	}
 
 	function viviendu_slideshow($size='full', $link='', $limit=0, $counter=false) {
-		$images = rwmb_meta('_ungrynerd_images', 'type=image&size=' . $size);
 		$return = '';
-		if (!empty($images)) {
-			if ($limit) {$images = array_slice($images, 0, $limit); }
-			$options = empty($link) ? '' : ' data-cycle-slides="> .slide"';
-			$return .= '<div class="cycle-slideshow"' . $options .' 
-			data-cycle-swipe=true
-    		data-cycle-swipe-fx=scrollHorz>';
-			foreach ( $images as $image ) {
-				$return .= empty($link) ? '' : "<a class='slide' href='{$link}'>";
-			    $return .=  "<img src='{$image['url']}' width='{$image['width']}' height='{$image['height']}' alt='" . get_the_title() . " " .$image['ID'] . "'/>";
-			    $return .= empty($link) ? '' : "</a>";
+		if ($limit==1) {
+			global $post;
+			$return = empty($link) ? '' : "<a class='slide' href='{$link}'>";
+			$return .=  get_the_post_thumbnail($post->ID, $size);
+			$return .= empty($link) ? '' : "</a>";
+			return $return;
+		} else {
+			$images = rwmb_meta('_ungrynerd_images', 'type=image&size=' . $size);
+			
+			if (!empty($images)) {
+				if ($limit) {$images = array_slice($images, 0, $limit); }
+				$options = empty($link) ? '' : ' data-cycle-slides="> .slide"';
+				$return .= '<div class="cycle-slideshow"' . $options .' 
+				data-cycle-swipe=true
+	    		data-cycle-swipe-fx=scrollHorz>';
+				foreach ( $images as $image ) {
+					$return .= empty($link) ? '' : "<a class='slide' href='{$link}'>";
+				    $return .=  "<img src='{$image['url']}' width='{$image['width']}' height='{$image['height']}' alt='" . get_the_title() . " " .$image['ID'] . "'/>";
+				    $return .= empty($link) ? '' : "</a>";
+				}
+				if ($counter) {
+					$return .= '<div class="cycle-caption"></div>';
+				}
+				$return .= '<a href="#" class="nav cycle-prev"><i class="fa fa-angle-left"></i></a>
+		    				<a href="#" class="nav cycle-next"><i class="fa fa-angle-right"></i></a>
+							</div>';
 			}
-			if ($counter) {
-				$return .= '<div class="cycle-caption"></div>';
-			}
-			$return .= '<a href="#" class="nav cycle-prev"><i class="fa fa-angle-left"></i></a>
-	    				<a href="#" class="nav cycle-next"><i class="fa fa-angle-right"></i></a>
-						</div>';
-		}
 
-		return $return;
+			return $return;
+		}
+		
 	}
 
 	function viviendu_set_post_thumb($post_id) {
