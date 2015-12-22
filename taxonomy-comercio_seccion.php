@@ -50,13 +50,6 @@
 							<div class="col-sm-12 more"><a href="<?php echo get_term_link($comercio); ?>">Ver todos los catálogos de <?php echo $comercio->name; ?> <i class="fa fa-angle-right"></i></a></div>
 						<?php endif ?>
 					</div>
-					<div class="row">
-						<div class="col-sm-12"><h2 class="title mini">Opiniones en <?php echo $comercio->name; ?></h2></div>
-						<div class="col-sm-12">
-							<div id="fb-root"></div>
-							<div class="fb-comments" data-href="<?php echo get_permalink(viviendu_post_id('comercio_seccion',get_queried_object()->term_id)); ?>" data-width="100%" data-numposts="10"></div>
-						</div>
-					</div>
 				<?php endwhile; ?>
 			</div>
 			<?php get_sidebar('comercio_seccion'); ?>

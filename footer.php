@@ -24,12 +24,5 @@
 		ga('send', 'pageview');
 	</script>
 	<?php wp_footer(); ?>
-	<?php if (!is_front_page()): ?>
-	<script>
-		$(window).bind("load", function() {
-			$.getScript('js/social.js', function() {});
-		});
-	</script>
-	<?php endif ?>
 </body>
 </html>
