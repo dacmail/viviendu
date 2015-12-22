@@ -45,10 +45,7 @@
 						<div class="col-sm-12"><h2 class="title mini tit-sep">Más empresas en <?php echo $seccion->name; ?></h2></div>
 						<?php include(locate_template('templates/links.php')); ?>
 					<?php endif ?>
-				</div>
-				
-				<div class="addthis_recommended_horizontal"></div>
-					
+				</div>					
 			</div>
 			<?php get_sidebar('provincia'); ?>
 		</div>
