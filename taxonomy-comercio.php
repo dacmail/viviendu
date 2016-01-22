@@ -38,7 +38,7 @@
 					<?php endif ?>
 				</div>
 			</div>
-			<?php get_sidebar('comercio'); ?>
+			<?php get_sidebar('comercio_seccion'); ?>
 		</div>
 	</div>
 </div>

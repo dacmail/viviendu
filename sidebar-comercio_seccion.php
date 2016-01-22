@@ -8,7 +8,7 @@
 	<?php $products = get_the_terms(get_the_ID(), 'product' ); ?>
 	<?php if (!empty($products)): ?>
 		<div class="widget">
-			<h2 class="title mini"><?php the_title(); ?></h2>
+			<h2 class="title mini"><?php echo single_term_title(); ?></h2>
 			<ul class="list-terms provincias row">
 			<?php foreach ($products as $product) : ?>
 			    <li class="col-sm-6">

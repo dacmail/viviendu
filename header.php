@@ -2,6 +2,7 @@
 <html <?php language_attributes(); ?>>
 <head>
 	<meta property="fb:app_id" content="1099906436728878" /> 
+	<meta name="p:domain_verify" content="60f63d05e7122a2c88a84b9feda6fa5e"/>
 	<meta charset="<?php bloginfo( 'charset' ); ?>">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<meta name="google-site-verification" content="1fXx-EMkArSR64VzTzdGzgelML8veS1ejluAGGO_9ts" />
@@ -22,7 +23,7 @@
 					<h1>Encuentra la casa de tus sueños</h1>
 					<h2>Busca y compara entre las mejores propuestas de casas prefabricadas y viviendas móviles.</h2>
 					<form action="<?php echo home_url(); ?>" method="get">
-					<input type="text" id="s" name="s" class="term" placeholder="¿Qué buscas?">
+					<input type="text" id="s" name="s" class="term" placeholder="¿Qué buscas? casa contenedor, jaima, casa en árbol...">
 					<button type="submit" class="btn">Buscar</button>
 					</form>
 				</div>
