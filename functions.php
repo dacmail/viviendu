@@ -4,7 +4,15 @@
 	//Includes
 	include get_template_directory() . '/inc/Tax-meta-class/Tax-meta-class.php';
 	include get_template_directory() . '/inc/taxonomies.php';
+	include get_template_directory() . '/inc/posts.php';
 	include get_template_directory() . '/inc/helpers.php';
+
+	function custom_rewrite_basic() {
+		add_rewrite_tag('%petition_type%', '([^&]+)');
+  		add_rewrite_tag('%petition_item%', '([^&]+)');
+	  	add_rewrite_rule('^presupuesto/([^/]*)/([^/]*)/?','index.php?page_id=8723&petition_type=$matches[1]&petition_item=$matches[2]','top');
+	}
+	add_action('init', 'custom_rewrite_basic');
 
 	//Enqueue scripts and styles
 	function ungrynerd_scripts() {
