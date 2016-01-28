@@ -48,7 +48,7 @@ body {
 	font-family:"Roboto";
     color:#7F7F7F;
     font-size: 16px;
-    line-height: 1.8;
+    line-height: 1.5;
 }
 h1,h2,h3,h4,h5,h6 {
     font-family: "Roboto Condensed";
@@ -153,7 +153,7 @@ a.btn, input.btn {
             display: table-cell;
             line-height: 52px;
             text-align: center;
-            border-right:1px solid #52747A;
+            border-right:1px solid #4d4d4d;
             min-width: 75px;
             list-style: none;
         }
@@ -356,7 +356,7 @@ a.btn, input.btn {
         font-size: 35px;
         margin-bottom: 20px;
     }  
-        .section .title.nm {margin-bottom: 0px;}
+        .section .title.nm {margin-bottom: 10px;}
         .section .title.mini {font-size: 25px;}
     .section .subtitle {
         margin:0px;
@@ -365,7 +365,7 @@ a.btn, input.btn {
         .section .subtitle p {margin:0px;}
     .section .tit-sep {
         position: relative;
-        margin-bottom: 35px;
+        margin-bottom: 40px;
     }
     .section .tit-sep:after {
         display: block;
@@ -381,16 +381,20 @@ a.btn, input.btn {
     background-color: #D3DEC0;
     color:#675A5F;
     padding-bottom: 0px;
+    padding-top:40px;
+    padding-bottom:40px;
 }
     #whatis .title {
         color:#675A5F;
     }
     #whatis img {
         display: block;
+        margin-top:30px;
     }
 #howto {
     background: url('images/howto-bg.jpg') repeat #766A6E;
     color:#fff;
+    padding-top:40px;
 }
     #howto .title {
         color:#fff;
@@ -407,7 +411,7 @@ a.btn, input.btn {
     }
 /* LISTADOS DE CATALOGOS */
 .catalogo-list {
-    margin-bottom:10px;
+    margin-bottom:30px;
     min-height: 250px;
 }
 .catalogo .title {
@@ -420,10 +424,12 @@ a.btn, input.btn {
     color:#76C0A5;
     font-size: 13px;
     margin-bottom: 10px;
+    margin-top:10px;
 }
     .title-category.main {
         font-size: 15px;
         line-height: 20px;
+        margin-top:0px;
     }
     .title-category a {color:#76C0A5;}
 .catalogo-list .cycle-slideshow {
@@ -485,13 +491,14 @@ a.btn, input.btn {
         font-weight: 300;
         margin-bottom: 2px;
         text-transform: capitalize;
+        font-family: "Roboto Condensed";
     }
     .list-terms li .fa {
         font-size: 11px;
       top: -1px;
       position: relative;
       margin-right: 5px;
-      color: #7F7F7F;
+      color: #8da99f;
     }
     .list-terms.provincias {margin-bottom: 50px;}
 /* COMERCIO-SECCION */
@@ -820,6 +827,13 @@ a img.aligncenter {
     }
 }
 @media only screen and  (max-width: 768px) {
+    #whatis img, .kksr-legend {
+        display:none !important;
+    }
+    .catalogo-list .cycle-slideshow {
+        margin:0px;
+    }
+    .kk-star-ratings .kksr-star.gray {float:right;}
     .show-on-mobile {
         display: block;
     }
@@ -867,7 +881,6 @@ a img.aligncenter {
     .top-header  {text-align: center;}
     .top-header .logo, .top-header .top-menu {
         display: inline-block;
-        float: none;
     }
 
     .section .title {
@@ -887,9 +900,6 @@ a img.aligncenter {
         margin-left: 0px;
         margin-bottom: 20px;
     }
-    .kk-star-ratings .kksr-star.gray {
-        float: left;
-    }
     .kk-star-ratings.lft {
         text-align: left;
     }
@@ -900,6 +910,14 @@ a img.aligncenter {
     .popup-content {
         width: 100%;
         margin:0px auto;
+    }
+    .catalogo .title {
+        font-size: 17px;
+    }
+}
+@media only screen and  (max-width: 700px) {
+    .top-header .logo, .top-header .top-menu {
+        float: none;
     }
 }
 section.menu .title.first {

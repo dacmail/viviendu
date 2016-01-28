@@ -6,7 +6,7 @@
 	$hrefs_keys = array_keys($hrefs);
 ?>
 <h2 class="title nm"><?php echo get_post_meta(get_the_ID(), '_ungrynerd_main_title', true ); ?></h2>
-<div class="subtitle"><?php echo get_post_meta(get_the_ID(), '_ungrynerd_subtitle', true ); ?></div>
+<div class="subtitle tit-sep"><?php echo get_post_meta(get_the_ID(), '_ungrynerd_subtitle', true ); ?></div>
 <div class="row">
 	<?php $i=0; ?>
 	<?php foreach ($titles as $key => $title) : ?>
