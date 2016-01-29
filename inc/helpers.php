@@ -179,4 +179,49 @@
 		return $post->post->ID;
 	}
 
+
+	/**
+	* Envio de correo electrónico si se ha recibido una petición de presupuesto.
+	*
+	*/
+	add_action("private_presupuesto", "viviendu_send_petition");
+
+	function viviendu_send_petition($post_id) {
+		$post = get_post($post_id);
+		if ($post->post_type!='presupuesto') { return true; }
+		
+	    $email_subject = "Nueva petición de presupuesto: " . $post->post_title;
+
+		ob_start();
+		//Incluir cabecera del mail
+		?>
+		<p>Hola, tienes una nueva petición de presupuesto, a continuación te indicamos 
+		los datos de dicha petición:</p>
+		<?php		
+		//Incluir pie del email.
+		$message = ob_get_contents();
+		ob_end_clean();
+
+		//Configuración opciones mail
+		$headers = 'Reply-to: Viviendu <presupuestos@viviendu.com>' . "\r\n";
+
+		add_filter('wp_mail_content_type',create_function('', 'return "text/html";'));
+	 
+	    add_filter('wp_mail_from','viviendu_email_from');
+		function viviendu_email_from($content_type) {
+		  return 'presupuestos@viviendu.com';
+		}
+	 
+	    add_filter('wp_mail_from_name','viviendu_email_from_name');
+	    function viviendu_email_from_name($name) {
+		  return 'Viviendu';
+		}
+
+		$terms = get_the_terms($post_id, 'comercio');
+		foreach ($terms as $term) {
+			$email_to = get_tax_meta($term->term_id, 'viviendu_comercio_email');
+			wp_mail($email_to, $email_subject, $message, $headers);
+		}
+	}
+
 ?>
