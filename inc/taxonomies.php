@@ -112,7 +112,11 @@
 						'comercio_seccion',
 						array('slug' => $tag_slug)
 					);
-					$term_id = $term['term_id']; 
+					if (is_array($term)) {
+						$term_id = $term['term_id']; 
+					} else {
+						wp_mail('dacmail@gmail.com', 'Error al crear comercio_seccion', $post_ID .  json_encode($categorias) . json_encode($comercios));
+					}
 				} else {
 					$term_id = $tag_exists->term_id;
 				}
