@@ -88,7 +88,17 @@ $meta_boxes[] = array(
 	                'name' =>  __('Fotografías del catálogo'),
 	                'id' => $prefix . 'images',
 	                'type' => 'plupload_image',
-	            )
+	            ),
+            array(
+                    'name' =>  __('¿Permite recibir presupuestos directos?'),
+                    'id' => $prefix . 'petition_direct',
+                    'type' => 'checkbox',
+                ),
+            array(
+                    'name' =>  __('¿Permite recibir presupuestos de sección?'),
+                    'id' => $prefix . 'petition_category',
+                    'type' => 'checkbox',
+                )
         ),
     );
 
