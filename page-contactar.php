@@ -1,5 +1,6 @@
 <?php /* Template Name: Petición presupuesto */ ?>
 <?php get_header() ?>
+<script src='https://www.google.com/recaptcha/api.js'></script>
 <?php 
     $petition_type = get_query_var('petition_type');
     $petition_item = get_query_var('petition_item');
@@ -47,39 +48,50 @@
 ?>
 <?php 
 if( 'POST' == $_SERVER['REQUEST_METHOD'] && !empty( $_POST['action'] ) &&  $_POST['action'] == "new_post") {
-    $title= 'VIVIENDU#' . date('Ymdhms');
-    $provincia = isset($_POST['provincia']) ? (array) $_POST['provincia'] : array();
-    $provincia = array_map('intval',$provincia);
+    $url = 'https://www.google.com/recaptcha/api/siteverify';
+    $data = array('secret' => get_option('captcha_secret'), 
+                    'response' => $_POST['g-recaptcha-response']);
 
-    $company = isset($_POST['comercio']) ? (array) explode(',', $_POST['comercio']) : array();
-    $company = array_map('intval',$company);
+    $result = wp_remote_post($url, array('body' => $data));
+    $captcha = json_decode( $result['body']);
+    if (!is_wp_error($result) && $captcha->success) {
+        $title= 'VIVIENDU#' . date('Ymdhms');
+        $provincia = isset($_POST['provincia']) ? (array) $_POST['provincia'] : array();
+        $provincia = array_map('intval',$provincia);
 
-    $new_post = array(
-        'post_title'    => $title,
-        'post_category' => array($_POST['cat']),  
-        'post_status'   => 'private',          
-        'post_type' => 'presupuesto',
-        'tax_input' => array(
-            'provincia' => $provincia,
-            'comercio' => $company,
-        )
-  
-    );
-    $pid = wp_insert_post($new_post); 
+        $company = isset($_POST['comercio']) ? (array) explode(',', $_POST['comercio']) : array();
+        $company = array_map('intval',$company);
 
-    if ($pid) {
-        add_post_meta( $pid, 'customer_name', $_POST['customer_name']);
-        add_post_meta( $pid, 'customer_email', $_POST['customer_email']);
-        add_post_meta( $pid, 'customer_phone', $_POST['customer_phone']);
-        add_post_meta( $pid, 'customer_money', $_POST['customer_money']);
-        add_post_meta( $pid, 'customer_comments', $_POST['customer_comments']);
-        add_post_meta( $pid, 'petition_type', $petition_type);
-        add_post_meta( $pid, 'petition_item', $petition_item);
-        //wp_set_object_terms($pid, array($_POST['provincia']), 'provincia', true);
+        $new_post = array(
+            'post_title'    => $title,
+            'post_category' => array($_POST['cat']),  
+            'post_status'   => 'private',          
+            'post_type' => 'presupuesto',
+            'tax_input' => array(
+                'provincia' => $provincia,
+                'comercio' => $company,
+            )
+      
+        );
+        $pid = wp_insert_post($new_post); 
 
-    	$message = "Tu petición se ha enviado correctamente con el número " . $title;
+        if ($pid) {
+            add_post_meta( $pid, 'customer_name', $_POST['customer_name']);
+            add_post_meta( $pid, 'customer_email', $_POST['customer_email']);
+            add_post_meta( $pid, 'customer_phone', $_POST['customer_phone']);
+            add_post_meta( $pid, 'customer_money', $_POST['customer_money']);
+            add_post_meta( $pid, 'customer_comments', $_POST['customer_comments']);
+            add_post_meta( $pid, 'petition_type', $petition_type);
+            add_post_meta( $pid, 'petition_item', $petition_item);
+            //wp_set_object_terms($pid, array($_POST['provincia']), 'provincia', true);
+
+            viviendu_send_petition($pid);
+        	$message = "Tu petición se ha enviado correctamente con el número " . $title;
+        } else {
+        	$message = "Ha ocurrido un error, por favor ponte en contacto con nosotros"; 
+        }
     } else {
-    	$message = "Ha ocurrido un error, por favor ponte en contacto con nosotros"; 
+        $message = "No hemos podido comprobar que eres humano, por favor completa el captcha al final del formulario";
     }
 } ?>
 <div id="container" class="page section">
@@ -134,7 +146,8 @@ if( 'POST' == $_SERVER['REQUEST_METHOD'] && !empty( $_POST['action'] ) &&  $_POS
                             <textarea class="input-block" id="customer_comments" name="customer_comments"></textarea>
                             </p>
                            
-                            
+                            <div class="g-recaptcha" data-sitekey="6LdeDRcTAAAAAP6AGwHu4dvBa_vB2ACppLPesbmR"></div>
+
                             <p><input type="submit" class="btn" value="Enviar petición" tabindex="6" id="submit" name="submit" /></p>
                             <?php if (!empty($comercio)): ?>
                                 <input type="hidden" name="comercio" value="<?php echo (is_array($comercio) ? implode(', ', $comercio) : $comercio );?>" />

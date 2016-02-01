@@ -412,7 +412,6 @@ a.btn, input.btn {
 /* LISTADOS DE CATALOGOS */
 .catalogo-list {
     margin-bottom:30px;
-    min-height: 250px;
 }
 .catalogo .title {
     font-size: 19px;

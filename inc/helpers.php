@@ -184,8 +184,6 @@
 	* Envio de correo electrónico si se ha recibido una petición de presupuesto.
 	*
 	*/
-	add_action("private_presupuesto", "viviendu_send_petition");
-
 	function viviendu_send_petition($post_id) {
 		$post = get_post($post_id);
 		if ($post->post_type!='presupuesto') { return true; }
@@ -197,6 +195,15 @@
 		?>
 		<p>Hola, tienes una nueva petición de presupuesto, a continuación te indicamos 
 		los datos de dicha petición:</p>
+		<ul>
+			<li>Nombre del cliente: <?php echo get_post_meta( $post_id, 'customer_name', true); ?></li>
+			<li>Correo electrónico: <?php echo get_post_meta( $post_id, 'customer_email', true); ?></li>
+			<li>Teléfono: <?php echo get_post_meta( $post_id, 'customer_phone', true); ?></li>
+			<li>Presupuesto máximo: <?php echo get_post_meta( $post_id, 'customer_money', true); ?></li>
+			<li>Provincia: <?php the_terms($post_id, 'provincia'); ?></li>
+			<li>Sección: <?php the_terms($post_id, 'category'); ?></li>
+			<li>Comentarios: <?php echo get_post_meta( $post_id, 'customer_comments', true); ?></li>
+		</ul>
 		<?php		
 		//Incluir pie del email.
 		$message = ob_get_contents();
