@@ -4,7 +4,7 @@ defined( 'ABSPATH' ) || exit;
 
 if ( ! class_exists( 'RWMB_Autocomplete_Field' ) )
 {
-	class RWMB_Autocomplete_Field extends RWMB_Field
+	class RWMB_Autocomplete_Field extends RWMB_Field_Multiple_Values
 	{
 		/**
 		 * Enqueue scripts and styles
@@ -31,13 +31,21 @@ if ( ! class_exists( 'RWMB_Autocomplete_Field' ) )
 			if ( ! is_array( $meta ) )
 				$meta = array( $meta );
 
-			$options = array();
-			foreach ( $field['options'] as $value => $label )
+			if ( is_string( $field['options'] ) )
 			{
-				$options[] = array(
-					'value' => $value,
-					'label' => $label,
-				);
+				$options = $field['options'];
+			}
+			else
+			{
+				$options = array();
+				foreach ( $field['options'] as $value => $label )
+				{
+					$options[] = array(
+						'value' => $value,
+						'label' => $label,
+					);
+				}
+				$options = wp_json_encode( $options );
 			}
 
 			// Input field that triggers autocomplete.
@@ -47,7 +55,7 @@ if ( ! class_exists( 'RWMB_Autocomplete_Field' ) )
 				'<input type="text" class="rwmb-autocomplete" id="%s" data-name="%s" data-options="%s" size="%s">',
 				$field['id'],
 				$field['field_name'],
-				esc_attr( json_encode( $options ) ),
+				esc_attr( $options ),
 				$field['size']
 			);
 
@@ -62,10 +70,30 @@ if ( ! class_exists( 'RWMB_Autocomplete_Field' ) )
 					<input type="hidden" class="rwmb-autocomplete-value" name="%s" value="%s">
 				</div>
 			';
-			foreach ( $field['options'] as $value => $label )
+
+			if ( is_array( $field['options'] ) )
 			{
-				if ( in_array( $value, $meta ) )
+				foreach ( $field['options'] as $value => $label )
 				{
+					if ( in_array( $value, $meta ) )
+					{
+						$html .= sprintf(
+							$tpl,
+							$label,
+							__( 'Delete', 'meta-box' ),
+							$field['field_name'],
+							$value
+						);
+					}
+				}
+			}
+			else
+			{
+				foreach ( $meta as $value )
+				{
+					if ( empty( $value ) )
+						continue;
+					$label = apply_filters( 'rwmb_autocomplete_result_label', $value, $field );
 					$html .= sprintf(
 						$tpl,
 						$label,
@@ -75,55 +103,10 @@ if ( ! class_exists( 'RWMB_Autocomplete_Field' ) )
 					);
 				}
 			}
+
 			$html .= '</div>'; // .rwmb-autocomplete-results
 
 			return $html;
-		}
-
-		/**
-		 * Get meta value
-		 * If field is cloneable, value is saved as a single entry in DB
-		 * Otherwise value is saved as multiple entries (for backward compatibility)
-		 *
-		 * @see "save" method for better understanding
-		 *
-		 * @param $post_id
-		 * @param $saved
-		 * @param $field
-		 *
-		 * @return array
-		 */
-		static function meta( $post_id, $saved, $field )
-		{
-			$meta = get_post_meta( $post_id, $field['id'], $field['clone'] );
-			$meta = ( ! $saved && '' === $meta || array() === $meta ) ? $field['std'] : $meta;
-
-			return $meta;
-		}
-
-		/**
-		 * Save meta value
-		 * If field is cloneable, value is saved as a single entry in DB
-		 * Otherwise value is saved as multiple entries (for backward compatibility)
-		 *
-		 * @param $new
-		 * @param $old
-		 * @param $post_id
-		 * @param $field
-		 */
-		static function save( $new, $old, $post_id, $field )
-		{
-			if ( ! $field['clone'] )
-			{
-				parent::save( $new, $old, $post_id, $field );
-
-				return;
-			}
-
-			if ( empty( $new ) )
-				delete_post_meta( $post_id, $field['id'] );
-			else
-				update_post_meta( $post_id, $field['id'], $new );
 		}
 
 		/**
@@ -135,15 +118,10 @@ if ( ! class_exists( 'RWMB_Autocomplete_Field' ) )
 		 */
 		static function normalize_field( $field )
 		{
+			$field = parent::normalize_field( $field );
 			$field = wp_parse_args( $field, array(
 				'size' => 30,
 			) );
-
-			$field['multiple']   = true;
-			$field['field_name'] = $field['id'];
-			if ( ! $field['clone'] )
-				$field['field_name'] .= '[]';
-
 			return $field;
 		}
 	}

@@ -91,6 +91,21 @@
 				that.geocodeAddress();
 				return false;
 			} );
+
+			/**
+			 * Add a custom event that allows other scripts to refresh the maps when needed
+			 * For example: when maps is in tabs or hidden div (this is known issue of Google Maps)
+			 *
+			 * @see https://developers.google.com/maps/documentation/javascript/reference
+			 *      ('resize' Event)
+			 */
+			$( window ).on( 'rwmb_map_refresh', function()
+			{
+				if ( that.map )
+				{
+					google.maps.event.trigger( that.map, 'resize' );
+				}
+			} );
 		},
 
 		// Autocomplete address
@@ -107,7 +122,6 @@
 			$( '#' + this.addressField ).autocomplete( {
 				source: function ( request, response )
 				{
-					// TODO: add 'region' option, to help bias geocoder.
 					that.geocoder.geocode( {
 						'address': request.term
 					}, function ( results )
@@ -180,6 +194,7 @@
 			field.init();
 
 			$( this ).data( 'mapController', field );
+
 		} );
 
 		$( '.rwmb-input' ).on( 'clone', function ()
