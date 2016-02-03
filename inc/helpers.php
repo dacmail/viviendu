@@ -46,7 +46,7 @@
 	function viviendu_comercio_seccion_content($tax_id) {
 		$comercio_seccion_desc = term_description($tax_id);
 		if (empty($comercio_seccion_desc)) {
-			$comercio_id = get_tax_meta($tax_id, 'viviendu_comercio_seccion_comercio'); 
+			$comercio_id = get_tax_meta($tax_id, 'viviendu_comercio_seccion_comercio', true); 
 			$comercio = get_term( $comercio_id, 'comercio');
 			return $comercio->description;
 		} else {
@@ -57,8 +57,8 @@
 	function viviendu_tag_content($tax_id) {
 		$tag_desc = term_description($tax_id);
 		if (empty($tag_desc)) {
-			$comercio = get_term(get_tax_meta($tax_id, 'viviendu_comercio'), 'comercio'); 
-			$seccion = get_term(get_tax_meta($tax_id, 'viviendu_seccion'), 'category'); 
+			$comercio = get_term(get_tax_meta($tax_id, 'viviendu_comercio', true), 'comercio'); 
+			$seccion = get_term(get_tax_meta($tax_id, 'viviendu_seccion', true), 'category'); 
 			$comercio_seccion = get_term_by('slug', $comercio->slug . "-" . $seccion->slug, 'comercio_seccion');
 
 			return viviendu_comercio_seccion_content($comercio_seccion->term_id);
@@ -68,11 +68,11 @@
 
 	function viviendu_location_info($comercio_id) {
 		return array(
-			'url' => get_tax_meta($comercio_id, 'viviendu_comercio_url'),
-			'address' => get_tax_meta($comercio_id, 'viviendu_comercio_address'),
-			'phone' => get_tax_meta($comercio_id, 'viviendu_comercio_phone'),
-			'email' => get_tax_meta($comercio_id, 'viviendu_comercio_email'),
-			'logo' => get_tax_meta($comercio_id, 'viviendu_comercio_logo')
+			'url' => get_tax_meta($comercio_id, 'viviendu_comercio_url', true),
+			'address' => get_tax_meta($comercio_id, 'viviendu_comercio_address', true),
+			'phone' => get_tax_meta($comercio_id, 'viviendu_comercio_phone', true),
+			'email' => get_tax_meta($comercio_id, 'viviendu_comercio_email', true),
+			'logo' => get_tax_meta($comercio_id, 'viviendu_comercio_logo', true)
 		);
 	}
 
@@ -226,7 +226,7 @@
 
 		$terms = get_the_terms($post_id, 'comercio');
 		foreach ($terms as $term) {
-			$email_to = get_tax_meta($term->term_id, 'viviendu_comercio_email');
+			$email_to = get_tax_meta($term->term_id, 'viviendu_comercio_email', true);
 			wp_mail($email_to, $email_subject, $message, $headers);
 		}
 	}

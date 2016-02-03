@@ -13,8 +13,8 @@
         if ($query->have_posts() ) {
             while ( $query->have_posts() ) { 
                 $query->the_post();
-                $category = get_tax_meta($item->term_id, 'viviendu_comercio_seccion_seccion');
-                $comercio = get_tax_meta($item->term_id, 'viviendu_comercio_seccion_comercio');
+                $category = get_tax_meta($item->term_id, 'viviendu_comercio_seccion_seccion', true);
+                $comercio = get_tax_meta($item->term_id, 'viviendu_comercio_seccion_comercio', true);
                 $message = "Vas a solicitar presupuesto a " . $item->name;
             }
         } else {

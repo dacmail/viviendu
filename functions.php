@@ -2,6 +2,8 @@
 	error_reporting(E_ALL);
 
 	//Includes
+	include get_template_directory() . '/inc/Tax-meta-class/migration/tax_to_term_meta.php';
+	//new tax_to_term_meta();
 	include get_template_directory() . '/inc/Tax-meta-class/Tax-meta-class.php';
 	include get_template_directory() . '/inc/taxonomies.php';
 	include get_template_directory() . '/inc/posts.php';

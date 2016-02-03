@@ -5,7 +5,7 @@
 			<div id="content" class="col-sm-7">
 				<?php while ( have_posts() ) : the_post(); ?>
 					<h1 class="title"><?php echo single_term_title(); ?></h1>
-					<?php $comercio = get_term(get_tax_meta(get_queried_object()->term_id, 'viviendu_comercio_seccion_comercio'), 'comercio' ); ?>
+					<?php $comercio = get_term(get_tax_meta(get_queried_object()->term_id, 'viviendu_comercio_seccion_comercio', true), 'comercio' ); ?>
 					<div class="row">
 						<div class="col-sm-6 title-category main"><?php echo viviendu_tax_anchor(get_the_ID(), 'category'); ?></div>
 						<div class="col-sm-6 ratings-wrap"><?php if(function_exists("kk_star_ratings")) : echo kk_star_ratings(viviendu_post_id('comercio_seccion',get_queried_object()->term_id)); endif; ?></div>
@@ -13,7 +13,7 @@
 					<div class="text main">
 						<div class="show-on-mobile"><p><a href="#popup_contacto" class="btn btn-block btn-contact btn-primary" id="btn-contact">Contactar</a></p></div>
 						<?php echo viviendu_get_paragraph(apply_filters('the_content',viviendu_comercio_seccion_content(get_queried_object()->term_id))); ?>
-						<?php  echo viviendu_slideshow('featured','', 0, true); ?>
+						<?php echo viviendu_slideshow('featured','', 0, true); ?>
 						<?php echo viviendu_get_paragraph(apply_filters('the_content',viviendu_comercio_seccion_content(get_queried_object()->term_id)), false); ?>
 					</div>
 					<?php /* $cities = get_the_terms( get_the_ID(), 'post_tag' ); ?>

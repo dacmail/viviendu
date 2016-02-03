@@ -20,11 +20,11 @@
 	<?php endif ?>
 	<div class="widget location">
 		<?php if (is_tax('comercio_seccion')): ?>
-			<?php $location_info = viviendu_location_info(get_tax_meta(get_queried_object()->term_id, 'viviendu_comercio_seccion_comercio'));  ?>
+			<?php $location_info = viviendu_location_info(get_tax_meta(get_queried_object()->term_id, 'viviendu_comercio_seccion_comercio', true));  ?>
 		<?php elseif (is_tax('comercio')) : ?>
 			<?php $location_info = viviendu_location_info(get_queried_object()->term_id);  ?>
 		<?php elseif (is_tag()) : ?>
-			<?php $location_info = viviendu_location_info(get_tax_meta(get_queried_object()->term_id, 'viviendu_comercio'));  ?>
+			<?php $location_info = viviendu_location_info(get_tax_meta(get_queried_object()->term_id, 'viviendu_comercio', true));  ?>
 		<?php endif ?>
 			<p><a href="#popup_contacto" class="btn btn-block btn-contact btn-primary" id="btn-contact">Contactar</a></p>
 		<?php if (!empty($location_info['url'])): ?>
