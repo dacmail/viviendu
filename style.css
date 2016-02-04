@@ -815,6 +815,21 @@ a img.aligncenter {
     .show-on-mobile {
         display: none;
     }
+/*MAILCHIMP FORMS */
+#mc_embed_signup .mc-field-group.input-group input[type=checkbox] {
+    margin-right: 5px;
+}
+#mc_embed_signup .mc-field-group .asterisk {
+    top:-4px !important;
+    right:auto !important;
+    color:#ccc;
+}
+#mc_embed_signup .mc-field-group strong {
+    text-transform: uppercase;
+    color:#000;
+    font-weight: normal;
+    font-size: 18px;
+}
 @media only screen and  (max-width: 1220px) {
     .jumbo .slide .item {
         background: #000;
