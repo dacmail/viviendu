@@ -830,6 +830,19 @@ a img.aligncenter {
     font-weight: normal;
     font-size: 18px;
 }
+
+/* Presupuesto form */
+textarea.input-block {
+    height:200px;
+    padding:10px;
+}
+select {
+    font-size:20px;
+}
+.page-template-page-contactar label {
+    display:inline-block;
+    margin-bottom: 5px;
+}
 @media only screen and  (max-width: 1220px) {
     .jumbo .slide .item {
         background: #000;

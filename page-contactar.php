@@ -47,53 +47,60 @@
 
 ?>
 <?php 
-if( 'POST' == $_SERVER['REQUEST_METHOD'] && !empty( $_POST['action'] ) &&  $_POST['action'] == "new_post") {
-    $url = 'https://www.google.com/recaptcha/api/siteverify';
-    $data = array('secret' => get_option('captcha_secret'), 
-                    'response' => $_POST['g-recaptcha-response']);
+if( 'POST' == $_SERVER['REQUEST_METHOD'] 
+    && !empty( $_POST['action'] ) 
+    &&  $_POST['action'] == "new_post") {
+        if (is_email($_POST['customer_email'])
+            && !empty($_POST['customer_name'])) {
+            //Comprobaciones captcha
+            $url = 'https://www.google.com/recaptcha/api/siteverify';
+            $data = array('secret' => get_option('captcha_secret'), 
+                            'response' => $_POST['g-recaptcha-response']);
+            $result = wp_remote_post($url, array('body' => $data));
+            $captcha = json_decode( $result['body']);
+            if (!is_wp_error($result) && $captcha->success) { // Si el captcha es válido
+                $title= 'VIVIENDU#' . date('Ymdhms');
+                $provincia = isset($_POST['provincia']) ? (array) $_POST['provincia'] : array();
+                $provincia = array_map('intval',$provincia);
 
-    $result = wp_remote_post($url, array('body' => $data));
-    $captcha = json_decode( $result['body']);
-    if (!is_wp_error($result) && $captcha->success) {
-        $title= 'VIVIENDU#' . date('Ymdhms');
-        $provincia = isset($_POST['provincia']) ? (array) $_POST['provincia'] : array();
-        $provincia = array_map('intval',$provincia);
+                $company = isset($_POST['comercio']) ? (array) explode(',', $_POST['comercio']) : array();
+                $company = array_map('intval',$company);
 
-        $company = isset($_POST['comercio']) ? (array) explode(',', $_POST['comercio']) : array();
-        $company = array_map('intval',$company);
+                $new_post = array(
+                    'post_title'    => $title,
+                    'post_category' => array($_POST['cat']),  
+                    'post_status'   => 'private',          
+                    'post_type' => 'presupuesto',
+                    'tax_input' => array(
+                        'provincia' => $provincia,
+                        'comercio' => $company,
+                    )
+              
+                );
+                $pid = wp_insert_post($new_post); 
 
-        $new_post = array(
-            'post_title'    => $title,
-            'post_category' => array($_POST['cat']),  
-            'post_status'   => 'private',          
-            'post_type' => 'presupuesto',
-            'tax_input' => array(
-                'provincia' => $provincia,
-                'comercio' => $company,
-            )
-      
-        );
-        $pid = wp_insert_post($new_post); 
-
-        if ($pid) {
-            add_post_meta( $pid, 'customer_name', $_POST['customer_name']);
-            add_post_meta( $pid, 'customer_email', $_POST['customer_email']);
-            add_post_meta( $pid, 'customer_phone', $_POST['customer_phone']);
-            add_post_meta( $pid, 'customer_money', $_POST['customer_money']);
-            add_post_meta( $pid, 'customer_comments', $_POST['customer_comments']);
-            add_post_meta( $pid, 'petition_type', $petition_type);
-            add_post_meta( $pid, 'petition_item', $petition_item);
-            //wp_set_object_terms($pid, array($_POST['provincia']), 'provincia', true);
-
-            viviendu_send_petition($pid);
-        	$message = "Tu petición se ha enviado correctamente con el número " . $title;
-        } else {
-        	$message = "Ha ocurrido un error, por favor ponte en contacto con nosotros"; 
+                if ($pid) { //Si el presupuesto se ha creado correctamente, completamos información
+                    add_post_meta( $pid, 'customer_name', sanitize_text_field($_POST['customer_name']));
+                    add_post_meta( $pid, 'customer_email', sanitize_email($_POST['customer_email']));
+                    add_post_meta( $pid, 'customer_phone', sanitize_text_field($_POST['customer_phone']));
+                    add_post_meta( $pid, 'customer_money', sanitize_text_field($_POST['customer_money']));
+                    add_post_meta( $pid, 'customer_comments', sanitize_text_field($_POST['customer_comments']));
+                    add_post_meta( $pid, 'petition_type', $petition_type);
+                    add_post_meta( $pid, 'petition_item', $petition_item);
+                    //Envío de correo electrónico
+                    viviendu_send_petition($pid);
+                    $message = "Tu petición se ha enviado correctamente con el número " . $title;
+                } else { //No se ha podido crear el post de presupuesto
+                    $message = "Ha ocurrido un error, por favor ponte en contacto con nosotros"; 
+                }
+            } else { //captcha no válido
+                $message = "No hemos podido comprobar que eres humano, por favor completa el captcha al final del formulario";
+            }     
+        } else { //Campos obligatorios (email, nombre) no rellenos
+            $message = "Revisa que los campos obligatorios estén rellenos";
         }
-    } else {
-        $message = "No hemos podido comprobar que eres humano, por favor completa el captcha al final del formulario";
-    }
-} ?>
+    
+}  ?>
 <div id="container" class="page section">
 	<div class="container">
 		<div class="row">
@@ -109,15 +116,15 @@ if( 'POST' == $_SERVER['REQUEST_METHOD'] && !empty( $_POST['action'] ) &&  $_POS
 						<form id="new_post" name="new_post" method="post" action="">
                             <!-- post name -->
                             <p><label for="customer_name">Nombre *</label><br />
-                            <input class="input-block" type="text" id="customer_name" value="" name="customer_name" />
+                            <input placeholder="Escribe tu nombre y apellidos para dirigirnos a ti" class="input-block" type="text" id="customer_name" value="" name="customer_name" required />
                             </p>
 
                             <p><label for="customer_phone">Telefono</label><br />
-                            <input class="input-block" type="text" id="customer_phone" value="" name="customer_phone" />
+                            <input placeholder="Si prefieres llamadas de teléfono, ponlo aquí" class="input-block" type="text" id="customer_phone" value="" name="customer_phone" />
                             </p>
 
                             <p><label for="customer_email">Correo electrónico *</label><br />
-                            <input class="input-block" type="text" id="customer_email" value="" name="customer_email" />
+                            <input placeholder="La dirección a la que te escribirán las empresas" class="input-block" type="email" id="customer_email" value="" name="customer_email" required />
                             </p>
                             <?php if (!empty($category)): ?>
                                 <input type="hidden" name="cat" value="<?php echo $category; ?>">
@@ -131,7 +138,7 @@ if( 'POST' == $_SERVER['REQUEST_METHOD'] && !empty( $_POST['action'] ) &&  $_POS
                             
                            
                            	<p><label for="customer_money">Presupuesto máximo</label><br />
-                            <input class="input-block" type="text" id="customer_money" value="" name="customer_money" />
+                            <input placeholder="Si tienes un presupuesto máximo, especifícalo" class="input-block" type="text" id="customer_money" value="" name="customer_money" />
                             </p>
 
                             <p><label for="provincia">Provincia:</label><br />
@@ -143,7 +150,7 @@ if( 'POST' == $_SERVER['REQUEST_METHOD'] && !empty( $_POST['action'] ) &&  $_POS
                            
                             <!-- post Content -->
                             <p><label for="customer_comments">Comentarios</label><br />
-                            <textarea class="input-block" id="customer_comments" name="customer_comments"></textarea>
+                            <textarea placeholder="Explica que es lo que necesitas, cuantos más detalles des, más fácil será para la empresa responder con un presupuesto." class="input-block" id="customer_comments" name="customer_comments"></textarea>
                             </p>
                            
                             <div class="g-recaptcha" data-sitekey="6LdeDRcTAAAAAP6AGwHu4dvBa_vB2ACppLPesbmR"></div>
