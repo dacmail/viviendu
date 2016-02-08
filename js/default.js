@@ -122,13 +122,15 @@
 		});
 	});
 
-	$('#btn-contact').on('click', function(event) {
-		ga('send', 'event', 'contacto_CTA', window.location.href);
+	$('..btn-contact').each(function(index, el) {
+		$('.btn-contact').on('click', function(event) {
+			ga('send', 'event', 'contacto_CTA', window.location.href, $(el).attr('id'));
+		});
 	});
 
 	$('.btn-visit').each(function(index, el) {
 		$(el).on('click', function(event) {
-			ga('send', 'event', 'visita_CTA', window.location.href, $(el).attr('href'));
+			ga('send', 'event', 'visita_CTA', window.location.href, $(el).attr('href'), index);
 		});
 	});
 

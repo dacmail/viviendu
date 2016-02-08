@@ -26,7 +26,7 @@
 		<?php elseif (is_tag()) : ?>
 			<?php $location_info = viviendu_location_info(get_tax_meta(get_queried_object()->term_id, 'viviendu_comercio', true));  ?>
 		<?php endif ?>
-			<p><a href="#popup_contacto" class="btn btn-block btn-contact btn-primary" id="btn-contact">Contactar</a></p>
+			<p><a href="#popup_contacto" class="btn btn-block btn-contact btn-primary" id="btn-contact-sidebar">Contactar</a></p>
 		<?php if (!empty($location_info['url'])): ?>
 			<p><a class="btn btn-block btn-visit" target="_blank" href="<?php echo esc_url($location_info['url']); ?>">Visitar web</a></p>
 		<?php endif; ?>

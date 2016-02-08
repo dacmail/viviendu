@@ -11,10 +11,25 @@
 						<div class="col-sm-6 ratings-wrap"><?php if(function_exists("kk_star_ratings")) : echo kk_star_ratings(viviendu_post_id('comercio_seccion',get_queried_object()->term_id)); endif; ?></div>
 					</div>
 					<div class="text main">
-						<div class="show-on-mobile"><p><a href="#popup_contacto" class="btn btn-block btn-contact btn-primary" id="btn-contact">Contactar</a></p></div>
+						<div class="show-on-mobile"><p><a href="#popup_contacto" class="btn btn-block btn-contact btn-primary" id="btn-contact-content-mobile">Contactar</a></p></div>
 						<?php echo viviendu_get_paragraph(apply_filters('the_content',viviendu_comercio_seccion_content(get_queried_object()->term_id))); ?>
 						<?php echo viviendu_slideshow('featured','', 0, true); ?>
 						<?php echo viviendu_get_paragraph(apply_filters('the_content',viviendu_comercio_seccion_content(get_queried_object()->term_id)), false); ?>
+					</div>
+					<div class="row voffset30">
+						<?php $location_info = viviendu_location_info(get_tax_meta(get_queried_object()->term_id, 'viviendu_comercio_seccion_comercio', true));  ?>
+						<?php if (!empty($location_info['url'])): ?>
+							<div class="col-sm-6">
+								<p><a href="#popup_contacto" class="btn btn-block btn-contact btn-primary" id="btn-contact-content">Contactar con la empresa</a></p>
+							</div>
+							<div class="col-sm-6">
+								<p><a class="btn btn-block btn-visit" target="_blank" href="<?php echo esc_url($location_info['url']); ?>">Visitar web</a></p>
+							</div>	
+						<?php else: ?>
+							<div class="col-sm-6 col-sm-offset-3">
+								<p><a href="#popup_contacto" class="btn btn-block btn-contact btn-primary" id="btn-contact">Contactar con la empresa</a></p>
+							</div>
+						<?php endif; ?>
 					</div>
 					<?php /* $cities = get_the_terms( get_the_ID(), 'post_tag' ); ?>
 					<?php if (!empty($cities)): ?>
