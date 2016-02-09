@@ -108,6 +108,19 @@ if (!function_exists('get_tax_meta')){
 	function get_tax_meta($term_id,$key,$multi = false){
 		$term_id = (is_object($term_id))? $term_id->term_id: $term_id;
 		return get_term_meta( $term_id, $key, $multi );
+		/*
+		USAR SI ALGUNOS DATOS NO HAN SIDO MIGRADOS DEL ANTIGUO SISTEMA
+		if (empty($return)) {
+			$t_id = (is_object($term_id))? $term_id->term_id: $term_id;
+		    $m = get_option( 'tax_meta_'.$t_id);  
+		    if (isset($m[$key])){
+		      update_term_meta($t_id, $key, $m[$key]);
+		      $return = $m[$key];
+		    }else{
+		      $return = '';
+		    }
+		}
+		return $return;*/
 	}
 }
 
