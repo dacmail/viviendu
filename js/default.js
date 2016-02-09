@@ -122,8 +122,8 @@
 		});
 	});
 
-	$('..btn-contact').each(function(index, el) {
-		$('.btn-contact').on('click', function(event) {
+	$('.btn-contact').each(function(index, el) {
+		$(el).on('click', function(event) {
 			ga('send', 'event', 'contacto_CTA', window.location.href, $(el).attr('id'));
 		});
 	});
