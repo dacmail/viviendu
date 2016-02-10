@@ -98,6 +98,11 @@ $meta_boxes[] = array(
                     'name' =>  __('¿Permite recibir presupuestos de sección?'),
                     'id' => $prefix . 'petition_category',
                     'type' => 'checkbox',
+                ),
+            array(
+                    'name' =>  __('No mostrar botones de acción en perfiles.'),
+                    'id' => $prefix . 'no_cta',
+                    'type' => 'checkbox',
                 )
         ),
     );
