@@ -231,4 +231,59 @@
 		}
 	}
 
+
+
+	function viviendu_determine_petition() {
+		$petition_type = get_query_var('petition_type');
+	    $petition_item = get_query_var('petition_item');
+	    if ($petition_type=='empresa') {
+	        $item = get_term_by('slug', $petition_item, 'comercio_seccion');
+	        $query = new WP_Query(array('comercio_seccion' => $petition_item, 
+	                                    'posts_per_page' => 1,
+	                                    'meta_key' => '_ungrynerd_petition_direct', 
+	                                    'meta_value' => 1));
+	        if ($query->have_posts() ) {
+	            while ( $query->have_posts() ) { 
+	                $query->the_post();
+	                $category = get_term_meta($item->term_id, 'viviendu_comercio_seccion_seccion', true);
+	                $comercio = get_term_meta($item->term_id, 'viviendu_comercio_seccion_comercio', true);
+	                $message = "Vas a solicitar presupuesto a " . $item->name;
+	            }
+	        } else {
+	            $message = "Ha ocurrido un error, la empresa no permite recibir solicitudes de presupuesto.";
+	        }
+	    }
+
+	    if ($petition_type == "seccion") {
+	        $cat = get_term_by('slug', $petition_item, 'category');
+	        $category = $cat->term_id;
+	        $query = new WP_Query(array('category' => $petition_item, 
+	                                    'posts_per_page' => -1,
+	                                    'meta_key' => '_ungrynerd_petition_category', 
+	                                    'meta_value' => 1));
+	        if ($query->have_posts() ) {
+	            $comercio = array();
+	            while ( $query->have_posts() ) { 
+	                $query->the_post();
+	                $terms = get_the_terms( $query->post->ID, 'comercio' );
+	                $term = array_pop($terms);
+	                if (!is_wp_error($term)) {
+	                    $comercio[] = $term->term_id;  
+	                }
+	            }
+	            $message = "Vas a solicitar presupuesto a " . $cat->name;
+	        } else {
+	            $message = "Ha ocurrido un error, la empresa no permite recibir solicitudes de presupuesto.";
+	        }
+	    }
+
+	    return array(
+	    	'message' => $message,
+	    	'comercio' => $comercio,
+	    	'category' => $category,
+	    	'petition_type' => $petition_type,
+	    	'petition_item' => $petition_item
+	    	);
+	}
+
 ?>

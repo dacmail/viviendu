@@ -2,49 +2,7 @@
 <?php get_header() ?>
 <script src='https://www.google.com/recaptcha/api.js'></script>
 <?php 
-    $petition_type = get_query_var('petition_type');
-    $petition_item = get_query_var('petition_item');
-    if ($petition_type=='empresa') {
-        $item = get_term_by('slug', $petition_item, 'comercio_seccion');
-        $query = new WP_Query(array('comercio_seccion' => $petition_item, 
-                                    'posts_per_page' => 1,
-                                    'meta_key' => '_ungrynerd_petition_direct', 
-                                    'meta_value' => 1));
-        if ($query->have_posts() ) {
-            while ( $query->have_posts() ) { 
-                $query->the_post();
-                $category = get_term_meta($item->term_id, 'viviendu_comercio_seccion_seccion', true);
-                $comercio = get_term_meta($item->term_id, 'viviendu_comercio_seccion_comercio', true);
-                $message = "Vas a solicitar presupuesto a " . $item->name;
-            }
-        } else {
-            $message = "Ha ocurrido un error, la empresa no permite recibir solicitudes de presupuesto.";
-        }
-    }
-
-    if ($petition_type == "seccion") {
-        $cat = get_term_by('slug', $petition_item, 'category');
-        $category = $cat->term_id;
-        $query = new WP_Query(array('category' => $petition_item, 
-                                    'posts_per_page' => -1,
-                                    'meta_key' => '_ungrynerd_petition_category', 
-                                    'meta_value' => 1));
-        if ($query->have_posts() ) {
-            $comercio = array();
-            while ( $query->have_posts() ) { 
-                $query->the_post();
-                $terms = get_the_terms( $post->ID, 'comercio' );
-                $term = array_pop($terms);
-                if (!is_wp_error($term)) {
-                    $comercio[] = $term->term_id;  
-                }
-            }
-            $message = "Vas a solicitar presupuesto a " . $cat->name;
-        } else {
-            $message = "Ha ocurrido un error, la empresa no permite recibir solicitudes de presupuesto.";
-        }
-    }
-
+    $petition = viviendu_determine_petition();
 ?>
 <?php 
 if( 'POST' == $_SERVER['REQUEST_METHOD'] 
@@ -85,19 +43,19 @@ if( 'POST' == $_SERVER['REQUEST_METHOD']
                     add_post_meta( $pid, 'customer_phone', sanitize_text_field($_POST['customer_phone']));
                     add_post_meta( $pid, 'customer_money', sanitize_text_field($_POST['customer_money']));
                     add_post_meta( $pid, 'customer_comments', sanitize_text_field($_POST['customer_comments']));
-                    add_post_meta( $pid, 'petition_type', $petition_type);
-                    add_post_meta( $pid, 'petition_item', $petition_item);
+                    add_post_meta( $pid, 'petition_type', $petition['petition_type']);
+                    add_post_meta( $pid, 'petition_item', $petition['petition_item']);
                     //Envío de correo electrónico
                     viviendu_send_petition($pid);
-                    $message = "Tu petición se ha enviado correctamente con el número " . $title;
+                    $petition['message'] = "Tu petición se ha enviado correctamente con el número " . $title;
                 } else { //No se ha podido crear el post de presupuesto
-                    $message = "Ha ocurrido un error, por favor ponte en contacto con nosotros"; 
+                    $petition['message'] = "Ha ocurrido un error, por favor ponte en contacto con nosotros"; 
                 }
             } else { //captcha no válido
-                $message = "No hemos podido comprobar que eres humano, por favor completa el captcha al final del formulario";
+                $petition['message'] = "No hemos podido comprobar que eres humano, por favor completa el captcha al final del formulario";
             }     
         } else { //Campos obligatorios (email, nombre) no rellenos
-            $message = "Revisa que los campos obligatorios estén rellenos";
+            $petition['message'] = "Revisa que los campos obligatorios estén rellenos";
         }
     
 }  ?>
@@ -110,8 +68,8 @@ if( 'POST' == $_SERVER['REQUEST_METHOD']
 						Petición de presupuesto
 					</h1>
 					<div class="post-content">
-						<?php if (!empty($message)): ?>
-							<h3><?php echo $message; ?></h3>
+						<?php if (!empty($petition['message'])): ?>
+							<h3><?php echo $petition['message']; ?></h3>
 						<?php endif ?>
 						<form id="new_post" name="new_post" method="post" action="">
                             <!-- post name -->
@@ -126,8 +84,8 @@ if( 'POST' == $_SERVER['REQUEST_METHOD']
                             <p><label for="customer_email">Correo electrónico *</label><br />
                             <input placeholder="La dirección a la que te escribirán las empresas" class="input-block" type="email" id="customer_email" value="" name="customer_email" required />
                             </p>
-                            <?php if (!empty($category)): ?>
-                                <input type="hidden" name="cat" value="<?php echo $category; ?>">
+                            <?php if (!empty($petition['category'])): ?>
+                                <input type="hidden" name="cat" value="<?php echo $petition['category']; ?>">
                             <?php else: ?>
                                 <p><label for="Category">Tipo de vivienda que me interesa:</label><br />
                                 <?php wp_dropdown_categories(array(
@@ -156,8 +114,8 @@ if( 'POST' == $_SERVER['REQUEST_METHOD']
                             <div class="g-recaptcha" data-sitekey="6LdeDRcTAAAAAP6AGwHu4dvBa_vB2ACppLPesbmR"></div>
 
                             <p><input type="submit" class="btn" value="Enviar petición" tabindex="6" id="submit" name="submit" /></p>
-                            <?php if (!empty($comercio)): ?>
-                                <input type="hidden" name="comercio" value="<?php echo (is_array($comercio) ? implode(', ', $comercio) : $comercio );?>" />
+                            <?php if (!empty($petition['comercio'])): ?>
+                                <input type="hidden" name="comercio" value="<?php echo (is_array($petition['comercio']) ? implode(', ', $petition['comercio']) : $petition['comercio'] );?>" />
                             <?php endif ?>
                             <input type="hidden" name="action" value="new_post" />
                             <?php wp_nonce_field( 'new-post' ); ?>
