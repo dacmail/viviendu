@@ -71,78 +71,78 @@
 	});
 
 	$('.main-search form').on('submit', function(event) {
-		ga('send', 'event', 'searchbox', window.location.href , $(this).find('#s').val());
+		ga('send', 'event', 'searchbox', window.location.pathname , $(this).find('#s').val());
 	});
 	$('#search-form').on('submit', function(event) {
-		ga('send', 'event', 'searchbox', window.location.href , $(this).find('#s').val());
+		ga('send', 'event', 'searchbox', window.location.pathname , $(this).find('#s').val());
 	});
 	$('#main-menu a').on('click', function(event) {
-		ga('send', 'event', 'header', window.location.href, $(this).attr('href'));
+		ga('send', 'event', 'header', window.location.pathname, $(this).attr('href'));
 	});
 	$('.tax-provincia .seccion-list a').each(function(index, el) {
 		$(el).on('click', function(event) {
-			ga('send', 'event', 'nav-prov', window.location.href, $(el).attr('href'), index);
+			ga('send', 'event', 'nav-prov', window.location.pathname, $(el).attr('href'), index);
 		});
 	});
 	$('.tax-provincia .catalogo-list a.slide').each(function(index, el) {
 		$(el).on('click', function(event) {
-			ga('send', 'event', 'nav-prov', window.location.href, $(el).attr('href'), index);
+			ga('send', 'event', 'nav-prov', window.location.pathname, $(el).attr('href'), index);
 		});
 	});
 	$('.tax-provincia .catalogo-list .title a').each(function(index, el) {
 		$(el).on('click', function(event) {
-			ga('send', 'event', 'nav-prov', window.location.href, $(el).attr('href'), index);
+			ga('send', 'event', 'nav-prov', window.location.pathname, $(el).attr('href'), index);
 		});
 	});
 
 	$('.tax-provincia_seccion .catalogo-list a.slide').each(function(index, el) {
 		$(el).on('click', function(event) {
-			ga('send', 'event', 'nav-prov2', window.location.href, $(el).attr('href'), index);
+			ga('send', 'event', 'nav-prov2', window.location.pathname, $(el).attr('href'), index);
 		});
 	});
 	$('.tax-provincia_seccion .catalogo-list .title a').each(function(index, el) {
 		$(el).on('click', function(event) {
-			ga('send', 'event', 'nav-prov2', window.location.href, $(el).attr('href'), index);
+			ga('send', 'event', 'nav-prov2', window.location.pathname, $(el).attr('href'), index);
 		});
 	});
 
 	$('.category .catalogo-list a.slide').each(function(index, el) {
 		$(el).on('click', function(event) {
-			ga('send', 'event', 'sección', window.location.href, $(el).attr('href'), index);
+			ga('send', 'event', 'sección', window.location.pathname, $(el).attr('href'), index);
 		});
 	});
 	$('.category .catalogo-list .title a').each(function(index, el) {
 		$(el).on('click', function(event) {
-			ga('send', 'event', 'sección', window.location.href, $(el).attr('href'), index);
+			ga('send', 'event', 'sección', window.location.pathname, $(el).attr('href'), index);
 		});
 	});
 	$('.category .link a').each(function(index, el) {
 		$(el).on('click', function(event) {
-			ga('send', 'event', 'sección', window.location.href, $(el).attr('href'), index);
+			ga('send', 'event', 'sección', window.location.pathname, $(el).attr('href'), index);
 		});
 	});
 
 	$('.btn-contact').each(function(index, el) {
 		$(el).on('click', function(event) {
-			ga('send', 'event', 'contacto_CTA', window.location.href, $(el).attr('id'));
+			ga('send', 'event', 'contacto_CTA', window.location.pathname, $(el).attr('id'));
 		});
 	});
 
 	$('.btn-visit').each(function(index, el) {
 		$(el).on('click', function(event) {
-			ga('send', 'event', 'visita_CTA', window.location.href, $(el).attr('href'), index);
+			ga('send', 'event', 'visita_CTA', window.location.pathname, $(el).attr('href'), index);
 		});
 	});
 
 	$('.btn-newsletter').each(function(index, el) {
 		$(el).on('click', function(event) {
-			ga('send', 'event', 'newsletter_sidebar', window.location.href);
+			ga('send', 'event', 'newsletter_sidebar', window.location.pathname);
 		});
 	});
 
 	$('.text.main iframe').each(function(index, el) {
 		$(el).on('click', function(event) {
-			ga('send', 'event', 'video', window.location.href, $(el).attr('src'));
+			ga('send', 'event', 'video', window.location.pathname, $(el).attr('src'));
 		});
 	});
 })(jQuery);

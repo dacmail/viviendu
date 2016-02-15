@@ -80,6 +80,11 @@
 		$return = '';
 		if ($limit==1) {
 			global $post;
+			$thumb = get_the_post_thumbnail($post->ID, $size);
+			if (empty($thumb)) {
+				viviendu_set_post_thumb($post->ID);
+			}
+			
 			$return = empty($link) ? '' : "<a class='slide' href='{$link}'>";
 			$return .=  get_the_post_thumbnail($post->ID, $size);
 			$return .= empty($link) ? '' : "</a>";
@@ -232,7 +237,10 @@
 	}
 
 
-
+	/**
+	* DETERMINA el tipo de petición y completa las variables necesarias para el formulario.
+	*
+	*/
 	function viviendu_determine_petition() {
 		$petition_type = get_query_var('petition_type');
 	    $petition_item = get_query_var('petition_item');

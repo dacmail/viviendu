@@ -1,5 +1,5 @@
 <?php
-	error_reporting(E_ALL);
+	error_reporting(0);
 
 	//Includes
 	include get_template_directory() . '/inc/Tax-meta-class/migration/tax_to_term_meta.php';
