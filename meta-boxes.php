@@ -103,6 +103,11 @@ $meta_boxes[] = array(
                     'name' =>  __('No mostrar botones de acción en perfiles.'),
                     'id' => $prefix . 'no_cta',
                     'type' => 'checkbox',
+                ),
+            array(
+                    'name' =>  __('Dar perfil de baja (no muestra fotos ni botones)'),
+                    'id' => $prefix . 'baja',
+                    'type' => 'checkbox',
                 )
         ),
     );
