@@ -18,6 +18,7 @@
 			</ul>
 		</div>
 	<?php endif ?>
+	<?php if (!get_post_meta(get_the_ID(),'_ungrynerd_baja', true )) :?>
 	<div class="widget location">
 		<?php if (is_tax('comercio_seccion')): ?>
 			<?php $location_info = viviendu_location_info(get_tax_meta(get_queried_object()->term_id, 'viviendu_comercio_seccion_comercio', true));  ?>
@@ -31,6 +32,7 @@
 			<p><a class="btn btn-block btn-visit" target="_blank" href="<?php echo esc_url($location_info['url']); ?>">Visitar web</a></p>
 		<?php endif; ?>
 	</div>
+	<?php endif; ?>
 
 	<?php dynamic_sidebar("Barra Lateral"); ?>
 </div>
