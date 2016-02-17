@@ -1,5 +1,14 @@
 <?php
 	error_reporting(0);
+	//Redirect to comercio_seccion if single
+	$frontpage_id = get_option('page_on_front');
+	add_action('wp', 'viviendu_redirect_single');
+	function viviendu_redirect_single() {
+		global $post;
+		if (isset($post->ID) && is_single($post->ID)) {
+			wp_redirect(viviendu_tax_link($post->ID, 'comercio_seccion'), 301);
+		}
+	}
 
 	//Includes
 	include get_template_directory() . '/inc/Tax-meta-class/migration/tax_to_term_meta.php';
