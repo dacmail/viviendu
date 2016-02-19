@@ -18,7 +18,7 @@
 			</ul>
 		</div>
 	<?php endif ?>
-	<?php if (!get_post_meta(get_the_ID(),'_ungrynerd_baja', true )) :?>
+	<?php if (!get_post_meta(get_the_ID(),'_ungrynerd_baja', true )  || !get_post_meta(get_the_ID(),'_ungrynerd_no_cta', true )) :?>
 	<div class="widget location">
 		<?php if (is_tax('comercio_seccion')): ?>
 			<?php $location_info = viviendu_location_info(get_tax_meta(get_queried_object()->term_id, 'viviendu_comercio_seccion_comercio', true));  ?>
