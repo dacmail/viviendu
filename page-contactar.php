@@ -9,7 +9,8 @@ if( 'POST' == $_SERVER['REQUEST_METHOD']
     && !empty( $_POST['action'] ) 
     &&  $_POST['action'] == "new_post") {
         if (is_email($_POST['customer_email'])
-            && !empty($_POST['customer_name'])) {
+            && !empty($_POST['customer_name'])
+            && !empty($_POST['customer_phone'])) {
             //Comprobaciones captcha
             $url = 'https://www.google.com/recaptcha/api/siteverify';
             $data = array('secret' => get_option('captcha_secret'), 
@@ -42,11 +43,11 @@ if( 'POST' == $_SERVER['REQUEST_METHOD']
                     add_post_meta( $pid, 'customer_email', sanitize_email($_POST['customer_email']));
                     add_post_meta( $pid, 'customer_phone', sanitize_text_field($_POST['customer_phone']));
                     add_post_meta( $pid, 'customer_money', sanitize_text_field($_POST['customer_money']));
+                    add_post_meta( $pid, 'estimated_date', sanitize_text_field($_POST['estimated_date']));
                     add_post_meta( $pid, 'customer_comments', sanitize_text_field($_POST['customer_comments']));
                     add_post_meta( $pid, 'petition_type', $petition['petition_type']);
                     add_post_meta( $pid, 'petition_item', $petition['petition_item']);
                     //Envío de correo electrónico
-                    viviendu_send_petition($pid);
                     $petition['message'] = "Tu petición se ha enviado correctamente con el número " . $title;
                 } else { //No se ha podido crear el post de presupuesto
                     $petition['message'] = "Ha ocurrido un error, por favor ponte en contacto con nosotros"; 
@@ -77,8 +78,8 @@ if( 'POST' == $_SERVER['REQUEST_METHOD']
                             <input placeholder="Escribe tu nombre y apellidos para dirigirnos a ti" class="input-block" type="text" id="customer_name" value="" name="customer_name" required />
                             </p>
 
-                            <p><label for="customer_phone">Telefono</label><br />
-                            <input placeholder="Si prefieres llamadas de teléfono, ponlo aquí" class="input-block" type="text" id="customer_phone" value="" name="customer_phone" />
+                            <p><label for="customer_phone">Telefono *</label><br />
+                            <input placeholder="Si prefieres llamadas de teléfono, ponlo aquí" class="input-block" type="text" id="customer_phone" value="" name="customer_phone" required/>
                             </p>
 
                             <p><label for="customer_email">Correo electrónico *</label><br />
@@ -106,7 +107,15 @@ if( 'POST' == $_SERVER['REQUEST_METHOD']
                             								'class' => 'input-block',
                                                             'name' => 'provincia')); ?></p>
                            
-                            <!-- post Content -->
+                            
+                            <p><label for="estimated_date">Fecha estimada</label><br />
+                            <select name="estimated_date" class="input-block" id="estimated_date">
+                                <option value="ASAP">Tan pronto como sea posible</option>
+                                <option value="LESS_3M">En menos de 3 meses</option>
+                                <option value="MORE_3M">En más de 3 meses</option>
+                            </select>
+                            </p>
+
                             <p><label for="customer_comments">Comentarios</label><br />
                             <textarea placeholder="Explica que es lo que necesitas, cuantos más detalles des, más fácil será para la empresa responder con un presupuesto." class="input-block" id="customer_comments" name="customer_comments"></textarea>
                             </p>

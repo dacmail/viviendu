@@ -9,7 +9,6 @@
 			wp_redirect(viviendu_tax_link($post->ID, 'comercio_seccion'), 301);
 		}
 	}
-
 	//Includes
 	include get_template_directory() . '/inc/Tax-meta-class/migration/tax_to_term_meta.php';
 	include get_template_directory() . '/inc/Tax-meta-class/Tax-meta-class.php';
