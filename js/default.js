@@ -139,10 +139,4 @@
 			ga('send', 'event', 'newsletter_sidebar', window.location.pathname);
 		});
 	});
-
-	$('.text.main iframe').each(function(index, el) {
-		$(el).on('click', function(event) {
-			ga('send', 'event', 'video', window.location.pathname, $(el).attr('src'));
-		});
-	});
 })(jQuery);
