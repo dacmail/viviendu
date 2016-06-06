@@ -108,6 +108,11 @@ $meta_boxes[] = array(
                     'name' =>  __('Dar perfil de baja (no muestra fotos ni botones)'),
                     'id' => $prefix . 'baja',
                     'type' => 'checkbox',
+                ),
+            array(
+                    'name' =>  __('País (si no es España)'),
+                    'id' => $prefix . 'country',
+                    'type' => 'text',
                 )
         ),
     );
