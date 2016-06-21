@@ -10,7 +10,7 @@
 					<div class="row">
 						<?php $related = new WP_Query(array(
 									'posts_per_page' => -1,
-									'meta_key' => '_ungrynerd_section_featured', 
+									'meta_key' => '_ungrynerd_section_featured',
 									'meta_value' => 1,
 									'tax_query' => array(
 										array(
@@ -30,7 +30,7 @@
 				</div>
 				<div class="row">
 					<?php $links = new WP_Query(array(
-									'posts_per_page' => 6,
+									'posts_per_page' => -1,
 									'post__not_in' => $exclude_posts,
 									'tax_query' => array(
 										array(
@@ -45,7 +45,7 @@
 						<div class="col-sm-12"><h2 class="title mini tit-sep">Más empresas en <?php echo $seccion->name; ?></h2></div>
 						<?php include(locate_template('templates/links.php')); ?>
 					<?php endif ?>
-				</div>					
+				</div>
 			</div>
 			<?php get_sidebar('provincia'); ?>
 		</div>

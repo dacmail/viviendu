@@ -10,7 +10,7 @@
 					<div class="row">
 						<?php $related = new WP_Query(array(
 									'posts_per_page' => 6,
-									'meta_key' => '_ungrynerd_product_featured', 
+									'meta_key' => '_ungrynerd_product_featured',
 									'meta_value' => 1,
 									'tax_query' => array(
 										array(
@@ -30,7 +30,7 @@
 				</div>
 				<div class="row">
 					<?php $links = new WP_Query(array(
-									'posts_per_page' => 6,
+									'posts_per_page' => -1,
 									'post__not_in' => $exclude_posts,
 									'tax_query' => array(
 										array(
@@ -46,8 +46,8 @@
 						<?php include(locate_template('templates/links.php')); ?>
 					<?php endif ?>
 				</div>
-				
-					
+
+
 			</div>
 			<?php get_sidebar('provincia'); ?>
 		</div>
