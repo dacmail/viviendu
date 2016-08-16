@@ -5,10 +5,11 @@
 	add_action('wp', 'viviendu_redirect_single');
 	function viviendu_redirect_single() {
 		global $post;
-		if (isset($post->ID) && is_single($post->ID)) {
+		if (isset($post->ID) && is_single($post->ID) && is_singular('post')) {
 			wp_redirect(viviendu_tax_link($post->ID, 'comercio_seccion'), 301);
 		}
 	}
+
 	//Includes
 	include get_template_directory() . '/inc/Tax-meta-class/migration/tax_to_term_meta.php';
 	include get_template_directory() . '/inc/Tax-meta-class/Tax-meta-class.php';
@@ -39,7 +40,7 @@
 			wp_enqueue_script('addthis', '//s7.addthis.com/js/300/addthis_widget.js#pubid=ra-566e723b50e69a9e', '', '', true );
 			wp_enqueue_script('html5shiv', 'https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js', array(), '3.7.2');
 			wp_enqueue_script('respond', 'https://oss.maxcdn.com/respond/1.4.2/respond.min.js', array(), '1.4.2');
-			
+
 			wp_script_add_data( 'html5shiv', 'conditional', 'lt IE 9' );
 			wp_script_add_data( 'respond', 'conditional', 'lt IE 9' );
 		}
@@ -49,7 +50,6 @@
 		}
 	}
 	add_action( 'wp_enqueue_scripts', 'ungrynerd_scripts' );
-
 	//Remove emojis support
 	remove_action( 'wp_head', 'print_emoji_detection_script', 7 );
 	remove_action( 'wp_print_styles', 'print_emoji_styles' );
@@ -156,3 +156,17 @@
 		}
 	    return $url;
 	}
+
+
+
+function viviendu_wiki_breadcrumb() {
+	global $post;
+	if ( is_tax() ) {
+		$cat = get_term_by( 'slug', get_query_var( 'term' ), 'wiki-section');
+		if ($cat->parent != 0) {
+			$cats = get_term( $cat->parent,'wiki-section');
+			echo '<a href="' . esc_url( get_term_link( $cats ) ) . '" alt="' . esc_attr( sprintf( __( 'View all post filed under %s', 'my_localization_domain' ), $cats->name ) ) . '">' . $cats->name . '</a>';
+		}
+
+	}
+}

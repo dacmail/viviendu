@@ -7,8 +7,6 @@
 		</h1>
 		<div class="post-content">
 			<?php the_content( __('Leer m&aacute;s &raquo;', 'ungrynerd')); ?>
-			<?php wp_link_pages(); ?>
 		</div>
-		<div class="meta"><?php the_tags(); ?></div>
 	</article>
 <?php endwhile; ?>
