@@ -50,7 +50,7 @@
 		//Legal checkbox
 		$('.button.btn-contact').on('click', function(event) {
 			event.preventDefault();
-			if ($(this).closest('form').find('#legal').is(':checked')) 
+			if ($(this).closest('form').find('#legal').is(':checked'))
 				$(this).closest('form').submit();
 		});
 	});
@@ -137,6 +137,12 @@
 	$('.btn-newsletter').each(function(index, el) {
 		$(el).on('click', function(event) {
 			ga('send', 'event', 'newsletter_sidebar', window.location.pathname);
+		});
+	});
+
+	$('.btn-lead-section').each(function(index, el) {
+		$(el).on('click', function(event) {
+			ga('send', 'event', 'Pedir_presu', window.location.pathname, index);
 		});
 	});
 })(jQuery);

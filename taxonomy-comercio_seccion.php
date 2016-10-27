@@ -16,7 +16,7 @@
 						<?php endif; ?>
 						<?php echo viviendu_get_paragraph(apply_filters('the_content',viviendu_comercio_seccion_content(get_queried_object()->term_id))); ?>
 						<?php if (!get_post_meta(get_the_ID(),'_ungrynerd_baja', true )) :?>
-							<?php echo viviendu_slideshow('featured','', 0, true); ?>
+							<?php echo viviendu_slideshow('featured','', 25, true); ?>
 						<?php endif; ?>
 						<?php echo viviendu_get_paragraph(apply_filters('the_content',viviendu_comercio_seccion_content(get_queried_object()->term_id)), false); ?>
 					</div>
@@ -29,7 +29,7 @@
 							</div>
 							<div class="col-sm-6">
 								<p><a class="btn btn-block btn-visit" target="_blank" href="<?php echo esc_url($location_info['url']); ?>">Visitar web</a></p>
-							</div>	
+							</div>
 						<?php else: ?>
 							<div class="col-sm-6 col-sm-offset-3">
 								<p><a href="#popup_contacto" class="btn btn-block btn-contact btn-primary" id="btn-contact">Contactar con la empresa</a></p>
@@ -54,7 +54,7 @@
 												'terms'    => $comercio->term_id,
 											),
 										'posts_per_archive_page' => 3,
-										'orderby' => 'rand', 
+										'orderby' => 'rand',
 										'post__not_in' => array(get_the_ID())
 										),
 									)); ?>

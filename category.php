@@ -7,6 +7,7 @@
 				<h1 class="title nm"><?php echo single_term_title(); ?></h1>
 				<div class="text main">
 					<?php echo viviendu_get_paragraph(apply_filters('the_content',$seccion->description)); ?>
+					<p><a href="http://viviendu.com/pedir-presupuesto/" class="btn btn-block btn-contact btn-lead-section">Pedir presupuesto</a></p>
 					<div class="row">
 						<?php $related = new WP_Query(array(
 									'posts_per_page' => -1,
@@ -23,7 +24,11 @@
 								)); ?>
 						<?php if ($related->post_count>0): ?>
 							<div class="col-sm-12"><h2 class="title mini tit-sep">Empresas destacadas en <?php echo $seccion->name; ?></h2></div>
-							<?php include(locate_template('templates/related.php')); ?>
+							<div class="clearfix">
+								<?php include(locate_template('templates/related.php')); ?>
+							</div>
+							<p><a href="http://viviendu.com/pedir-presupuesto/" class="btn btn-block btn-contact btn-lead-section">Pedir presupuesto</a></p>
+
 						<?php endif ?>
 					</div>
 					<?php echo viviendu_get_paragraph(apply_filters('the_content',$seccion->description), false); ?>
