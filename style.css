@@ -532,9 +532,9 @@ a.btn, input.btn {
     .kk-star-ratings .kksr-stars,
     .kk-star-ratings .kksr-stars .kksr-fuel,
     .kk-star-ratings .kksr-stars a { height:17px; }
-    .kk-star-ratings .kksr-star.gray { background-image: url(http://viviendu.com/wp-content/uploads/2015/06/stars_r1_c3.jpg); }
-    .kk-star-ratings .kksr-star.yellow { background-image: url(http://viviendu.com/wp-content/uploads/2015/06/stars_r1_c1.jpg); }
-    .kk-star-ratings .kksr-star.orange { background-image: url(http://viviendu.com/wp-content/uploads/2015/06/stars_r1_c1.jpg); }
+    .kk-star-ratings .kksr-star.gray { background-image: url(https://viviendu.com/wp-content/uploads/2015/06/stars_r1_c3.jpg); }
+    .kk-star-ratings .kksr-star.yellow { background-image: url(https://viviendu.com/wp-content/uploads/2015/06/stars_r1_c1.jpg); }
+    .kk-star-ratings .kksr-star.orange { background-image: url(https://viviendu.com/wp-content/uploads/2015/06/stars_r1_c1.jpg); }
 #container {
     width: 100%;
     padding-top:40px;

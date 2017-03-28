@@ -10,7 +10,7 @@
 				foreach ($terms as $term) : ?>
 					<?php $location_info = viviendu_location_info($term->term_id);  ?>
 					<tr>
-						<td><a href="http://viviendu.com/wp-admin/edit-tags.php?action=edit&taxonomy=comercio&tag_ID=<?php echo $term->term_id ?>" target="blank"><?php echo $term->name; ?></a></td>
+						<td><a href="https://viviendu.com/wp-admin/edit-tags.php?action=edit&taxonomy=comercio&tag_ID=<?php echo $term->term_id ?>" target="blank"><?php echo $term->name; ?></a></td>
 						<td><?php echo $location_info['phone']; ?></td>
 						<td><?php echo $location_info['url']; ?></td>
 						<td><?php echo $location_info['address']; ?></td>

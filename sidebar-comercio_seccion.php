@@ -45,12 +45,12 @@
 		<p>¡Muchas gracias por tu interés!. Aún no es posible contactar con empresas a através de Viviendu, para conocer el momento en el que esta funcionalidad estará disponible déjanos tu correo electrónico.</p>
 		<div id="mc_embed_signup1">
 		<form action="//viviendu.us11.list-manage.com/subscribe/post?u=6421e5c37cf26359595d46661&amp;id=e64548f3e5" method="post" id="mc-embedded-subscribe-form" name="mc-embedded-subscribe-form" class="validate" target="_blank" novalidate>
-		    <div id="mc_embed_signup_scroll1">	
+		    <div id="mc_embed_signup_scroll1">
 				<div class="mc-field-group">
 					<p>
 						<input placeholder="Correo electrónico" type="email" value="" name="EMAIL" class="required email input-block" id="mce-EMAIL">
 					</p>
-					<p><input type="checkbox" checked name="legal" id="legal"> <label for="legal">Acepto <a href="http://viviendu.com/aviso-legal/" target="_blank">términos y condiciones</a> para recibir alertas</label></p>
+					<p><input type="checkbox" checked name="legal" id="legal"> <label for="legal">Acepto <a href="https://viviendu.com/aviso-legal/" target="_blank">términos y condiciones</a> para recibir alertas</label></p>
 				</div>
 				<input type="hidden" value="Contacto" name="CTA" id="mce-CTA">
 				<input type="hidden" value="<?php echo $_SERVER["HTTP_HOST"] . $_SERVER["REQUEST_URI"]; ?>" name="URL" class="required" id="mce-URL">
