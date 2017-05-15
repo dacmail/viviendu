@@ -1,4 +1,4 @@
-<?php 
+<?php
 	define('LIMIT_WORDS', 10);
 
 	function viviendu_term_combi_link($type, $tax1, $tax2, $tax3='') {
@@ -46,7 +46,7 @@
 	function viviendu_comercio_seccion_content($tax_id) {
 		$comercio_seccion_desc = term_description($tax_id);
 		if (empty($comercio_seccion_desc)) {
-			$comercio_id = get_tax_meta($tax_id, 'viviendu_comercio_seccion_comercio', true); 
+			$comercio_id = get_tax_meta($tax_id, 'viviendu_comercio_seccion_comercio', true);
 			$comercio = get_term( $comercio_id, 'comercio');
 			return $comercio->description;
 		} else {
@@ -57,8 +57,8 @@
 	function viviendu_tag_content($tax_id) {
 		$tag_desc = term_description($tax_id);
 		if (empty($tag_desc)) {
-			$comercio = get_term(get_tax_meta($tax_id, 'viviendu_comercio', true), 'comercio'); 
-			$seccion = get_term(get_tax_meta($tax_id, 'viviendu_seccion', true), 'category'); 
+			$comercio = get_term(get_tax_meta($tax_id, 'viviendu_comercio', true), 'comercio');
+			$seccion = get_term(get_tax_meta($tax_id, 'viviendu_seccion', true), 'category');
 			$comercio_seccion = get_term_by('slug', $comercio->slug . "-" . $seccion->slug, 'comercio_seccion');
 
 			return viviendu_comercio_seccion_content($comercio_seccion->term_id);
@@ -84,18 +84,18 @@
 			if (empty($thumb)) {
 				viviendu_set_post_thumb($post->ID);
 			}
-			
+
 			$return = empty($link) ? '' : "<a class='slide' href='{$link}'>";
 			$return .=  get_the_post_thumbnail($post->ID, $size);
 			$return .= empty($link) ? '' : "</a>";
 			return $return;
 		} else {
 			$images = rwmb_meta('_ungrynerd_images', 'type=image&size=' . $size);
-			
+
 			if (!empty($images)) {
 				if ($limit) {$images = array_slice($images, 0, $limit); }
 				$options = empty($link) ? '' : ' data-cycle-slides="> .slide"';
-				$return .= '<div class="cycle-slideshow"' . $options .' 
+				$return .= '<div class="cycle-slideshow"' . $options .'
 				data-cycle-swipe=true
 	    		data-cycle-swipe-fx=scrollHorz>';
 				foreach ( $images as $image ) {
@@ -113,7 +113,7 @@
 
 			return $return;
 		}
-		
+
 	}
 
 	function viviendu_set_post_thumb($post_id) {
@@ -140,7 +140,7 @@
 		} else {
 			return str_replace($first_p,'', $text);
 		}
-		
+
 	}
 	/**
 	* Muestra el texto correspondiente a un catálogo
@@ -192,13 +192,13 @@
 	function viviendu_send_petition($post_id) {
 		$post = get_post($post_id);
 		if ($post->post_type!='presupuesto') { return true; }
-		
+
 	    $email_subject = "Nueva petición de presupuesto: " . $post->post_title;
 
 		ob_start();
 		//Incluir cabecera del mail
 		?>
-		<p>Hola, tienes una nueva petición de presupuesto, a continuación te indicamos 
+		<p>Hola, tienes una nueva petición de presupuesto, a continuación te indicamos
 		los datos de dicha petición:</p>
 		<ul>
 			<li>Nombre del cliente: <?php echo get_post_meta( $post_id, 'customer_name', true); ?></li>
@@ -209,7 +209,7 @@
 			<li>Sección: <?php the_terms($post_id, 'category'); ?></li>
 			<li>Comentarios: <?php echo get_post_meta( $post_id, 'customer_comments', true); ?></li>
 		</ul>
-		<?php		
+		<?php
 		//Incluir pie del email.
 		$message = ob_get_contents();
 		ob_end_clean();
@@ -218,12 +218,12 @@
 		$headers = 'Reply-to: Viviendu <presupuestos@viviendu.com>' . "\r\n";
 
 		add_filter('wp_mail_content_type',create_function('', 'return "text/html";'));
-	 
+
 	    add_filter('wp_mail_from','viviendu_email_from');
 		function viviendu_email_from($content_type) {
 		  return 'presupuestos@viviendu.com';
 		}
-	 
+
 	    add_filter('wp_mail_from_name','viviendu_email_from_name');
 	    function viviendu_email_from_name($name) {
 		  return 'Viviendu';
@@ -246,12 +246,12 @@
 	    $petition_item = get_query_var('petition_item');
 	    if ($petition_type=='empresa') {
 	        $item = get_term_by('slug', $petition_item, 'comercio_seccion');
-	        $query = new WP_Query(array('comercio_seccion' => $petition_item, 
+	        $query = new WP_Query(array('comercio_seccion' => $petition_item,
 	                                    'posts_per_page' => 1,
-	                                    'meta_key' => '_ungrynerd_petition_direct', 
+	                                    'meta_key' => '_ungrynerd_petition_direct',
 	                                    'meta_value' => 1));
 	        if ($query->have_posts() ) {
-	            while ( $query->have_posts() ) { 
+	            while ( $query->have_posts() ) {
 	                $query->the_post();
 	                $category = get_term_meta($item->term_id, 'viviendu_comercio_seccion_seccion', true);
 	                $comercio = get_term_meta($item->term_id, 'viviendu_comercio_seccion_comercio', true);
@@ -265,18 +265,18 @@
 	    if ($petition_type == "seccion") {
 	        $cat = get_term_by('slug', $petition_item, 'category');
 	        $category = $cat->term_id;
-	        $query = new WP_Query(array('category' => $petition_item, 
+	        $query = new WP_Query(array('category' => $petition_item,
 	                                    'posts_per_page' => -1,
-	                                    'meta_key' => '_ungrynerd_petition_category', 
+	                                    'meta_key' => '_ungrynerd_petition_category',
 	                                    'meta_value' => 1));
 	        if ($query->have_posts() ) {
 	            $comercio = array();
-	            while ( $query->have_posts() ) { 
+	            while ( $query->have_posts() ) {
 	                $query->the_post();
 	                $terms = get_the_terms( $query->post->ID, 'comercio' );
 	                $term = array_pop($terms);
 	                if (!is_wp_error($term)) {
-	                    $comercio[] = $term->term_id;  
+	                    $comercio[] = $term->term_id;
 	                }
 	            }
 	            $message = "Vas a solicitar presupuesto a " . $cat->name;
@@ -294,4 +294,38 @@
 	    	);
 	}
 
+
+
+	// Listado de comentarios
+	function comentarios($comment, $args, $depth) {
+	   $GLOBALS['comment'] = $comment; ?>
+	   <li <?php comment_class(); ?> id="li-comment-<?php comment_ID() ?>">
+	     <article id="comment-<?php comment_ID(); ?>" class="clearfix">
+		  <?php echo get_avatar($comment,$size='75' ); ?>
+	    	<div class="comment-content">
+	    		<h5 class="author">
+					<?php comment_author_link(); ?>
+					<?php if ($comment->comment_approved == '0') : ?>
+			         	<em><?php _e('Your comment is awaiting moderation.', 'ungrynerd') ?></em>
+			      	<?php endif; ?>
+			      	<?php edit_comment_link(__('(Edit)', 'ungrynerd'),'  ','') ?>
+				</h5>
+	    		<?php comment_text() ?>
+	    	</div>
+	     </article>
+	<?php
+	}
+
+
+	//wiki breadcrumb
+	function viviendu_wiki_breadcrumb() {
+		global $post;
+		if ( is_tax() ) {
+			$cat = get_term_by( 'slug', get_query_var( 'term' ), 'wiki-section');
+			if ($cat->parent != 0) {
+				$cats = get_term( $cat->parent,'wiki-section');
+				echo '<a href="' . esc_url( get_term_link( $cats ) ) . '" alt="' . esc_attr( sprintf( __( 'View all post filed under %s', 'my_localization_domain' ), $cats->name ) ) . '">' . $cats->name . '</a>';
+			}
+		}
+	}
 ?>

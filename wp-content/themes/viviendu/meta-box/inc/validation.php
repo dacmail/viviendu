@@ -1,48 +1,50 @@
 <?php
 /**
- * Validation module
+ * Validation module.
+ *
  * @package Meta Box
  */
 
 /**
- * Validation class
+ * Validation class.
  */
-class RWMB_Validation
-{
+class RWMB_Validation {
+
 	/**
-	 * Add hooks when module is loaded
+	 * Add hooks when module is loaded.
 	 */
-	public static function load()
-	{
-		add_action( 'rwmb_after', array( __CLASS__, 'rules' ) );
-		add_action( 'rwmb_enqueue_scripts', array( __CLASS__, 'scripts' ) );
+	public function __construct() {
+		add_action( 'rwmb_after', array( $this, 'rules' ) );
+		add_action( 'rwmb_enqueue_scripts', array( $this, 'enqueue' ) );
 	}
 
 	/**
-	 * Output validation rules of each meta box
-	 * The rules are outputted in [data-rules] attribute of an hidden div and will be converted into JSON by JS
-	 * @param RW_Meta_Box $object Meta Box object
+	 * Output validation rules of each meta box.
+	 * The rules are outputted in [data-rules] attribute of an hidden <script> and will be converted into JSON by JS.
+	 *
+	 * @param RW_Meta_Box $object Meta Box object.
 	 */
-	public static function rules( RW_Meta_Box $object )
-	{
-		if ( ! empty( $object->meta_box['validation'] ) )
-		{
-			// Use script tag with type="text/html" to prevent browser to render
-			echo '<script type="text/html" class="rwmb-validation-rules hidden" data-rules="' . esc_attr( json_encode( $object->meta_box['validation'] ) ) . '"></script>';
+	public function rules( RW_Meta_Box $object ) {
+		if ( ! empty( $object->meta_box['validation'] ) ) {
+			echo '<script type="text/html" class="rwmb-validation-rules" data-rules="' . esc_attr( wp_json_encode( $object->meta_box['validation'] ) ) . '"></script>';
 		}
 	}
 
 	/**
-	 * Enqueue scripts for validation
+	 * Enqueue scripts for validation.
+	 *
+	 * @param RW_Meta_Box $object Meta Box object.
 	 */
-	public static function scripts()
-	{
-		wp_enqueue_script( 'jquery-validate', RWMB_JS_URL . 'jquery.validate.min.js', array( 'jquery' ), RWMB_VER, true );
-		wp_enqueue_script( 'rwmb-validate', RWMB_JS_URL . 'validate.js', array( 'jquery-validate' ), RWMB_VER, true );
-		wp_localize_script( 'rwmb-validate', 'rwmbValidate', array(
-			'summaryMessage' => __( 'Please correct the errors highlighted below and try again.', 'meta-box' ),
+	public function enqueue( RW_Meta_Box $object ) {
+		if ( empty( $object->meta_box['validation'] ) ) {
+			return;
+		}
+		wp_enqueue_script( 'jquery-validation', RWMB_JS_URL . 'jquery-validation/jquery.validate.min.js', array( 'jquery' ), '1.15.0', true );
+		wp_enqueue_script( 'jquery-validation-additional-methods', RWMB_JS_URL . 'jquery-validation/additional-methods.min.js', array( 'jquery-validation' ), '1.15.0', true );
+		wp_enqueue_script( 'rwmb-validate', RWMB_JS_URL . 'validate.js', array( 'jquery-validation', 'jquery-validation-additional-methods' ), RWMB_VER, true );
+
+		RWMB_Field::localize_script( 'rwmb-validate', 'rwmbValidate', array(
+			'summaryMessage' => esc_html__( 'Please correct the errors highlighted below and try again.', 'meta-box' ),
 		) );
 	}
 }
-
-RWMB_Validation::load();

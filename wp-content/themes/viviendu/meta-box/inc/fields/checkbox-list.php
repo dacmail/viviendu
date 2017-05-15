@@ -1,37 +1,24 @@
 <?php
-// Prevent loading this file directly
-defined( 'ABSPATH' ) || exit;
+/**
+ * The checkbox list field which shows a list of choices and allow users to select multiple options.
+ *
+ * @package Meta Box
+ */
 
-if ( ! class_exists( 'RWMB_Checkbox_List_Field' ) )
-{
-	class RWMB_Checkbox_List_Field extends RWMB_Field_Multiple_Values
-	{
-		/**
-		 * Get field HTML
-		 *
-		 * @param mixed $meta
-		 * @param array $field
-		 *
-		 * @return string
-		 */
-		static function html( $meta, $field )
-		{
-			$meta = (array) $meta;
-			$html = array();
-			$tpl  = '<label><input type="checkbox" class="rwmb-checkbox-list" name="%s" value="%s"%s> %s</label>';
+/**
+ * Checkbox list field class.
+ */
+class RWMB_Checkbox_List_Field extends RWMB_Input_List_Field {
+	/**
+	 * Normalize parameters for field.
+	 *
+	 * @param array $field Field parameters.
+	 * @return array
+	 */
+	public static function normalize( $field ) {
+		$field['multiple'] = true;
+		$field = parent::normalize( $field );
 
-			foreach ( $field['options'] as $value => $label )
-			{
-				$html[] = sprintf(
-					$tpl,
-					$field['field_name'],
-					$value,
-					checked( in_array( $value, $meta ), 1, false ),
-					$label
-				);
-			}
-
-			return implode( '<br>', $html );
-		}
+		return $field;
 	}
 }

@@ -1,42 +1,49 @@
 <?php
-// Prevent loading this file directly
-defined( 'ABSPATH' ) || exit;
+/**
+ * The text field.
+ *
+ * @package Meta Box
+ */
 
-// Make sure "input" field is loaded
-require_once RWMB_FIELDS_DIR . 'input.php';
+/**
+ * Text field class.
+ */
+class RWMB_Text_Field extends RWMB_Input_Field {
+	/**
+	 * Normalize parameters for field.
+	 *
+	 * @param array $field Field parameters.
+	 * @return array
+	 */
+	public static function normalize( $field ) {
+		$field = parent::normalize( $field );
 
-if ( ! class_exists( 'RWMB_Text_Field' ) )
-{
-	class RWMB_Text_Field extends RWMB_Input_Field
-	{
-		/**
-		 * Normalize parameters for field
-		 *
-		 * @param array $field
-		 *
-		 * @return array
-		 */
-		static function normalize_field( $field )
-		{
-			$field = parent::normalize_field( $field );
+		$field = wp_parse_args( $field, array(
+			'size'        => 30,
+			'maxlength'   => false,
+			'pattern'     => false,
+		) );
 
-			$field = wp_parse_args( $field, array(
-				'size'        => 30,
-				'maxlength'   => false,
-				'pattern'     => false,
-				'placeholder' => '',
-			) );
+		return $field;
+	}
 
-			$field['attributes'] = wp_parse_args( $field['attributes'], array(
-				'size'        => $field['size'],
-				'maxlength'   => $field['maxlength'],
-				'pattern'     => $field['pattern'],
-				'placeholder' => $field['placeholder'],
-			) );
+	/**
+	 * Get the attributes for a field.
+	 *
+	 * @param array $field Field parameters.
+	 * @param mixed $value Meta value.
+	 *
+	 * @return array
+	 */
+	public static function get_attributes( $field, $value = null ) {
+		$attributes = parent::get_attributes( $field, $value );
+		$attributes = wp_parse_args( $attributes, array(
+			'size'        => $field['size'],
+			'maxlength'   => $field['maxlength'],
+			'pattern'     => $field['pattern'],
+			'placeholder' => $field['placeholder'],
+		) );
 
-			$field['attributes']['type'] = 'text';
-
-			return $field;
-		}
+		return $attributes;
 	}
 }

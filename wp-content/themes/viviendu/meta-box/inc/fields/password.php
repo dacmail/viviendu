@@ -1,28 +1,25 @@
 <?php
-// Prevent loading this file directly
-defined( 'ABSPATH' ) || exit;
+/**
+ * The secured password field.
+ *
+ * @package Meta Box
+ */
 
-// Make sure "text" field is loaded
-require_once RWMB_FIELDS_DIR . 'text.php';
-
-if ( ! class_exists( 'RWMB_Password_Field' ) )
-{
-	class RWMB_Password_Field extends RWMB_Text_Field
-	{
-		/**
-		 * Normalize parameters for field
-		 *
-		 * @param array $field
-		 *
-		 * @return array
-		 */
-		static function normalize_field( $field )
-		{
-			$field = parent::normalize_field( $field );
-
-			$field['attributes']['type'] = 'password';
-
-			return $field;
-		}
+/**
+ * Password field class.
+ */
+class RWMB_Password_Field extends RWMB_Text_Field {
+	/**
+	 * Store secured password in the database.
+	 *
+	 * @param mixed $new     The submitted meta value.
+	 * @param mixed $old     The existing meta value.
+	 * @param int   $post_id The post ID.
+	 * @param array $field   The field parameters.
+	 * @return string
+	 */
+	public static function value( $new, $old, $post_id, $field ) {
+		$new = $new !== $old ? wp_hash_password( $new ) : $new;
+		return $new;
 	}
 }
