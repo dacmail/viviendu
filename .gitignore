@@ -1,4 +1,5 @@
 *.log
+*.sql
 .htaccess
 sitemap.xml
 sitemap.xml.gz
@@ -19,6 +20,7 @@ licencia.txt
 Movefile
 node_modules/
 bower_components/
+dist/
 
 ### OSX ###
 .DS_Store

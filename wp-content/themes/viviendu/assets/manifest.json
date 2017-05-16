@@ -14,6 +14,12 @@
     },
     "jquery.js": {
       "bower": ["jquery"]
+    },
+    "fontawesome": {
+      "main": [
+        "./scss/font-awesome.scss",
+        "./fonts/*"
+      ]
     }
   },
   "config": {

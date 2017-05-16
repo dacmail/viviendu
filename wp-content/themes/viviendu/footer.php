@@ -2,7 +2,7 @@
 		<div class="container">
 			<div class="row">
 				<div class="col-sm-4">
-					<a href="<?php echo home_url(); ?>" class="logo"><img src="<?php echo get_template_directory_uri(); ?>/images/logo-foot.png" alt="<?php bloginfo('name'); ?>"></a>
+					<a href="<?php echo home_url(); ?>" class="logo"><img src="<?php echo asset_path('images/logo-foot.png'); ?>" alt="<?php bloginfo('name'); ?>"></a>
 				</div>
 				<div class="col-sm-8 menu-wrap">
 					<?php wp_nav_menu(array('container' => 'nav', 'container_id' => 'footer-menu', 'container_class' => 'footer-menu', 'theme_location' => 'footer-social')); ?>
