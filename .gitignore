@@ -17,6 +17,8 @@ license.txt
 readme.html
 licencia.txt
 Movefile
+node_modules/
+bower_components/
 
 ### OSX ###
 .DS_Store
