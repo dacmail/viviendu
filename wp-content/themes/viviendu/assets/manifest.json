@@ -1,5 +1,10 @@
 {
   "dependencies": {
+    "cycle.js": {
+      "files": [
+        "scripts/cycle.js"
+      ]
+    },
     "main.js": {
       "files": [
         "scripts/main.js"
@@ -20,6 +25,9 @@
         "./scss/font-awesome.scss",
         "./fonts/*"
       ]
+    },
+    "fonts": {
+      "files": ["fonts/**/*", "../bower_components/**/*.{eot,otf,svg,ttc,ttf,woff,woff2}"]
     }
   },
   "config": {
