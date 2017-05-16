@@ -9,3 +9,8 @@
 	include get_template_directory() . '/inc/taxonomies.php';
 	include get_template_directory() . '/inc/posts.php';
 	include get_template_directory() . '/inc/helpers.php';
+	if (WP_DEBUG) {
+		include get_template_directory() . '/inc/development.php';
+	} else {
+		include get_template_directory() . '/inc/production.php';
+	}

@@ -132,7 +132,7 @@
             $terms = get_the_terms($post_ID, 'wiki-section');
             if (!empty($terms) ) {
                 foreach ( $terms as $term )
-                $post_terms[] ="<a href='edit.php?post_type={$post_type}&{$taxonomy}={$term->slug}'> " .esc_html(sanitize_term_field('name', $term->name, $term->term_id, $taxonomy, 'edit')) . "</a><br/>";
+                $post_terms[] ="<a href='edit.php?post_type=wiki&wiki-section={$term->slug}'> " .esc_html(sanitize_term_field('name', $term->name, $term->term_id, 'wiki-section', 'edit')) . "</a><br/>";
                 echo join('', $post_terms );
             }
              else echo '<i>Sin datos. </i>';
