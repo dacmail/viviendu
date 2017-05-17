@@ -1,0 +1,111 @@
+/* FIXES */
+*, html { margin:0; padding:0; }
+body, input, textarea {
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+/* GENERAL */
+input:focus {
+    outline:0px;
+}
+
+a {
+    text-decoration:none;
+    color:#8da99f;
+    -webkit-transition: opacity 0.3s ease-in;
+    -o-transition: opacity 0.3s ease-in;
+    transition: opacity 0.3s ease-in;
+    &:hover {
+        text-decoration:none;
+        opacity: 0.7;
+    }
+}
+a img, :link img, :visited img {
+    border: 0;
+}
+input, button {
+    -webkit-appearance:none;
+}
+body {
+  font-family:"Roboto";
+    color:#7F7F7F;
+    font-size: 16px;
+    line-height: 1.5;
+}
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    font-family: "Roboto Condensed";
+    font-weight: 400;
+    color:#333;
+    line-height: 1.1;
+    a {
+        color:#333;
+    }
+}
+img {
+    max-width: 100%;
+    height: auto;
+}
+.voffset30 {
+    margin-bottom:30px;
+}
+.more {
+    text-align: right;
+    text-transform: uppercase;
+}
+#container {
+    width: 100%;
+    padding-top:40px;
+    .sticky & {
+        margin-top:52px;
+    }
+}
+p {
+    margin:20px 0px;
+    .legal {
+        font-size: 13px;
+    }
+}
+#cookie-law-info-bar #cookie_action_close_header {
+    text-shadow:none;
+    background: #76C0A5 !important;
+    box-shadow: none;
+    border:0px !important;
+}
+.show-on-mobile {
+    display: none;
+    @media only screen and  (max-width: 768px) {
+        display: block;
+    }
+}
+[class^="col"], [class*=" col"] {
+    @media only screen and  (max-width: 768px) {
+        margin-bottom:30px;
+    }
+}
+section {
+    &.menu {
+        .title {
+            &:before {
+                content: url("../images/menu_title_line.png");
+                margin-right: 20px;
+                flex: 1;
+            }
+            &:after {
+                content: url("../images/menu_title_line.png");
+                margin-left: 20px;
+                flex: 1;
+            }
+            &.first {
+              margin-top: 130px;
+              display: flex;
+            }
+        }
+    }
+}

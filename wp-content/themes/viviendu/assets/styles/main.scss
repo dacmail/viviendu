@@ -1,9 +1,21 @@
 @import "../../bower_components/bootstrap/scss/variables";
 @import "../../bower_components/bootstrap/scss/mixins";
 @import "../../bower_components/bootstrap/scss/grid";
+//@import "../../bower_components/bootstrap-sass/assets/stylesheets/bootstrap";
 @import "../../bower_components/font-awesome/scss/font-awesome";
 
 @import "common/global";
+@import "components/header";
+@import "components/jumbo";
+@import "components/slideshow";
+@import "components/blocks";
+@import "components/listings";
 @import "components/sidebar";
-
-
+@import "layouts/home";
+@import "components/ratings";
+@import "layouts/page";
+@import "components/pagination";
+@import "components/footer";
+@import "common/wp";
+@import "components/popups";
+@import "components/forms";

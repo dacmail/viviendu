@@ -16,7 +16,8 @@
     "tests"
   ],
   "dependencies": {
-    "bootstrap": "git://github.com/twbs/bootstrap.git#v4.0.0-alpha.6",
-    "font-awesome": "fontawesome#^4.7.0"
+    "font-awesome": "fontawesome#^4.7.0",
+    "bootstrap-sass": "^3.3.7",
+    "bootstrap": "v4.0.0-alpha.6"
   }
 }

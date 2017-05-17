@@ -1,0 +1,105 @@
+#header {
+    height: 52px;
+    background-color: #323232;
+    width: 100%;
+    .sticky & {
+        position: fixed;
+        top: 0px;
+        left: 0px;
+        width: 100%;
+        z-index:999999;
+    }
+
+    .nav-toggle {
+        display: none;
+        @media only screen and  (max-width: 768px) {
+            display: block;
+            float: right;
+            font-size: 30px;
+            line-height: 30px;
+            padding:10px;
+            color:#fff;
+        }
+    }
+    .logo {
+        display: block;
+        float: left;
+        margin:13px 0px 0px 0px;
+        width: 10%;
+    }
+    .menu {
+        float: right;
+        display: table;
+        width: 90%;
+        margin: 0px;
+        @media only screen and  (max-width: 768px) {
+            display: block;
+            position: absolute;
+            top: 0px;
+            left: -100%;
+            width: 80%;
+            height: 100%;
+            z-index: 9999;
+            background-color:#323232;
+            -webkit-transition: left 0.3s ease-in;
+            -o-transition: left 0.3s ease-in;
+            transition: left 0.3s ease-in;
+            height: auto;
+        }
+        .menu-item {
+            display: table-cell;
+            line-height: 52px;
+            text-align: center;
+            border-right:1px solid #4d4d4d;
+            min-width: 75px;
+            list-style: none;
+            @media only screen and  (max-width: 768px) {
+                display: block;
+                border-right: 0px;
+            }
+            &:last-child {
+                border:0px;
+            }
+            a {
+                display: block;
+                color:#fff;
+                font-size: 14px;
+                font-family: "Roboto Condensed";
+                text-transform: uppercase;
+            }
+            &.menu-item-has-children > a {
+                background:url('../images/submenu.png') center right no-repeat;
+            }
+            .sub-menu {
+                position: absolute;
+                background-color: #F1F1F1;
+                display: none;
+                z-index: 999;
+                @media only screen and  (max-width: 768px) {
+                    display: block;
+                    position: relative;
+                }
+                .menu-item {
+                    display: block;
+                    border-right: 0px;
+                    border-bottom: 1px solid #fff;
+                    padding:16px;
+                    line-height: 17px;
+                    a {
+                        color:#7F7F7F;
+                    }
+                }
+            }
+            &:hover .sub-menu {
+                display: block;
+            }
+        }
+    }
+    &.open .menu {
+        @media only screen and  (max-width: 768px) {
+            left: 0px;
+            height: auto;
+        }
+    }
+}
+
