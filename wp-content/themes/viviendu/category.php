@@ -24,11 +24,8 @@
 								)); ?>
 						<?php if ($related->post_count>0): ?>
 							<div class="col-sm-12"><h2 class="title mini tit-sep">Empresas destacadas en <?php echo $seccion->name; ?></h2></div>
-							<div class="clearfix">
-								<?php include(locate_template('templates/related.php')); ?>
-							</div>
-							<p><a href="https://viviendu.com/pedir-presupuesto/" class="btn btn-block btn-contact btn-lead-section">Pedir presupuesto</a></p>
-
+							<?php include(locate_template('templates/related.php')); ?>
+							<p class="col-12"><a href="https://viviendu.com/pedir-presupuesto/" class="btn btn-block btn-contact btn-lead-section">Pedir presupuesto</a></p>
 						<?php endif ?>
 					</div>
 					<?php echo viviendu_get_paragraph(apply_filters('the_content',$seccion->description), false); ?>

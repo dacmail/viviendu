@@ -1,8 +1,14 @@
 (function($) {
   //Max equal height
   $.fn.setAllToMaxHeight = function(){
-    return this.height( Math.max.apply(this, $.map( this , function(e){ return $(e).height() }) ) );
-  }
+    return this.height(
+      Math.max.apply(this, $.map(
+        this, function(e) {
+          return $(e).height();
+        })
+      )
+    );
+  };
 
   //Cycle defaults
   $.fn.cycle.log = $.noop;
@@ -26,11 +32,8 @@
     $allVideos.each(function() {
       $(this)
         .data('aspectRatio', this.height / this.width)
-
-        // and remove the hard coded width/height
         .removeAttr('height')
         .removeAttr('width');
-
     });
 
     // When the window is resized

@@ -155,7 +155,7 @@ a.btn, input.btn {
                 text-transform: uppercase;
             }
             #header .menu-item.menu-item-has-children > a {
-                background:url('images/submenu.png') center right no-repeat;
+                background:url('../images/submenu.png') center right no-repeat;
             }
             #header .menu-item .sub-menu {
                 position: absolute;
@@ -381,7 +381,7 @@ a.btn, input.btn {
         margin-top:30px;
     }
 #howto {
-    background: url('images/howto-bg.jpg') repeat #766A6E;
+    background: url('../images/howto-bg.jpg') repeat #766A6E;
     color:#fff;
     padding-top:40px;
 }
@@ -488,7 +488,10 @@ a.btn, input.btn {
       margin-right: 5px;
       color: #8da99f;
     }
-    .list-terms.provincias {margin-bottom: 50px;}
+    .list-terms.provincias {
+        margin-bottom: 50px;
+        width: 100%;
+    }
 /* COMERCIO-SECCION */
 .section iframe {
     max-width: 100%;
@@ -535,73 +538,7 @@ a.btn, input.btn {
   #content .post-content ul, #content .post-content ol {
     margin:10px;
   }
-  .sidebar {}
-        .sidebar iframe, .sidebar .fb-page * {
-            max-width: 100% !important;
-        }
-        .sidebar .list-terms li {
-            font-size: 15px;
-            float: none;
-            width: 100%;
-        }
-        .sidebar .widget {
-            margin-bottom: 35px;
-        }
-            .sidebar .widget ul {
-                padding-left: 20px;
-                margin:10px 0px;
-                list-style: square;
-            }
-            .sidebar .widget ul.list-terms {
-                margin:0px -15px;
-                padding:0px;
-            }
-            .sidebar .widget .title {
-                font-size: 25px;
-                position: relative;
-                margin-bottom: 30px;
-            }
-            .sidebar .widget .title:after {
-                display: block;
-                position: absolute;
-                content:" ";
-                bottom:-17px;
-                left: 0px;
-                width: 51px;
-                height: 5px;
-                background-color: #675A5E;
-            }
-            .sidebar .widget .company-data {
-                list-style: none;
-                padding:0px;
-            }
-            .sidebar .widget .company-data .fa {
-                margin-right: 10px;
-                font-size: 13px;
-                color:#76C0A5;
-            }
-            .sidebar .widget .search-wrap {
-                position: relative;
-            }
-            .sidebar .widget .search-wrap:after {
-                content: "\f002";
-                font-family: FontAwesome;
-                font-style: normal;
-                font-weight: normal;
-                text-decoration: inherit;
-                position: absolute;
-                font-size: 15px;
-                line-height: 16px;
-                color: #CCCCCC;
-                top: 50%;
-                right: 10px;
-                margin: -8px 0 0 0px;
-                z-index: 1;
-            }
-            .sidebar .widget .search-wrap input {
-                display: block;
-                width: 100%;
-            }
+
 /*PAGE*/
 .page iframe.habitissimo {
     border:0px;

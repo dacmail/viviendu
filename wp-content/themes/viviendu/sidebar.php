@@ -1,4 +1,4 @@
-<div id="sidebar" class="sidebar col-sm-4 col-sm-offset-1">
+<div id="sidebar" class="sidebar col-sm-4 offset-sm-1">
 	<div class="widget">
 		<?php get_search_form(true); ?>
 	</div>
