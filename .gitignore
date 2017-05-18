@@ -1,2 +1,5 @@
 sftp-config.json
 .DS_Store
+Movefile
+wp-content/
+wp-config.php
