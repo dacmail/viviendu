@@ -80,18 +80,18 @@ p {
 }
 #cookie-law-info-bar #cookie_action_close_header {
     text-shadow:none;
-    background: #76C0A5 !important;
+    background: $brand-primary !important;
     box-shadow: none;
     border:0px !important;
 }
 .show-on-mobile {
     display: none;
-    @media only screen and  (max-width: 768px) {
+    @include media(768px) {
         display: block;
     }
 }
 [class^="col"], [class*=" col"] {
-    @media only screen and  (max-width: 768px) {
+    @include media(768px) {
         margin-bottom:30px;
     }
 }

@@ -1,47 +1,47 @@
 #whatis {
-    background-color: #D3DEC0;
+  background-color: #D3DEC0;
+  color:#675A5F;
+  padding-bottom: 0px;
+  padding-top:40px;
+  padding-bottom:40px;
+  .title {
     color:#675A5F;
-    padding-bottom: 0px;
-    padding-top:40px;
-    padding-bottom:40px;
-    .title {
-        color:#675A5F;
+  }
+  img {
+    display: block;
+    margin-top:30px;
+    @include media(768px) {
+      display: none;
     }
-    img {
-        display: block;
-        margin-top:30px;
-        @media only screen and  (max-width: 768px) {
-            display: none;
-        }
-    }
+  }
 }
 
 #howto {
-    background: url('../images/howto-bg.jpg') repeat #766A6E;
+  background: url('../images/howto-bg.jpg') repeat #766A6E;
+  color:#fff;
+  padding-top:40px;
+  .title {
     color:#fff;
-    padding-top:40px;
-    .title {
-        color:#fff;
+  }
+  .howto-item {
+    padding-top: 20px;
+    text-align: center;
+    padding-left: 60px;
+    padding-right: 60px;
+    margin-bottom: 30px;
+    img {
+      margin-bottom: 10px;
     }
-    .howto-item {
-        padding-top: 20px;
-        text-align: center;
-        padding-left: 60px;
-        padding-right: 60px;
-        margin-bottom: 30px;
-        img {
-            margin-bottom: 10px;
-        }
-    }
+  }
 }
 
 .link {
-    margin-bottom:20px;
-    .link-title {
-        font-size: 19px;
-        font-weight: 400;
-    }
-    p {
-        margin:5px 0px;
-    }
+  margin-bottom:20px;
+  .link-title {
+    font-size: 19px;
+    font-weight: 400;
+  }
+  p {
+    margin:5px 0px;
+  }
 }

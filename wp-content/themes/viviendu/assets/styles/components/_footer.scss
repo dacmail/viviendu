@@ -1,42 +1,41 @@
-
 #footer {
-    background: #191919;
-    padding:40px 0px 10px 0px;
-    width: 100%;
-    margin-top: 100px;
-    .menu {
-        float: right;
-        list-style: none;
-        position: relative;
-        margin-top:20px;
-        margin-left: 40px;
-        @media only screen and  (max-width: 768px) {
-            float: none;
-            margin-left: 0px;
-            margin-bottom: 20px;
-        }
-        &:before {
-            display: block;
-            position: absolute;
-            content:" ";
-            top:-17px;
-            left: 0px;
-            width: 51px;
-            height: 5px;
-            background-color: #675A5E;
-        }
-        .menu-item {
-            font-size: 14px;
-            color:#CCCCCC;
-            line-height: 20px;
-            a {
-                color:#CCCCCC;
-            }
-        }
+  background: #191919;
+  padding:40px 0px 10px 0px;
+  width: 100%;
+  margin-top: 100px;
+  .menu {
+    float: right;
+    list-style: none;
+    position: relative;
+    margin-top:20px;
+    margin-left: 40px;
+    @include media(768px) {
+      float: none;
+      margin-left: 0px;
+      margin-bottom: 20px;
     }
-    .copy {
-        text-align: center;
-        font-size: 12px;
-        color:#666666;
+    &:before {
+      display: block;
+      position: absolute;
+      content:" ";
+      top:-17px;
+      left: 0px;
+      width: 51px;
+      height: 5px;
+      background-color: #675A5E;
     }
+    .menu-item {
+      font-size: 14px;
+      color:#CCCCCC;
+      line-height: 20px;
+      a {
+        color:#CCCCCC;
+      }
+    }
+  }
+  .copy {
+    text-align: center;
+    font-size: 12px;
+    color:#666666;
+  }
 }
