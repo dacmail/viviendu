@@ -1,0 +1,74 @@
+/*#WooZone*/
+#WooZone-csvBulkImport {
+	float: left;
+	min-height: 200px;
+	width: 100%;
+	display: block;
+}
+#WooZone-csvBulkImport-left-panel {
+	float: left;
+	width: 40%;
+	margin: 10px 0px 0px 10px;
+}
+#WooZone-csvBulkImport-left-panel h3 {
+	margin: 10px 0px 4px 0px;
+}
+#WooZone-csv-asin {
+	width: 80%;
+	height: 200px;
+}
+
+#WooZone-csvBulkImport-left-panel input {
+	margin: 0px 5px 0px 0px;
+	display: block;
+	width: 20px;
+	height: 20px;
+	float: left;
+}
+
+#WooZone-csvBulkImport-left-panel label {
+	float: left;
+	width: 100px;
+}
+#WooZone-addASINtoQueue, #WooZone-startImportASIN {
+	margin: 10px 0px 10px 0px;
+}
+#WooZone-addASINtoQueue:hover, #WooZone-startImportASIN:hover {
+	color: #000;
+}
+.WooZone-status-block {
+	display: none;
+	position: relative;
+	width: 300px;
+	margin: 10px 0px 0px 0px;
+}
+#WooZone-status-remaining {
+	font-weight: bold;
+	color: #de8a05;
+}
+#WooZone-status-ready {
+	font-weight: bold;
+	color: #079407;
+}
+#WooZone-csvBulkImport-right-panel {
+	float: left;
+	width: 55%;
+}
+#WooZone-csvBulkImport-right-panel table {
+	width: 100%;
+	margin: 20px 0px 0px 0px;
+	border: 1px solid #F2F2F2;
+}
+#WooZone-csvBulkImport-right-panel table th {
+	font-weight: bold;
+	text-align: left;
+	font-size: 14px;
+}
+#WooZone-csvBulkImport-right-panel .WooZone-message {
+	padding: 5px 5px 5px 5px;
+	background-image: none;
+	line-height: 14px;
+}
+#WooZone-no-ASIN {
+	margin: 20px 0px 0px 0px;
+}

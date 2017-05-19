@@ -1,0 +1,50 @@
+%loader_box {
+	border-radius: 50%;
+	width: 10em;
+	height: 10em;
+}
+.#{$alias}-loader-holder,
+.#{$alias}-loader-holder-take-over {
+	position: absolute;
+	left: 0;
+	top: 0;
+	right: 0;
+	bottom: 0;
+	overflow: hidden;
+	text-align: center;
+	text-transform: uppercase;
+	color: $white;
+	font-family: $primary_font;
+	font-size: px(11);
+
+	&.#{$alias}-loader-holder-take-over {
+		z-index: 99999;
+		left: -20px;
+		background: rgba( 0,0,0, 0.8);
+	}
+
+	.#{$alias}-loader {
+		margin: px(120) auto px(20) auto;
+		font-size: px(10);
+		position: relative;
+		text-indent: -9999em;
+		border-top: 1.1em solid rgba($white,.2);
+		border-right: 1.1em solid rgba($white,.2);
+		border-bottom: 1.1em solid rgba($white,.2);
+		border-left: 1.1em solid $white;
+		transform: translateZ(0);
+		animation: #{$alias}-loading 1.1s infinite linear;
+		@extend %loader_box;
+		&:after {
+			@extend %loader_box;
+		}
+	}
+}
+@-webkit-keyframes #{$alias}-loading {
+	0%		{ transform: rotate(0deg); }
+	100%	{ transform: rotate(360deg); }
+}
+@keyframes #{$alias}-loading {
+	0%		{ transform: rotate(0deg); }
+	100%	{ transform: rotate(360deg); }
+}

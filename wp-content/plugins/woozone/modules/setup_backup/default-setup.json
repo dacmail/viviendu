@@ -1,0 +1,28 @@
+{
+	"WooZone_module_advanced_search": "true",
+	"WooZone_module_amazon": "true",
+	"WooZone_module_amazon_debug": "true",
+	"WooZone_module_asin_grabber": "true",
+	"WooZone_module_assets_download": "true",
+	"WooZone_module_content_spinner": "true",
+	"WooZone_module_cronjobs": "true",
+	"WooZone_module_csv_products_import": "true",
+	"WooZone_module_insane_import": "true",
+	"WooZone_module_price_select": "true",
+	"WooZone_module_product_in_post": "true",
+	"WooZone_module_report": "true",
+	"WooZone_module_server_status": "true",
+	"WooZone_module_stats_prod": "true",
+	"WooZone_module_synchronization": "true",
+	"WooZone_module_woocustom": "true",
+	"WooZone_module_auto_import": "true",
+	"WooZone_plugin_do_activation_redirect": false,
+    "WooZone_amazon": {
+        "protocol":"auto",
+        "country":"com",
+        "AccessKeyID":"aateam demo access key",
+        "SecretAccessKey":"aateam demo secret access key",
+        "main_aff_id":"com",
+        "amazon_requests_rate":"1"
+    }
+}

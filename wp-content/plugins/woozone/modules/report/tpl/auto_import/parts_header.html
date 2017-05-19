@@ -1,0 +1,199 @@
+<style type="text/css">
+	.ReadMsgBody {
+		width: 100%;
+		background-color: #ffffff;
+	}
+	.ExternalClass {
+		width: 100%;
+		background-color: #ffffff;
+	}
+	body {
+		width: 100%;
+		background-color: #ffffff;
+		margin:0;
+		padding:0;
+		-webkit-font-smoothing: antialiased;
+		font-family: 'Open Sans', sans-serif
+	}
+	table {
+		border-collapse: collapse;
+	}
+	table thead th {
+		text-align: left;
+		border-bottom: 1px solid #dddddd;
+	}
+	
+	@media only screen and (max-width: 640px) {
+		body[yahoo] .deviceWidth {width:440px!important; padding:0;}
+		body[yahoo] .center {text-align: center!important;}
+	}
+
+	@media only screen and (max-width: 479px) {
+		body[yahoo] .deviceWidth {width:280px!important; padding:0;}
+		body[yahoo] .center {text-align: center!important;}
+	}
+
+	.WooZone-sync-products,
+	.WooZone-perf-products {
+		overflow: hidden;
+		overflow-y: auto;
+		max-height: 400px;
+	}
+	.WooZone-sync-products > table span.success {
+		color: #1abc9c;
+	}
+	.WooZone-sync-products > table span.error {
+		color: #e67e22;
+	}
+	.WooZone-sync-products > table span.already {
+		color: #f1c40f;
+	}
+	.WooZone-sync-products > table span.new {
+		color: #3498db;
+	}
+	
+	.WooZone-products-summary {
+		border-bottom: 0px solid #dadada;
+		width: 100%;
+		overflow: hidden;
+		height: 40px;
+		padding-bottom: 5px;
+		margin: 5px 0px 0px 0px;
+	}
+		.WooZone-products-summary .the-item-stat {
+			display: block;
+			width: 130px;
+			height: 40px;
+			float: left;
+			padding: 4px 4px 4px 4px;
+			margin-right: 10px;
+			border-left: 1px solid #dddddd;
+		}
+		.WooZone-products-summary .the-item-stat:first-child {
+			border-left: 0px;
+		}
+		.WooZone-products-summary .the-item-stat:first-child {
+		}
+		.WooZone-products-summary .the-item-stat:last-child {
+			width: 175px;
+		}
+			.WooZone-products-summary .the-item-stat:hover {
+				background: #ecf0f1;
+				border-radius: 4px;
+			}
+		.WooZone-products-summary .the-item-stat div {
+			float: left;
+			width: 100%;
+		}
+			.WooZone-products-summary .WooZone-summary-icon {
+				display: block;
+				float: left;
+				width: 20px; 
+				height: 20px;
+				border-radius: 2px;
+				position: relative;
+			}
+				.WooZone-products-summary .WooZone-summary-icon img {
+					position: absolute;
+					top: 50%;
+					left: 50%;
+					margin-left: -8px;
+					margin-top: -8px;
+					width: 16px;
+				}
+			.WooZone-products-summary .WooZone-summary-text {
+				display: block;
+				float: left;
+				width: auto;
+				margin: 0px 0px 0px 6px;
+			}
+				.WooZone-products-summary .WooZone-summary-text span,
+				.WooZone-products-summary .WooZone-summary-text span:first-child,
+				.WooZone-products-summary .WooZone-summary-text span:last-child {
+					color: inherit;
+    				display: inline;
+    				font-family: inherit;
+					font-size: 12px;
+					font-weight: normal;
+					width: 100%;
+				}
+				.WooZone-products-summary .the-item-stat div:first-child .WooZone-summary-text span:first-child {
+					font-weight: bold;
+				}
+				.WooZone-products-summary .the-item-stat div:last-child {
+					float: right;
+				}
+				.WooZone-products-summary .the-item-stat div:last-child .WooZone-summary-text {
+					margin: 0px;
+					float: right;
+				}
+				
+	table.WooZone-top-products tr .WooZone-prod-position {
+		float: left;
+		width: 45px; 
+		height: 20px; 
+		position: relative;
+	}
+		table.WooZone-top-products tr .WooZone-prod-position span {
+			display: block;
+			background: #5A1977;
+			width: 34px;
+			height: 22px;
+			line-height: 22px;
+			border-radius: 5px;
+			font-weight: bold;
+			color: #fff;
+			text-align: center;
+			position: absolute;
+			top: 50%;
+			left: 0%;
+			margin-top: -10px;
+			vertical-align: center;
+		}
+				
+		table.WooZone-top-products tr:nth-child(1) .WooZone-prod-position span {
+			background: #f1c40f;
+		}
+		table.WooZone-top-products tr:nth-child(2) .WooZone-prod-position span {
+			background: #bdc3c7;
+		}
+		table.WooZone-top-products tr:nth-child(3) .WooZone-prod-position span {
+			background: #e67e22;
+		}
+		
+	.WooZone-prod-stats-number {
+		padding: 2px 8px 2px 8px;
+		border-radius: 4px;
+		background: #bdc3c7;
+		color: #fff;
+	}
+	.WooZone-prod-stats-number.hits {
+		background: #f39c12;
+		color: #fff;
+	}
+	.WooZone-prod-stats-number.add-to-cart {
+		background: #1abc9c;
+		color: #fff;
+	}
+	.WooZone-prod-stats-number.redirect-to-amazon {
+		background: #3498db;
+		color: #fff;
+	}
+	
+	.WooZone-report-notice {
+		width: 100%;
+		display: table;
+	}
+	.WooZone-report-notice img {
+		display:table-cell;
+	}
+	.WooZone-report-notice span {
+		display:table-cell;
+		vertical-align: bottom;
+		width: 70%;
+		font-size: 12px;
+		color: #b3b3b3;
+		text-align: right;
+		padding-bottom: 7px;
+	}
+</style>
