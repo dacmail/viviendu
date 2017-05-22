@@ -1,0 +1,111 @@
+.woocommerce {
+  &.single-product {
+    .product {
+      .entry-title {
+        text-transform: uppercase;
+        font-size: 35px;
+        margin-bottom: 20px;
+        position: relative;
+        margin-bottom: 40px;
+        @include media(768px) {
+          font-size: 25px;
+        }
+        &:after {
+          display: block;
+          position: absolute;
+          content:" ";
+          bottom:-17px;
+          left: 0px;
+          width: 51px;
+          height: 5px;
+          background-color: #675A5E;
+        }
+      }
+      .WooZone-price-info {
+        display: none;
+      }
+      .quantity {
+        .input-text {
+          @extend input[type=text];
+        }
+      }
+      .single_add_to_cart_button {
+        border: 0px;
+        border-radius: 0px;
+        background-color: $brand-primary;
+        color: #fff;
+        font-size: 21px;
+        font-weight: bold;
+        font-family: "Roboto Condensed";
+        border-radius: 5px;
+        cursor: pointer;
+        -webkit-transition: all 0.2s ease-in;
+        -o-transition: all 0.2s ease-in;
+        transition: all 0.2s ease-in;
+        padding:0px 12px;
+        line-height: 40px;
+        text-align: center;
+      }
+    }
+  }
+  .woocommerce-products-header__title {
+    @extend .title;
+    @extend .tit-sep;
+  }
+  .results-orders {
+    display: flex;
+    justify-content: space-between;
+  }
+  nav.woocommerce-pagination {
+    ul {
+      li {
+        float: none;
+        a, span {
+          padding: 5px 10px;
+          &:hover,
+          &:focus,
+          &.current {
+            background: $brand-primary;
+            color: #fff;
+            opacity: 0.8;
+          }
+        }
+      }
+    }
+  }
+  .product__list {
+    list-style: none;
+    padding: 0px;
+    marging: 0px;
+    .product {
+      margin-bottom:30px;
+      flex: 0 0 25%;
+      max-width: 25%;
+      padding-left:15px;
+      padding-right: 15px;
+      display: flex;
+      flex-flow: column;
+      justify-content: space-between;
+      .woocommerce-loop-product__title {
+        font-size: 18px;
+        text-transform: uppercase;
+      }
+      .price {
+        font-size: 25px;
+        display: block;
+        text-align: right;
+      }
+      .attachment-shop_catalog {
+        width: 100%;
+        max-height: 150px;
+        object-fit: cover;
+      }
+      .add_to_cart_button {
+        display: block;
+        @extend .btn;
+        @extend .btn-primary;
+      }
+    }
+  }
+
+}
