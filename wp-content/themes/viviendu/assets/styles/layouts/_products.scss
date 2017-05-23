@@ -141,6 +141,10 @@
   nav.woocommerce-pagination {
     ul {
       width: auto;
+      &.page-numbers {
+        background: transparent;
+        border: 0px;
+      }
       li {
         float: none;
         a, span {
