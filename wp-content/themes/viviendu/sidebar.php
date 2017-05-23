@@ -1,5 +1,5 @@
 <?php if (class_exists('Woocommerce')) : ?>
-	<?php if (!is_shop()) : ?>
+	<?php if (!is_woocommerce()) : ?>
 		<div id="sidebar" class="sidebar col-sm-4 offset-sm-1">
 			<div class="widget">
 				<?php get_search_form(true); ?>

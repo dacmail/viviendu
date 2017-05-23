@@ -1,4 +1,34 @@
 .woocommerce {
+  .button,
+  a.button,
+  button.button,
+  input.button
+  .actions .button,
+  .woocommerce-cart .wc-proceed-to-checkout a.checkout-button,
+  a.button.alt {
+    @extend .btn;
+    &:hover {
+      color: #fff;
+    }
+  }
+  .wc-proceed-to-checkout a.checkout-button {
+    line-height: 50px;
+    &:hover {
+      background-color: rgba($brand-primary, 0.5);
+    }
+  }
+  .woocommerce-error,
+  .woocommerce-info,
+  .woocommerce-message {
+    border-top-color: $brand-primary;
+  }
+  .shop_table {
+    .quantity {
+      .text {
+        @extend input[type=text];
+      }
+    }
+  }
   &.single-product {
     .product {
       .entry-title {
@@ -45,6 +75,58 @@
         padding:0px 12px;
         line-height: 40px;
         text-align: center;
+        &:hover {
+          background-color: $brand-primary;
+          opacity: 0.8;
+        }
+        &.disabled {
+          background-color: #ccc;
+          opacity: 0.5;
+          &:hover {
+            background-color: #ccc;
+            opacity: 0.5;
+          }
+        }
+      }
+      .WooZone-country-check {
+        margin-bottom: 10px;
+      }
+      .price {
+        font-size: 40px;
+        text-align: right;
+      }
+      .variations {
+        tr {
+          td {
+            padding: 10px 0px;
+          }
+        }
+      }
+      .woocommerce-tabs {
+        ul.tabs {
+          li {
+            border-radius: 0px;
+            border-color: $brand-primary;
+            background-color: rgba($brand-primary, 0.2);
+            margin: 0;
+            &:before,
+            &:after {
+              display: none;
+            }
+            a {
+              font-weight: 400;
+              text-transform: uppercase;
+            }
+          }
+        }
+      }
+      .related.products {
+        h2 {
+          margin-bottom: 30px;
+        }
+        .product__list {
+          @extend .product__list;
+        }
       }
     }
   }
@@ -58,6 +140,7 @@
   }
   nav.woocommerce-pagination {
     ul {
+      width: auto;
       li {
         float: none;
         a, span {
@@ -76,9 +159,12 @@
   .product__list {
     list-style: none;
     padding: 0px;
-    marging: 0px;
+    margin: 0px;
+    margin-left: -15px;
+    margin-right: -15px;
     .product {
-      margin-bottom:30px;
+      position: relative;
+      margin-bottom:50px;
       flex: 0 0 25%;
       max-width: 25%;
       padding-left:15px;
@@ -94,6 +180,13 @@
         font-size: 25px;
         display: block;
         text-align: right;
+        .WooZone-free-shipping {
+          display: block;
+          font-size: 13px;
+        }
+      }
+      .link {
+        display: none; //amazon help
       }
       .attachment-shop_catalog {
         width: 100%;
@@ -102,8 +195,8 @@
       }
       .add_to_cart_button {
         display: block;
+        margin-top: 15px;
         @extend .btn;
-        @extend .btn-primary;
       }
     }
   }
