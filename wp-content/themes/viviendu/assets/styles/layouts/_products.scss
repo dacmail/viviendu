@@ -137,6 +137,9 @@
   .results-orders {
     display: flex;
     justify-content: space-between;
+    @include media(768px) {
+      flex-flow: column;
+    }
   }
   nav.woocommerce-pagination {
     ul {
@@ -176,9 +179,17 @@
       display: flex;
       flex-flow: column;
       justify-content: space-between;
+      @include media(768px) {
+        flex: 0 0 100%;
+        max-width: 100%;
+      }
       .wc-tax-shortcode & {
         flex: 0 0 33%;
         max-width: 33%;
+        @include media(768px) {
+          flex: 0 0 100%;
+          max-width: 100%;
+        }
       }
       .woocommerce-loop-product__title {
         font-size: 18px;

@@ -65,4 +65,11 @@
     return $menu . $social;
 
   }
+
+  //Default order in WOO Shortcode set to DESC
+  add_filter('woocommerce_shortcode_products_query', 'wh_woocommerce_shortcode_products_orderby');
+  function wh_woocommerce_shortcode_products_orderby($args) {
+    $args['order'] = 'DESC';
+    return $args;
+  }
 ?>
