@@ -2,7 +2,6 @@
 <?php if (!empty($shorcode)): ?>
   <section class="wc-tax-shortcode">
     <h2 class="title mini tit-sep">Productos</h2>
-
     <?php echo do_shortcode($shorcode); ?>
   </section>
 <?php endif ?>
