@@ -57,6 +57,10 @@
         display: block;
         border-right: 0px;
       }
+      &.cart {
+        min-width: 0px;
+        padding: 0px 0px 0px 10px;
+      }
       &:last-child {
         border:0px;
       }

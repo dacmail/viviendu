@@ -197,7 +197,7 @@
         max-height: 150px;
         object-fit: cover;
       }
-      .add_to_cart_button {
+      .add_to_cart_button, .added_to_cart {
         display: block;
         margin-top: 15px;
         @extend .btn;
