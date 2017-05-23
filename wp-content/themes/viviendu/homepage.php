@@ -52,7 +52,7 @@
 				<?php include(locate_template('templates/list-terms.php')); ?>
 			</div>
 			<div class="col-sm-6 col-sm-offset-1">
-				<?php $list = array('term' => 'product', 'class' => 'col-md-6 col-sm-12', 'icon' => 'fa-star', 'args' => array('hide_empty' => 0, 'orderby' => 'count', 'number' => 36, 'order' => 'desc')); ?>
+				<?php $list = array('term' => 'oferta', 'class' => 'col-md-6 col-sm-12', 'icon' => 'fa-star', 'args' => array('hide_empty' => 0, 'orderby' => 'count', 'number' => 36, 'order' => 'desc')); ?>
 				<h2 class="title mini nm">Tipos de casas prefabricadas</h2>
 				<p class="subtitle">Las casas prefabricadas y viviendas móviles pueden ser de muchos tipos y en Viviendu los tenemos todos. Accede directamente a las opciones de viviendas que mejor se adaptan a tus necesidades y preferencias.</p>
 				<?php include(locate_template('templates/list-terms.php')); ?>

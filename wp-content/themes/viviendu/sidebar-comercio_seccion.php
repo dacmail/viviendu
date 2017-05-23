@@ -5,7 +5,7 @@
 	<div class="widget share">
 		<div class="addthis_sharing_toolbox"></div>
 	</div>
-	<?php $products = get_the_terms(get_the_ID(), 'product' ); ?>
+	<?php $products = get_the_terms(get_the_ID(), 'oferta' ); ?>
 	<?php if (!empty($products)): ?>
 		<div class="widget">
 			<h2 class="title mini"><?php echo single_term_title(); ?></h2>

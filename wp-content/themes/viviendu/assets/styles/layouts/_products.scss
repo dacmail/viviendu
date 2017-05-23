@@ -176,6 +176,10 @@
       display: flex;
       flex-flow: column;
       justify-content: space-between;
+      .wc-tax-shortcode & {
+        flex: 0 0 33%;
+        max-width: 33%;
+      }
       .woocommerce-loop-product__title {
         font-size: 18px;
         text-transform: uppercase;

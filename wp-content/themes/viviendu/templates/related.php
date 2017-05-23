@@ -12,7 +12,7 @@
 	</article>
 	<?php $exclude_posts[] = get_the_ID(); ?>
 	<?php $related_categories = array_merge($related_categories,wp_get_post_terms(get_the_ID(), 'category')); ?>
-	<?php $related_categories = array_merge($related_categories, wp_get_post_terms(get_the_ID(), 'product')); ?>
+	<?php $related_categories = array_merge($related_categories, wp_get_post_terms(get_the_ID(), 'oferta')); ?>
 <?php endwhile; ?>
 <?php $related_categories = array_unique($related_categories,SORT_REGULAR); ?>
 <?php wp_reset_query(); ?>

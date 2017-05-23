@@ -37,7 +37,7 @@
 						<?php endif; ?>
 					</div>
 					<?php endif; ?>
-					<?php $products = get_the_terms( get_the_ID(), 'product' ); ?>
+					<?php $products = get_the_terms( get_the_ID(), 'oferta' ); ?>
 					<?php if (!empty($products)): ?>
 						<div class="row">
 							<div class="col-sm-12"><h2 class="title mini">Otras propuestas de casas prefabricadas y viviendas móviles</h2></div>

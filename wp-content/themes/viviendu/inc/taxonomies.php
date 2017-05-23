@@ -1,4 +1,4 @@
-<?php 
+<?php
 	/* Create custom taxonomies */
 	function viviendu_create_taxonomies() {
 		register_taxonomy('comercio','post',array(
@@ -26,7 +26,7 @@
 			'hierarchical' => true,
 			'rewrite' => array('slug' => 'g')
 		));
-		register_taxonomy('product','post',array(
+		register_taxonomy('oferta','post',array(
 			'label' => 'Etiquetas de catálogo',
 			'hierarchical' => false,
 			'rewrite' => array('slug' => 'ofertas')
@@ -53,7 +53,7 @@
 							'post_tag',
 							array('slug' => $tag_slug)
 						);
-						$term_id = $term['term_id']; 
+						$term_id = $term['term_id'];
 					} else {
 						$term_id = $tag_exists->term_id;
 					}
@@ -79,11 +79,11 @@
 					$tag_exists = get_term_by('slug', $tag_slug, 'comercio_provincia');
 					if (!$tag_exists) {
 						$term = wp_insert_term(
-							$com->name . " en " . $prov->name, //Empresa en Provincia							
+							$com->name . " en " . $prov->name, //Empresa en Provincia
 							'comercio_provincia',
 							array('slug' => $tag_slug)
 						);
-						$term_id = $term['term_id']; 
+						$term_id = $term['term_id'];
 					} else {
 						$term_id = $tag_exists->term_id;
 					}
@@ -113,7 +113,7 @@
 						array('slug' => $tag_slug)
 					);
 					if (is_array($term)) {
-						$term_id = $term['term_id']; 
+						$term_id = $term['term_id'];
 					} else {
 						wp_mail('dacmail@gmail.com', 'Error al crear comercio_seccion', $post_ID .  json_encode($categorias) . json_encode($comercios));
 					}
@@ -145,7 +145,7 @@
 						'seccion_provincia',
 						array('slug' => $tag_slug)
 					);
-					$term_id = $term['term_id']; 
+					$term_id = $term['term_id'];
 				} else {
 					$term_id = $tag_exists->term_id;
 				}
@@ -210,18 +210,39 @@
 				'name'=> 'Logotipo'
 			)
 		);
-		
+
 		//Finish Meta Box Decleration
 		$comercio_meta->Finish();
+
+		//Shortcode in taxonomies
+		$shortcode_tax =  new Tax_Meta_Class(array(
+			'id' => 'shortcode',          // meta box id, unique per meta box
+			'title' => 'WooCommerce Shortcode',          // meta box title
+			'pages' => array('category', 'post_tag', 'oferta'),        // taxonomy name, accept categories, post_tag and custom taxonomies
+			'context' => 'normal',            // where the meta box appear: normal (default), advanced, side; optional
+			'fields' => array(),            // list of meta fields (can be added by field arrays)
+			'local_images' => false,          // Use local or hosted images (meta box images for add/remove)
+			'use_with_theme' => true          //change path if used with theme set to true, false for a plugin or anything else for a custom path(default false).
+		));
+
+		$shortcode_tax->addText(
+			$prefix . 'wc_shortcode',
+			array(
+				'name'=> 'WooCommerce Shortcode <br>(ej. [product_category category="jardin"] <br> <a target="_blank" href="https://docs.woocommerce.com/document/woocommerce-shortcodes/">+info</a>)',
+			)
+		);
+		$shortcode_tax->Finish();
+
+
 	}
 
-	// Taxonomy description tinyMCE 
+	// Taxonomy description tinyMCE
 	add_action('init', 'kws_rich_text_tags', 9999);
 	function kws_rich_text_tags() {
-		
+
 		global $wpdb, $user, $current_user, $pagenow, $wp_version;
-		
-		
+
+
 		// ADD EVENTS
 		if(
 		$pagenow == 'edit-tags.php' ||
@@ -236,32 +257,32 @@
 			wp_enqueue_style('editor-buttons');
 
 			$taxonomies = get_taxonomies();
-			
+
 			foreach($taxonomies as $tax) {
 				add_action($tax.'_edit_form_fields', 'kws_add_form');
 				add_action($tax.'_add_form_fields', 'kws_add_form');
 			}
-			
+
 			add_filter('attachment_fields_to_edit', 'kws_add_form_media', 1, 2);
 			add_filter('media_post_single_attachment_fields_to_edit', 'kws_add_form_media', 1, 2);
-			
+
 			if($pagenow == 'edit-tags.php' && isset($_REQUEST['action']) && $_REQUEST['action'] == 'edit' && empty($_REQUEST['taxonomy'])) {
 				add_action('edit_term','kws_rt_taxonomy_save');
 			}
-			
+
 			foreach ( array( 'pre_term_description', 'pre_link_description', 'pre_link_notes', 'pre_user_description' ) as $filter ) {
 				remove_filter( $filter, 'wp_filter_kses' );
 			}
-			
+
 			add_action('show_user_profile', 'kws_add_form', 1);
 			add_action('edit_user_profile', 'kws_add_form', 1);
 			add_action('edit_user_profile_update', 'kws_rt_taxonomy_save');
-			
+
 			if(empty($_REQUEST['action'])) {
 				add_filter('get_terms', 'kws_shorten_term_description');
 			}
 		}
-		
+
 		// Enable shortcodes in category, taxonomy, tag descriptions
 		if(function_exists('term_description')) {
 			add_filter('term_description', 'do_shortcode');
@@ -281,15 +302,15 @@
 
 	function kws_add_form_media($form_fields, $post) {
 		$form_fields['post_content']['input'] = 'html';
-		
+
 		// We remove the ' and " from the $name so it works for tinyMCE.
 		$name = "attachments[$post->ID][post_content]";
 
 		// Let's grab the editor.
 		ob_start();
-		wp_editor($post->post_content, $name, 
+		wp_editor($post->post_content, $name,
 				array(
-					'textarea_name' => $name, 
+					'textarea_name' => $name,
 					'editor_css' => kws_rtt_get_css(),
 				)
 		);
@@ -312,13 +333,13 @@
 
 	function kws_add_form($object = ''){
 		global $pagenow;?>
-		
+
 		<style type="text/css">
 			.quicktags-toolbar input { width:auto!important; }
 			.wp-editor-area {border: none!important;}
 		</style>
-		
-		<?php 
+
+		<?php
 		// This is a profile page
 		if(is_a($object, 'WP_User')) {
 			$content = html_entity_decode(get_user_meta($object->ID, 'description', true));
@@ -328,15 +349,15 @@
 		<tr>
 			<th><label for="description"><?php _e('Biographical Info'); ?></label></th>
 
-			<td><?php wp_editor($content, $editor_id, 
+			<td><?php wp_editor($content, $editor_id,
 				array(
-					'textarea_name' => $editor_selector, 
+					'textarea_name' => $editor_selector,
 					'editor_css' => kws_rtt_get_css(),
 				)); ?><br />
 			<span class="description"><?php _e('Share a little biographical information to fill out your profile. This may be shown publicly.'); ?></span></td>
 		</tr>
 	<?php
-		} 
+		}
 		// This is a taxonomy
 		else {
 			$content = is_object($object) && isset($object->description) ? html_entity_decode(htmlentities(trim(stripslashes($object->description)))) : '';
@@ -349,14 +370,14 @@
 			?>
 	<tr class="form-field">
 		<th scope="row" valign="top"><label for="description"><?php _ex('Description', 'Taxonomy Description'); ?></label></th>
-		
+
 		<td><?php wp_editor(htmlspecialchars_decode($content), $editor_id, array(
-					'textarea_name' => $editor_selector, 
+					'textarea_name' => $editor_selector,
 					'editor_css' => kws_rtt_get_css(),
 		)); ?><br />
 		<span class="description"><?php _e('The description is not prominent by default, however some themes may show it.'); ?></span></td>
 	</tr>
-	<?php 
+	<?php
 
 		}
 
