@@ -1,4 +1,28 @@
 .woocommerce {
+  #cross-sell-add-to-cart {
+    margin-top:15px;
+    display: block;
+    &:before {
+      content: "Añadir al carrito";
+      @extend .btn;
+    }
+    img {
+      display: none;
+    }
+  }
+  #cross-sell-buying-price {
+    &.price {
+      font-size: 25px;
+    }
+  }
+  #cross-sell-bpt {
+    font-size: 0px;
+    text-indent:-99999px;
+    &:before {
+      font-size: 16px;
+      content: "Precio total";
+    }
+  }
   .button,
   a.button,
   button.button,
