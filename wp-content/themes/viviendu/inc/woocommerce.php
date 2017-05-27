@@ -9,7 +9,13 @@
 
   add_action('woocommerce_before_main_content', 'viviendu_wc_outpup_content_wrapper', 10);
   function viviendu_wc_outpup_content_wrapper() {
-    echo '<section class="container section">';
+    if (is_product()) {
+       echo '<section class="container section">';
+    } else {
+      echo '<div class="container section">
+              <div class="row">
+                <section class="col-sm-8">';
+    }
   }
   add_action('woocommerce_after_main_content', 'viviendu_wc_outpup_content_wrapper_end', 10);
   function viviendu_wc_outpup_content_wrapper_end() {

@@ -26,6 +26,14 @@
       'after_title' => '</h4>',
       'name' => 'Barra Lateral'
      ));
+     register_sidebar(array(
+      'id' => 'product-list',
+      'before_widget' => '<div id="%1$s" class="widget %2$s">',
+      'after_widget' => '</div>',
+      'before_title' => '<h4 class="title">',
+      'after_title' => '</h4>',
+      'name' => 'Listado productos'
+     ));
   }
 
 

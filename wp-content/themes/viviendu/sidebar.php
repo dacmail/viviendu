@@ -1,5 +1,13 @@
 <?php if (class_exists('Woocommerce')) : ?>
-	<?php if (!is_woocommerce()) : ?>
+	<?php if (is_woocommerce()) : ?>
+		<?php if (!is_product()): ?>
+					<div class="sidebar col-sm-4">
+						<?php dynamic_sidebar("product-list"); ?>
+					</div>
+				</div>
+			</div>
+		<?php endif ?>
+	<?php else : ?>
 		<div id="sidebar" class="sidebar col-sm-4 offset-sm-1">
 			<div class="widget">
 				<?php get_search_form(true); ?>

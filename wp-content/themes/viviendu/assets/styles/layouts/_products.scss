@@ -150,6 +150,14 @@
         }
         .product__list {
           @extend .product__list;
+          .product {
+            flex: 0 0 25% !important;
+            max-width: 25% !important;
+            @include media(768px) {
+              flex: 0 0 100%;
+              max-width: 100%;
+            }
+          }
         }
       }
     }
@@ -196,8 +204,8 @@
     .product {
       position: relative;
       margin-bottom:50px;
-      flex: 0 0 25%;
-      max-width: 25%;
+      flex: 0 0 33%;
+      max-width: 33%;
       padding-left:15px;
       padding-right: 15px;
       display: flex;
