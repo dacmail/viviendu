@@ -60,7 +60,7 @@
 
   //Exclude pages from search
   function viviendu_search_filter($query) {
-    if ($query->is_search) {
+    if ($query->is_search && empty(get_query_var('post_type'))) {
       $query->set('post_type', 'post');
     }
     return $query;
