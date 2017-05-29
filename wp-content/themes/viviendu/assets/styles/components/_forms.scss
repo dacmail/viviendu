@@ -1,0 +1,94 @@
+/*MAILCHIMP FORMS */
+#mc_embed_signup .mc-field-group.input-group input[type=checkbox] {
+  margin-right: 5px;
+}
+#mc_embed_signup .mc-field-group .asterisk {
+  top:-4px !important;
+  right:auto !important;
+  color:#ccc;
+}
+#mc_embed_signup .mc-field-group strong {
+  text-transform: uppercase;
+  color:#000;
+  font-weight: normal;
+  font-size: 18px;
+}
+
+/* Presupuesto form */
+textarea.input-block {
+  height:200px;
+  padding:10px;
+}
+select {
+  font-size:20px;
+}
+.page-template-page-contactar label {
+  display:inline-block;
+  margin-bottom: 5px;
+}
+/* Contact form */
+input[type=text], input[type=email] {
+  background-color: transparent;
+  border:1px solid #E5E5E5;
+  border-radius: 10px;
+  height: 40px;
+  line-height: 40px;
+  padding:0px 10px;
+  font-size: 14px;
+}
+textarea {
+  padding:0px 10px;
+  font-size: 14px;
+  background-color: transparent;
+  border:1px solid #E5E5E5;
+  border-radius: 10px;
+}
+.wpcf7-submit {
+  border:0px;
+  border-radius: 10px;
+  line-height: 40px;
+  height: 40px;
+  padding:0px 15px;
+  background: #323232;
+  color:#fff;
+  font-size: 15px;
+  text-transform: uppercase;
+}
+.wpcf7 textarea,
+.wpcf7 input[type=text],
+.wpcf7 input[type=email],
+.input-block {
+  width: 100%;
+}
+
+/* Buttons */
+a.btn, input.btn {
+  border: 0px;
+  border-radius: 0px;
+  background-color: $brand-primary;
+  color: #fff;
+  font-size: 21px;
+  font-weight: bold;
+  font-family: "Roboto Condensed";
+  border-radius: 5px;
+  cursor: pointer;
+  -webkit-transition: all 0.2s ease-in;
+  -o-transition: all 0.2s ease-in;
+  transition: all 0.2s ease-in;
+  padding:5px 12px;
+  text-align: center;
+}
+a.btn:hover, input.btn {background-color: $brand-primary;}
+a.btn-block, input.btn-block {
+  display: block;
+  width: 100%;
+}
+.btn.btn-primary {
+  background-color:#323232;
+}
+.btn.btn-secondary {
+  background-color: rgba(118, 192, 164, 0.7);
+}
+.btn-more-products {
+  margin-bottom: 60px;
+}

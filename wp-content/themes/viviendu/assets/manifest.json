@@ -1,0 +1,36 @@
+{
+  "dependencies": {
+    "cycle.js": {
+      "files": [
+        "scripts/cycle.js"
+      ]
+    },
+    "main.js": {
+      "files": [
+        "scripts/main.js"
+      ],
+      "main": true
+    },
+    "main.css": {
+      "files": [
+        "styles/main.scss"
+      ],
+      "main": true
+    },
+    "jquery.js": {
+      "bower": ["jquery"]
+    },
+    "fontawesome": {
+      "main": [
+        "./scss/font-awesome.scss",
+        "./fonts/*"
+      ]
+    },
+    "fonts": {
+      "files": ["fonts/**/*", "../bower_components/**/*.{eot,otf,svg,ttc,ttf,woff,woff2}"]
+    }
+  },
+  "config": {
+    "devUrl": "http://viviendu.dev"
+  }
+}

@@ -1,0 +1,247 @@
+All notable changes to this project will be documented here.
+
+## [9.0.4.5] - 16.05.2017
+- fixed compatibility issue with cache plugins
+- cross sell (Frequently bought together box): fixed some issues; added new option "Debug IP List" ( in module amazon config / new tab "Debug" )
+- fixed bug: unknown column 'a.nb_tries' in 'where clause'...
+- fixed bug: Request-URI Too Long / The requested URL's length exceeds the capacity limit for this server.", which occures when you click the "Empty Trash" button in admin products listing / trash view
+- solved some plugin notices
+- fixed compatibility with wordpress installer
+- solved bug regarding remote amazon images display in wp-admin/upload.php
+- OPTIMIZATION (modification) - cached requests made by the plugin for hooks "wp_get_attachment_url", "wp_calculate_image_srcset" to decrease page loading time - this means that your website will load faster / we've improved the implementation for this functionality: you also have now to 2 options in module amazon config / plugin setup: "Cache Product Images?", "Images Cache"
+
+## [9.0.4.4] - 04.05.2017
+- OPTIMIZATION - cached requests made by the plugin for hooks "wp_get_attachment_url", "wp_calculate_image_srcset" to decrease page loading time - this means that your website will load faster
+- OPTIMIZATION - cross sell box (from frontend / product details page) is now ajax loaded - this means that the product details page will load faster
+- fixed an issue with the custom button text on archives and shortcodes
+
+## [9.0.4.3] - 28.04.2017
+- fixed "Delete zero priced products" issue ( "Delete zero priced products" option can be found in "amazon config" module / "Bug Fixes" tab)
+
+## [9.0.4.2] - 27.04.2017
+- fixed some visual issues regarding synchronization log interface (specialy for when you click sync all now button)
+
+## [9.0.4.1] - 24.04.2017
+- added new option "Country Flags as Links?" in amazon config module / plugin setup tab: Choose YES if you want to show the country flags as links, on product details page.
+
+## [9.0.4] - 18.04.2017
+-fixed issue with thumbnails not displaying on cart page
+
+## [9.0.3.5] - 06.04.2017
+- compatibility for WooCommerce 3.0.0
+- fixed error "Call to a member function convert_to_button() on a non-object Error"
+
+## [9.0.3.4] - 28.03.2017
+- added box with "active modules" in "server status" module
+- added "check integrity" functionality to "server status" module 
+
+## [9.0.3.3] - 27.02.2017
+- Using WooZone Chrome Extension create lists and import products into WooZone
+- some core changes to the way we verify plugin installation integrity for tables structure & cronjobs
+
+## [9.0.3.2] - 23.02.2017
+- fixed the "As of" showing an empty string because date/time not set in wordpress settings
+- added new option <"As Of" text font size> in module "amazon config" / "plugin setup" tab
+- added new option <Delete attachments also when you delete product?> in module "amazon config" / "plugin setup" tab
+- cross sell box: solved bug "The item you specified, <ASIN>, is not eligible to be added to the cart. Check the item's availability to make sure it is available" which occured for variable products
+- cross sell box: added options "Cross-selling Nb Products" and "Cross-selling Variable Product" in module "amazon config" / "plugin setup" tab
+
+## [9.0.3.1] - 18.02.2017
+- added new "option" in module "amazon config" / "bug fixes" tab/ "Clean orphaned Wordpress Product Attachments" which removes from your database (wp_posts & wp_postmeta tables) the remained attachments associated to deleted products (if your deleted products had associated "remote amazon images" this option will have a higher rate of success): it is not certain that the option will delete "all remained unassociated attachments"
+
+## [9.0.3] - 17.02.2017
+- removed option "Delete unavailable products" from "Insane Import Settings" plugin menu page (use option "Put amazon products in trash when syncing after" from "amazon config" module / BUG Fixes tab - and choose the number of sync tries after which a product is marked as trashed)
+- solved issue "414 Request-URI Too Large" occuring on Products listing, when using "Bulk actions" dropdown and click Apply on page bottom
+- solved issue: on Synchronization log page, when executing "Sync now", product title field weren't show with the new updated value
+- added amazon request link (as xml request) in module "insane import mode" in the box showed when you click "View messages log"
+- added amazon location / amazon country from where the product is imported, as a meta
+- countries from country availability box on product details page, are now translatable
+
+## [9.0.2.22] - 14.02.2017
+- solved bug coupon html buggy output on product details page when sale price is present
+
+## [9.0.2.21] - 13.02.2017
+- solved bug "empty cart at checkout" generated in some cases for option "checkout email" from "amazon config" / "import SETUP" tab (tested in firefox 51.0.1 & chrome 56)
+
+## [9.0.2.20] - 24.01.2017
+- added option "Import product from merchant" in module "amazon config" / "import SETUP" tab - which can let you import only product selled by amazon (beta version)
+
+## [9.0.2.19] - 09.01.2017
+- added option "Disable amazon checkout" in module "amazon config" / "plugin SETUP" tab
+- solved bug regarding "checkout" : WooZone_before_user_checkout (feedback from a client)
+
+## [9.0.2.18] - 28.12.2016
+- solved "bug" Show Amazon Url as Buy Url didn't work as expected!
+
+## [9.0.2.17] - 20.12.2016 - 21.12.2016
+- solved the remote images bug /20.12.2016
+- solved empty cart when both e-mail options disabled /21.12.2016
+- solved bug "cannot put product in trash" on page wp-admin/edit.php?post_type=product /21.12.2016
+
+## [9.0.2.16] - 05.12.2016
+- removed the remote access (alternative to ftp connection) module
+- solved a bug regarding product prices (occurring when "price setup" option is set to "Amazon OR other sellers (get lowest price)" and the amazon API response contains the sequence ['Offers']['Offer']['OfferListing']['Price']['Amount'])
+
+## [9.0.2.15] - 26.11.2016
+- fixed some notices which occured when php notices are set to be logged or displayed
+
+## [9.0.2.14] - 20.11.2016
+- solved bug "asin grabber" module & "asin grabber for insane mode module" not working anymore
+
+## [9.0.2.13] - 15.11.2016
+- fixed the HTTPS issue on remote images when ssl is activated
+- fixed mandatory e-mail function
+- added the option to open buy now button in new/current window
+
+## [9.0.2.12] - 01.11.2016
+- fixed W3 Total Cache compatibility with WooZone-country-check box on product detail
+
+## [9.0.2.11] - 31.10.2016
+- fixed some missing images (external request pop-up that appeared on the Insane import module)
+
+## [9.0.2.10] - 27.10.2016
+- solved bug: product country link in country availability box on product details page didn't contain the affiliate tag
+
+## [9.0.2.9] - 23.10.2016
+- solved bug "modules/auto_import/init.php" : chage to-category' => '-1' to 'to_category' => '-1',
+- solved bug "Duplicate column name 'image_sizes' for query ALTER TABLE": changes made in "aa-framework/framework.class.php" in "function update_db()"
+- solved bug translate Text "Available" of Activate Product Availability by Country Box
+- solved bug "insane import module show prices always as $" - now to right currency is showed for products
+
+## [9.0.2.8] - 10.10.2016
+- added new functionality "product countries availability": you can select in frontend, from which amazon shop you want to buy a product (add in woocommerce cart)
+- solved bug "short descriptions" is overwritten at syncing (if "Short description" sync setting is checked and "Product Short Description" amazon config module / Plugin Setup - option is "yes") for variable products
+
+## [9.0.2.7] - 27.09.2016
+- fixed bug related to plugin amzstore: "Error: Unable to use Advanced Search module, yet!" which occures even if you have set the mandatory amazon settings
+- fixed bug "duplicated nodeid for amazon categories not appearing in insane mode module"
+- solved issue with generating admin main-style.css file on some servers
+- created the .po & .mo files for en_GB: can be found in woozone/languages/
+- bug fix: phpQuery "Cannot redeclare class CallbackBody"
+
+## [9.0.2.6] - 22.08.2016
+- fixed the bug $_REQUEST['do'] from aa-framework/framework.class.php
+- probably request to amazon api was dropped! : in some cases where is posible now displays the error received from amazon API
+- product in post updates: 2 new options regarding produc in post module now available in amazon config / plugin setup tab
+
+## [9.0.2.5] - 17.08.2016
+- Empty amazon cart: when redirecting from your website cart to the amazon one.
+
+## [9.0.2.4] - 28.07.2016
+- Added user email collecting & export system before checkout
+
+## [9.0.2.3] - 16.07.2016
+- Bugfix: sale price for variation child: ex.: India - B01EZVRE8K
+- Bugfix: affiliate tag not sent for cross sell box
+- Bugfix: sync statuses are not appearing in Sync Log because of a css issue
+
+## [9.0.2.2] - 15.07.2016
+- Bugfix: cross sell frontend module not displayed properly on responsive & add2cart button hidden on mobile devices
+
+## [9.0.2.1] - 14.07.2016 
+- Bugfix: description not synced for variation products
+- Bugfix: ssl for remote amazon images
+
+## [9.0.2] - 10.07.2016 
+- Bugfix: description not imported for variation products
+
+## [9.0.1] - 02.07.2016 
+- Bugfix on dashboard Loading
+
+## [9.0] - 01.07.2016 - MAJOR RELEASE
+- Changed the Visual Look and Feel of the plugin.
+- Added the most wanted feature: Auto Products Import.
+- New error handling messages.
+- Several bug fixes.
+
+## [8.4.1.5] - 25.05.2016
+- added the option to remove duplicate product featured image in product gallery 
+
+## [8.4.1.3] - 23.02.2016
+- added "Close button" to the 'Install default config' message (solved the bug which exists in the version 8.4.1.2 for this close button)
+- solved bug: amazon config / plugin setup tab / option "Show buy url as Amazon url" set on "Yes" changes the link on the woocommerce product page, but not in the product in a post widget.
+- solved bug regardind the cross sell (Frequently bought together box from frontend product page) prices and currency symbol
+
+## [8.4.1.2] - 26.01.2016
+- solved the "Warning: Illegal string offset 'request_amazon'..." issue
+- added dissmiss button for the default install bar
+
+## [8.4.1.1] - 19.01.2016
+- solved the bug "checkout redirect to amazon not working" which occures after woocommerce 2.5.0 update
+
+## [8.4.1] - 12.01.2016
+- solved bug: the amazon config settings were overwritten by some default settings when updating to plugin version 8.4 
+- solved request: "as of" appears now only once alongside the product price
+
+## [8.4] - 14.12.2015
+- solved bug: products synchronization & stats interface breaks on too many products in database - now the interface have a pagination system
+- update: AA-Team amazon config keys are set by default in "modules/setup_backup/default-setup.json"; try to generate your own keys after you make some tests with the plugin using AA-Team default keys
+- solved bug: "as of" missing for new imported products (bug generated in case the product wasn't synced at least once)
+- Insane Mode module/ added "check all" selection for products loaded in queue!
+- solved bug: "Request-URI too long" which occured on wp admin panel / products list section
+- added the PSP "Modules Manager" module version (with multiple modules activate/deactivate operation)
+- solved bug: which occured when importing variable products with default status = draft => the variation were not available and the product become "This product is currently out of stock and unavailable."
+- solved bug for product attributes: for example when in frontend an attribute like size had only one value (like "one size") the dropdown didn't have any value!
+
+## [8.3] - 18.09.2015
+- added Amazon API access for Mexico, Brazil (Affiliate IDs configurable in the Amazon config module)
+
+## [8.2.2] - 26.08.2015 
+- Fixed "Import Insane Mode" bug:
+	- when importing products, categories from amazon are not imported in website
+	- added new option "Fix Product Attributes (woocommerce 2.4 update)" on Amazon config / Bug Fixes - need to be run for products already existing in website database
+- Fixed "Variations" not displayed anymore bug: for variable products
+
+## [8.2.1] - 30.06.2015
+- Fixed issue for items with multiple "Reviews".
+
+## [8.2] - 29.06.2015
+Feature Added: New import module called Insane Mode - this allows you to import 50 products at once per general search and 100 products at once per categories / subcategories
+
+## [8.1.3] - 29.05.2015
+Fix - variable products "Buy at Amazon" button bug: added the product to cart even if the product should be redirected to amazon instead
+
+## [8.1.3] - 28.05.2015
+Fix - Content Spinner not working on some servers when using WP_filesystem. Try to get treasure file with php native function
+
+## [8.1.3] - 05.05.2015
+- Already imported function now checks for postmeta "_amzASIN" only on posts that have post_type "product" or "product_variation"
+- Tool "Clean Orphaned AMZ Meta" now also deletes "_amzASIN" from postmeta if assigned to invalid post types. Post Types taken into consideration are only "product" and "product_variation"
+- Product "As of" date & time localization using wordpress admin selected ones (date & time format)
+- Fixed amzStore_bulk_wp_exist_post_by_args - checks only posts that have post_type "product" or "product_variation" 
+- Fixed when importing a product, if a product has variations, but don't have an associated feature image, then the first image found from the variations array, will be used  
+- fixed bug: product description loose [gallery] when updating: if you choose to update product description in sync settings, then
+the [gallery] shortcode which contains the product images, will be lost after update!
+- fixed bug: product short description cand be updated at synchronization!  
+
+## [8.1.2] - 27.03.2015
+- bug fixes on cronjob products synchronization (bug: sync cycle run once but halted after)
+- fix "www.amazon./gp/aws/cart/add.html missing domain" issue
+- fix "when product has only one variation" issue - with variation attributes
+- added new module for reporting - to be send via email
+- added new option in amazon config module: "Button buy text" to set globally the button buy text for your all your amazon products
+- fix on last sync date in product details page - as of date was inccorect and was not reflecting the last update date
+- Bugfixes on cronjob
+- new module "Plugin Cronjobs"
+	- here you can activate or de-activate the cronjobs associated with our plugin (see documentation for future details)
+- re-designed and greatly improved module "Synchronization log" using the "Plugin Cronjobs" functionality also
+- re-designed and greatly improved module "Products stats" based on "Synchronization log" interface
+- Fixed tool "Clean Orphaned AMZ Meta".
+- On Amazon Config save: Check for and remove mistake in keys after copy/paste them from Amazon
+- Fix, configuration problem with special character: "="
+- New option to enable/disable product short description on import
+- Check if the product have an ASIN meta assigned to it and then display it in the price fix ajax table
+- New option to create only parent categories from Amazon on import instead of the whole category tree
+- Fixed the wordpress menu checkbox flicker when asigning a menu in wordpress admin
+- Fixed the auto-refresh if trying to bulk edit woocommerce products
+- Fixed the CSV bulk import to user specified-category 
+- Autotrim whitespaces on inputs in the Amazon Config area
+
+## [7.0.6] - 28.01.2015
+
+- Hierarchical list of categories for Advanced Search & CSV import module Import In option.
+- Import also "Sales Rank" attribute to products from Amazon
+
+## [7.0.5] - 26.01.2015
+- Added "Sort by Sales Rank" option
+- Synchronize option - "Sales Rank"

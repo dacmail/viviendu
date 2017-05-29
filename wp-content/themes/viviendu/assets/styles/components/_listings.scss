@@ -1,0 +1,98 @@
+/* LISTADOS DE CATALOGOS */
+.catalogo-list {
+  margin-bottom:30px;
+  .cycle-slideshow {
+    max-height: 170px;
+    overflow: hidden;
+  }
+}
+.catalogo {
+  .title {
+    font-size: 19px;
+    text-transform: uppercase;
+    @include media(768px) {
+      font-size: 17px;
+    }
+  }
+}
+.title-category {
+  display: block;
+  text-transform: uppercase;
+  color:$brand-primary;
+  font-size: 13px;
+  margin-bottom: 10px;
+  margin-top:10px;
+  &.main {
+    font-size: 15px;
+    line-height: 20px;
+    margin-top:0px;
+  }
+  a {
+    color:$brand-primary;
+  }
+}
+
+/* LISTADO SECCIONES */
+.seccion-list {
+  position: relative;
+  margin-bottom: 30px;
+  .wp-post-image {
+    display: block;
+  }
+  .title {
+    position: absolute;
+    bottom: 0px;
+    left: 0px;
+    padding:10px;
+    width: 100%;
+    background: $brand-primary;
+    background:rgba(118, 192, 165, 0.9);
+    margin-bottom:0px;
+    a {
+      height: 100%;
+      display: table;
+      width: 100%;
+    }
+  }
+  &:hover {
+    .title {
+      height: 100%;
+      background: $brand-primary;
+      background:rgba(118, 192, 165, 1);
+    }
+  }
+  .title-category {
+    color:#fff;
+    margin-bottom: 0px;
+    font-weight: bold;
+    text-align: center;
+    display: table-cell;
+    vertical-align: middle;
+  }
+}
+
+
+/* LISTADOS DE TAXONOMÍAS */
+.list-terms {
+  li {
+    list-style: none;
+    font-weight: 300;
+    margin-bottom: 2px;
+    text-transform: capitalize;
+    font-family: "Roboto Condensed";
+    @include media(768px) {
+      font-size: 17px;
+    }
+    .fa {
+      font-size: 11px;
+      top: -1px;
+      position: relative;
+      margin-right: 5px;
+      color: #8da99f;
+    }
+  }
+  &.provincias {
+    margin-bottom: 50px;
+    width: 100%;
+  }
+}

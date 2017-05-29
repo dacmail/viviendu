@@ -1,0 +1,43 @@
+/* adding custom product info on the edit product page */
+.wp-core-ui .woocommerce_variations .woocommerce_variation .WooZone_asin {
+    margin-top: 8px;
+}
+.wp-core-ui .WooZone_asin_field a.button.button-primary {
+    display: inline-block;
+    margin-left: 7px;
+}
+
+/* adding custom product info on the product listing page */
+th#WooZone_product_info { 
+	width: 170px; 
+}
+	td.WooZone_product_info .WooZoneWoocustomFields span:first-child {
+	    color: green;
+	    font-weight: bold;
+	    font-size: 14px;
+	    vertical-align: bottom;
+	}
+	td.WooZone_product_info .WooZoneWoocustomFields a {
+	    vertical-align: bottom;
+	    margin-left: 4px;
+	}
+	td.WooZone_product_info .WooZoneWoocustomFields span:last-child {
+	    vertical-align: bottom;
+	    margin-left: 1px;
+	}
+	
+
+/* woocommerce fix thumb for remote images with https - on product listing page - admin product listing wp-admin/edit.php?post_type=product */
+table.wp-list-table .column-thumb_woozone {
+    width: 52px;
+    text-align: center;
+    white-space: nowrap;
+}
+	table.wp-list-table td.column-thumb_woozone img {
+	    margin: 0;
+	    width: auto;
+	    height: auto;
+	    max-width: 40px;
+	    max-height: 40px;
+	    vertical-align: middle;
+	}

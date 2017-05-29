@@ -1,0 +1,43 @@
+/* STARS RATING */
+.kk-star-ratings {
+  width:95px;
+  &.lft {
+    margin-top:0px;
+    float: none;
+    margin-bottom:20px;
+    width: 100%;
+    height: 20px;
+    text-align: right;
+    @include media(768px) {
+      text-align: left;
+    }
+  }
+  .kksr-legend {
+    margin-right: 100px;
+    text-align: right;
+    position: relative;
+    top: -3px;
+    @include media(768px) {
+      display: none !important;
+    }
+  }
+  .kksr-star.gray {
+    float: right;
+    @include media(768px) {
+      float:right;
+    }
+  }
+  .kksr-stars a {
+    width:19px;
+  }
+  .kksr-stars,
+  .kksr-stars .kksr-fuel,
+  .kksr-stars a {
+    height:17px;
+  }
+  .kksr-star.gray { background-image: url(//viviendu.com/wp-content/uploads/2015/06/stars_r1_c3.jpg); }
+  .kksr-star.yellow { background-image: url(//viviendu.com/wp-content/uploads/2015/06/stars_r1_c1.jpg); }
+  .kksr-star.orange { background-image: url(//viviendu.com/wp-content/uploads/2015/06/stars_r1_c1.jpg); }
+}
+
+
