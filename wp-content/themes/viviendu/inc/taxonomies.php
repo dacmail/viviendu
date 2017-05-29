@@ -231,6 +231,12 @@
 				'name'=> 'WooCommerce Shortcode <br>(ej. [product_category category="jardin"] <br> <a target="_blank" href="https://docs.woocommerce.com/document/woocommerce-shortcodes/">+info</a>)',
 			)
 		);
+		$shortcode_tax->addText(
+			$prefix . 'wc_shortcode_more',
+			array(
+				'name'=> 'Enlace ver más',
+			)
+		);
 		$shortcode_tax->Finish();
 
 

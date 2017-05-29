@@ -8,7 +8,10 @@
 				<div class="text main">
 					<?php echo viviendu_get_paragraph(apply_filters('the_content',$seccion->description)); ?>
 					<?php get_template_part('templates/wc_shortcode'); ?>
-					<p><a href="https://viviendu.com/pedir-presupuesto/" class="btn btn-block btn-contact btn-lead-section">Pedir presupuesto</a></p>
+					<?php $shorcode = get_tax_meta(get_queried_object()->term_id, 'viviendu_wc_shortcode', true); ?>
+					<?php if (empty($shorcode)): ?>
+						<p><a href="https://viviendu.com/pedir-presupuesto/" class="btn btn-block btn-contact btn-lead-section">Pedir presupuesto</a></p>
+					<?php endif; ?>
 					<div class="row">
 						<?php $related = new WP_Query(array(
 									'posts_per_page' => -1,
