@@ -40,7 +40,7 @@
 		window._fbq.push(['track', '6022865114446', {'value':'0.00','currency':'EUR'}]);
 	</script>
 	<noscript><img height="1" width="1" alt="" style="display:none" src="https://www.facebook.com/tr?ev=6022865114446&amp;cd[value]=0.00&amp;cd[currency]=EUR&amp;noscript=1" /></noscript>
-	<script src="//code.tidio.co/vkj7cfsxrm7rkkddj6idlcm77ktfsnh9.js"></script>
+	<script src="//code.tidio.co/xtwm4iqk4edj6z9u876w2rh2baes1qfx.js"></script>
 	<?php wp_footer(); ?>
 </body>
 </html>
