@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: WooZone - Wordpress Plugin 9.0.2.7\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2016-09-28 20:20+0300\n"
-"PO-Revision-Date: 2017-05-27 10:28+0200\n"
+"PO-Revision-Date: 2017-05-29 10:05+0200\n"
 "Last-Translator: admin <george@aa-team.com>\n"
 "Language: es_ES\n"
 "MIME-Version: 1.0\n"
@@ -991,7 +991,7 @@ msgstr ""
 
 #: modules/amazon/product-tabs.php:17
 msgid "Amazon Customer Reviews"
-msgstr ""
+msgstr "Valoraciones de Amazon"
 
 #: modules/amazon/product-tabs.php:158
 msgid "Content"

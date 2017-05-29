@@ -6,6 +6,6 @@
     <?php echo do_shortcode($shorcode); ?>
   </section>
   <?php if (!empty($more)): ?>
-    <p><a href="https://viviendu.com/pedir-presupuesto/" class="btn btn-block btn-more-products">Ver más productos</a></p>
+    <p><a href="<?php echo esc_url($more); ?>" class="btn btn-block btn-more-products">Ver más productos</a></p>
   <?php endif; ?>
 <?php endif ?>
