@@ -1,4 +1,16 @@
 .woocommerce {
+  .widget_product_search {
+    .screen-reader-text {
+      display: none;
+    }
+    .search-field {
+      @extend input[type=text];
+      width: 100%;
+    }
+    input[type=submit] {
+      display: none;
+    }
+  }
   #cross-sell-add-to-cart {
     margin-top:15px;
     display: block;
