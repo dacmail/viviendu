@@ -27,6 +27,9 @@
     font-size: 25px;
     position: relative;
     margin-bottom: 30px;
+    @include media(992px) {
+      font-size: 19px;
+    }
   }
   .widget .title:after {
     display: block;
