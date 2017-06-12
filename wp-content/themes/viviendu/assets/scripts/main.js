@@ -148,4 +148,13 @@
       ga('send', 'event', 'Pedir_presu', window.location.pathname, index);
     });
   });
+
+  $('.add_to_cart_button').each(function(index, el) {
+    $(el).on('click', function(event) {
+      ga('send', 'event', 'AddToCart', window.location.pathname, $(el).siblings('a').find('.woocommerce-loop-product__title').text());
+    });
+  });
+  $('.single_add_to_cart_button').on('click', function(event) {
+    ga('send', 'event', 'AddToCart', window.location.pathname, $('h1.product_title').text());
+  });
 })(jQuery);
