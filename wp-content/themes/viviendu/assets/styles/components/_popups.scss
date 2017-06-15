@@ -11,6 +11,7 @@
   visibility: hidden;
   opacity: 0;
   z-index:999999;
+  overflow: scroll;
   &:target {
     visibility: visible;
     opacity: 1;

@@ -1,4 +1,9 @@
 /* STARS RATING */
+.ratings-wrap {
+  @include media(768px) {
+    margin-bottom: 0px !important;
+  }
+}
 .kk-star-ratings {
   width:95px;
   &.lft {
@@ -10,6 +15,7 @@
     text-align: right;
     @include media(768px) {
       text-align: left;
+      margin-bottom: 0px;
     }
   }
   .kksr-legend {

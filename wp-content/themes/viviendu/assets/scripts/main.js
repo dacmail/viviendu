@@ -73,88 +73,90 @@
     }
   });
 
-  $('.main-search form').on('submit', function(event) {
-    ga('send', 'event', 'searchbox', window.location.pathname , $(this).find('#s').val());
-  });
-  $('#search-form').on('submit', function(event) {
-    ga('send', 'event', 'searchbox', window.location.pathname , $(this).find('#s').val());
-  });
-  $('#main-menu a').on('click', function(event) {
-    ga('send', 'event', 'header', window.location.pathname, $(this).attr('href'));
-  });
-  $('.tax-provincia .seccion-list a').each(function(index, el) {
-    $(el).on('click', function(event) {
-      ga('send', 'event', 'nav-prov', window.location.pathname, $(el).attr('href'), index);
+  if (typeof ga != 'undefined') {
+    $('.main-search form').on('submit', function(event) {
+      ga('send', 'event', 'searchbox', window.location.pathname , $(this).find('#s').val());
     });
-  });
-  $('.tax-provincia .catalogo-list a.slide').each(function(index, el) {
-    $(el).on('click', function(event) {
-      ga('send', 'event', 'nav-prov', window.location.pathname, $(el).attr('href'), index);
+    $('#search-form').on('submit', function(event) {
+      ga('send', 'event', 'searchbox', window.location.pathname , $(this).find('#s').val());
     });
-  });
-  $('.tax-provincia .catalogo-list .title a').each(function(index, el) {
-    $(el).on('click', function(event) {
-      ga('send', 'event', 'nav-prov', window.location.pathname, $(el).attr('href'), index);
+    $('#main-menu a').on('click', function(event) {
+      ga('send', 'event', 'header', window.location.pathname, $(this).attr('href'));
     });
-  });
+    $('.tax-provincia .seccion-list a').each(function(index, el) {
+      $(el).on('click', function(event) {
+        ga('send', 'event', 'nav-prov', window.location.pathname, $(el).attr('href'), index);
+      });
+    });
+    $('.tax-provincia .catalogo-list a.slide').each(function(index, el) {
+      $(el).on('click', function(event) {
+        ga('send', 'event', 'nav-prov', window.location.pathname, $(el).attr('href'), index);
+      });
+    });
+    $('.tax-provincia .catalogo-list .title a').each(function(index, el) {
+      $(el).on('click', function(event) {
+        ga('send', 'event', 'nav-prov', window.location.pathname, $(el).attr('href'), index);
+      });
+    });
 
-  $('.tax-provincia_seccion .catalogo-list a.slide').each(function(index, el) {
-    $(el).on('click', function(event) {
-      ga('send', 'event', 'nav-prov2', window.location.pathname, $(el).attr('href'), index);
+    $('.tax-provincia_seccion .catalogo-list a.slide').each(function(index, el) {
+      $(el).on('click', function(event) {
+        ga('send', 'event', 'nav-prov2', window.location.pathname, $(el).attr('href'), index);
+      });
     });
-  });
-  $('.tax-provincia_seccion .catalogo-list .title a').each(function(index, el) {
-    $(el).on('click', function(event) {
-      ga('send', 'event', 'nav-prov2', window.location.pathname, $(el).attr('href'), index);
+    $('.tax-provincia_seccion .catalogo-list .title a').each(function(index, el) {
+      $(el).on('click', function(event) {
+        ga('send', 'event', 'nav-prov2', window.location.pathname, $(el).attr('href'), index);
+      });
     });
-  });
 
-  $('.category .catalogo-list a.slide').each(function(index, el) {
-    $(el).on('click', function(event) {
-      ga('send', 'event', 'sección', window.location.pathname, $(el).attr('href'), index);
+    $('.category .catalogo-list a.slide').each(function(index, el) {
+      $(el).on('click', function(event) {
+        ga('send', 'event', 'sección', window.location.pathname, $(el).attr('href'), index);
+      });
     });
-  });
-  $('.category .catalogo-list .title a').each(function(index, el) {
-    $(el).on('click', function(event) {
-      ga('send', 'event', 'sección', window.location.pathname, $(el).attr('href'), index);
+    $('.category .catalogo-list .title a').each(function(index, el) {
+      $(el).on('click', function(event) {
+        ga('send', 'event', 'sección', window.location.pathname, $(el).attr('href'), index);
+      });
     });
-  });
-  $('.category .link a').each(function(index, el) {
-    $(el).on('click', function(event) {
-      ga('send', 'event', 'sección', window.location.pathname, $(el).attr('href'), index);
+    $('.category .link a').each(function(index, el) {
+      $(el).on('click', function(event) {
+        ga('send', 'event', 'sección', window.location.pathname, $(el).attr('href'), index);
+      });
     });
-  });
 
-  $('.btn-contact').each(function(index, el) {
-    $(el).on('click', function(event) {
-      ga('send', 'event', 'contacto_CTA', window.location.pathname, $(el).attr('id'));
+    $('.btn-contact').each(function(index, el) {
+      $(el).on('click', function(event) {
+        ga('send', 'event', 'contacto_CTA', window.location.pathname, $(el).attr('id'));
+      });
     });
-  });
 
-  $('.btn-visit').each(function(index, el) {
-    $(el).on('click', function(event) {
-      ga('send', 'event', 'visita_CTA', window.location.pathname, $(el).attr('href'), index);
+    $('.btn-visit').each(function(index, el) {
+      $(el).on('click', function(event) {
+        ga('send', 'event', 'visita_CTA', window.location.pathname, $(el).attr('href'), index);
+      });
     });
-  });
 
-  $('.btn-newsletter').each(function(index, el) {
-    $(el).on('click', function(event) {
-      ga('send', 'event', 'newsletter_sidebar', window.location.pathname);
+    $('.btn-newsletter').each(function(index, el) {
+      $(el).on('click', function(event) {
+        ga('send', 'event', 'newsletter_sidebar', window.location.pathname);
+      });
     });
-  });
 
-  $('.btn-lead-section').each(function(index, el) {
-    $(el).on('click', function(event) {
-      ga('send', 'event', 'Pedir_presu', window.location.pathname, index);
+    $('.btn-lead-section').each(function(index, el) {
+      $(el).on('click', function(event) {
+        ga('send', 'event', 'Pedir_presu', window.location.pathname, index);
+      });
     });
-  });
 
-  $('.add_to_cart_button').each(function(index, el) {
-    $(el).on('click', function(event) {
-      ga('send', 'event', 'AddToCart', window.location.pathname, $(el).siblings('a').find('.woocommerce-loop-product__title').text());
+    $('.add_to_cart_button').each(function(index, el) {
+      $(el).on('click', function(event) {
+        ga('send', 'event', 'AddToCart', window.location.pathname, $(el).siblings('a').find('.woocommerce-loop-product__title').text());
+      });
     });
-  });
-  $('.single_add_to_cart_button').on('click', function(event) {
-    ga('send', 'event', 'AddToCart', window.location.pathname, $('h1.product_title').text());
-  });
+    $('.single_add_to_cart_button').on('click', function(event) {
+      ga('send', 'event', 'AddToCart', window.location.pathname, $('h1.product_title').text());
+    });
+  }
 })(jQuery);
