@@ -24,11 +24,8 @@
 					<div class="row voffset30">
 						<?php $location_info = viviendu_location_info(get_tax_meta(get_queried_object()->term_id, 'viviendu_comercio_seccion_comercio', true));  ?>
 						<?php if (!empty($location_info['url'])): ?>
-							<div class="col-sm-6">
+							<div class="col-sm-12">
 								<p><a href="#popup_contacto" class="btn btn-block btn-contact btn-primary" id="btn-contact-content">Contactar con la empresa</a></p>
-							</div>
-							<div class="col-sm-6">
-								<p><a class="btn btn-block btn-visit" target="_blank" href="<?php echo esc_url($location_info['url']); ?>">Visitar web</a></p>
 							</div>
 						<?php else: ?>
 							<div class="col-sm-6 col-sm-offset-3">
