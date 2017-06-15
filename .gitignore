@@ -46,3 +46,4 @@ Temporary Items
 .apdisk
 sftp-config.json
 .DS_Store
+*.sublime-*

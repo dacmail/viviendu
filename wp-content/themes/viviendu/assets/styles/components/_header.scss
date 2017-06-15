@@ -12,7 +12,7 @@
 
   .nav-toggle {
     display: none;
-    @include media(768px) {
+    @include media(992px) {
       display: block;
       float: right;
       font-size: 30px;
@@ -32,7 +32,7 @@
     display: table;
     width: 90%;
     margin: 0px;
-    @include media(768px) {
+    @include media(992px) {
       display: block;
       position: absolute;
       top: 0px;
@@ -53,7 +53,7 @@
       border-right:1px solid #4d4d4d;
       min-width: 75px;
       list-style: none;
-      @include media(768px) {
+      @include media(992px) {
         display: block;
         border-right: 0px;
       }
@@ -79,7 +79,7 @@
         background-color: #F1F1F1;
         display: none;
         z-index: 999;
-        @include media(768px) {
+        @include media(992px) {
           display: block;
           position: relative;
         }
@@ -100,7 +100,7 @@
     }
   }
   &.open .menu {
-    @include media(768px) {
+    @include media(992px) {
       left: 0px;
       height: auto;
     }

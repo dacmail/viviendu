@@ -1,4 +1,7 @@
 .woocommerce {
+  .woocommerce-ordering {
+    margin-bottom: 30px;
+  }
   .widget_product_search {
     .screen-reader-text {
       display: none;
@@ -130,6 +133,9 @@
       .price {
         font-size: 40px;
         text-align: right;
+        del {
+          font-size: 0.5em;
+        }
       }
       .variations {
         tr {
@@ -165,6 +171,10 @@
           .product {
             flex: 0 0 25% !important;
             max-width: 25% !important;
+            @include media(992px) {
+              flex: 0 0 50%;
+              max-width: 50%;
+            }
             @include media(768px) {
               flex: 0 0 100%;
               max-width: 100%;
@@ -223,6 +233,10 @@
       display: flex;
       flex-flow: column;
       justify-content: space-between;
+      @include media(992px) {
+        flex: 0 0 50%;
+        max-width: 50%;
+      }
       @include media(768px) {
         flex: 0 0 100%;
         max-width: 100%;
@@ -230,6 +244,10 @@
       .wc-tax-shortcode & {
         flex: 0 0 33%;
         max-width: 33%;
+        @include media(992px) {
+          flex: 0 0 50%;
+          max-width: 50%;
+        }
         @include media(768px) {
           flex: 0 0 100%;
           max-width: 100%;
@@ -243,6 +261,9 @@
         font-size: 25px;
         display: block;
         text-align: right;
+        del {
+          font-size: 0.5em;
+        }
         .WooZone-free-shipping {
           display: block;
           font-size: 13px;
