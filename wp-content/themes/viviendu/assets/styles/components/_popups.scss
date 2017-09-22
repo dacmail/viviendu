@@ -1,5 +1,13 @@
 
 /* POPUP */
+.btn.btn-fixed {
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+  width: auto;
+  display: inline-block;
+  z-index: 999;
+}
 .popup-wrapper {
   position: fixed;
   top: 0;
@@ -17,7 +25,7 @@
     opacity: 1;
   }
 }
-.section {
+.popup-wrapper {
   .popup-content {
     margin: 70px auto;
     padding: 20px;

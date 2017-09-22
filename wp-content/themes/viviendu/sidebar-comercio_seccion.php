@@ -34,12 +34,4 @@
 	<?php dynamic_sidebar("Barra Lateral"); ?>
 </div>
 
-<div class="popup-wrapper" id="popup_contacto">
-	<div class="popup-content">
-		<a class="close" href="#">×</a>
-		<!-- Begin MailChimp Signup Form -->
-		<h3 class="title">Contacta con nosotros</h3>
-		<p>Dinos exactamente qué estás buscando y nos pondremos en contacto contigo para encontrar soluciones</p>
-		<?php echo do_shortcode('[contact-form-7 id="7500" title="Formulario de contacto"]') ?>
-	</div>
-</div>
+

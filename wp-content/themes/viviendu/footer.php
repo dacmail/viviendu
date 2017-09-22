@@ -14,6 +14,15 @@
 			</div>
 		</div>
 	</footer>
+	<div class="popup-wrapper" id="popup_contacto">
+		<div class="popup-content">
+			<a class="close" href="#">×</a>
+			<h3 class="title">Contacta con nosotros</h3>
+			<p>Dinos exactamente qué estás buscando y nos pondremos en contacto contigo para encontrar soluciones</p>
+			<?php echo do_shortcode('[contact-form-7 id="7500" title="Formulario de contacto"]') ?>
+		</div>
+	</div>
+	<a href="#popup_contacto" class="btn-fixed btn btn-block btn-contact btn-primary" id="btn-contact">Pide presupuesto</a>
 
 	<!-- Facebook Conversion Code for Entradas -->
 	<script>
@@ -32,7 +41,6 @@
 		window._fbq.push(['track', '6022865114446', {'value':'0.00','currency':'EUR'}]);
 	</script>
 	<noscript><img height="1" width="1" alt="" style="display:none" src="https://www.facebook.com/tr?ev=6022865114446&amp;cd[value]=0.00&amp;cd[currency]=EUR&amp;noscript=1" /></noscript>
-	<script src="//code.tidio.co/xtwm4iqk4edj6z9u876w2rh2baes1qfx.js"></script>
 	<?php wp_footer(); ?>
 </body>
 </html>
