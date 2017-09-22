@@ -17,8 +17,9 @@
 	<div class="popup-wrapper" id="popup_contacto">
 		<div class="popup-content">
 			<a class="close" href="#">×</a>
-			<h3 class="title">Contacta con nosotros</h3>
-			<p>Dinos exactamente qué estás buscando y nos pondremos en contacto contigo para encontrar soluciones</p>
+			<h3 class="title">Pide presupuesto y contacta con fabricantes.</h3>
+			<p>Pide presupuesto a través de este sencillo formulario para contactar con los fabricantes líderes de casas prefabricadas y viviendas móviles.
+También puedes pedir presupuesto para reformas, ampliaciones y espacios comerciales.</p>
 			<?php echo do_shortcode('[contact-form-7 id="7500" title="Formulario de contacto"]') ?>
 		</div>
 	</div>
