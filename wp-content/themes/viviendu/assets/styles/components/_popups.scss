@@ -7,6 +7,10 @@
   width: auto;
   display: inline-block;
   z-index: 999;
+  @include media(768px) {
+    bottom: 10px;
+    right: 10px;
+  }
 }
 .popup-wrapper {
   position: fixed;
@@ -56,6 +60,14 @@
     .title {
       font-size: 24px;
       padding-right: 50px;
+    }
+    input[type='text'],
+    input[type='number'],
+    input[type='email'],
+    textarea {
+      @include media(768px) {
+        font-size: 16px;
+      }
     }
   }
 }
