@@ -7,7 +7,6 @@
 				<h1 class="title nm"><?php echo single_term_title(); ?></h1>
 				<div class="text main">
 					<?php echo viviendu_get_paragraph(apply_filters('the_content',$seccion->description)); ?>
-					<?php get_template_part('templates/wc_shortcode'); ?>
 					<div class="row">
 						<?php $related = new WP_Query(array(
 									'posts_per_page' => -1,
