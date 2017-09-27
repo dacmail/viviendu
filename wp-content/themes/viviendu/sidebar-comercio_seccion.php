@@ -27,19 +27,11 @@
 		<?php elseif (is_tag()) : ?>
 			<?php $location_info = viviendu_location_info(get_tax_meta(get_queried_object()->term_id, 'viviendu_comercio', true));  ?>
 		<?php endif ?>
-			<p><a href="#popup_contacto" class="btn btn-block btn-contact btn-primary" id="btn-contact-sidebar">Contactar</a></p>
+		<p><a href="#popup_contacto" class="btn btn-block btn-contact btn-primary" id="btn-contact-sidebar">Contactar</a></p>
 	</div>
 	<?php endif; ?>
 
 	<?php dynamic_sidebar("Barra Lateral"); ?>
 </div>
 
-<div class="popup-wrapper" id="popup_contacto">
-	<div class="popup-content">
-		<a class="close" href="#">×</a>
-		<!-- Begin MailChimp Signup Form -->
-		<h3 class="title">Contacta con nosotros</h3>
-		<p>Dinos exactamente qué estás buscando y nos pondremos en contacto contigo para encontrar soluciones</p>
-		<?php echo do_shortcode('[contact-form-7 id="7500" title="Formulario de contacto"]') ?>
-	</div>
-</div>
+
