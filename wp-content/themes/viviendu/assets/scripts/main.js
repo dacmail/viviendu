@@ -11,10 +11,18 @@
   };
 
   //Cycle defaults
-  $.fn.cycle.log = $.noop;
-  $.fn.cycle.speed = 0;
-  $.fn.cycle.defaults.timeout = 0;
+  if ($.fn.cycle!==undefined) {
+    $.fn.cycle.log = $.noop;
+    $.fn.cycle.speed = 0;
+    $.fn.cycle.defaults.timeout = 0;
+  }
+
   $(document).ready(function() {
+
+    //Lightgallery
+    $(".photos").lightGallery({
+      selector: '.photos__photo__link'
+    });
 
     //Menu movil
     $('#header').on('click', '.nav-toggle', function(event) {

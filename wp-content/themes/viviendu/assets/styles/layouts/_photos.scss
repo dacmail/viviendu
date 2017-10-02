@@ -1,0 +1,39 @@
+.photos {
+  display: flex;
+  justify-content: flex-start;
+  align-items: top;
+  flex-wrap: wrap;
+  list-style: none;
+  &:after {
+    content: "";
+    flex: auto;
+  }
+  &__photo {
+    flex: 0 1 24%;
+    margin: 0px 0.5%;
+    margin-bottom: 30px;
+    @include media(992px) {
+      flex: 0 1 49%;
+    }
+    @include media(768px) {
+      flex: 0 1 99%;
+    }
+    &__link {
+      img {
+        width: 100%;
+        height: auto;
+      }
+    }
+    &__tags {
+      a {
+        display: inline-block;
+        background: #76c0a4;
+        color: #fff;
+        border-radius: 3px;
+        padding: 2px 5px;
+        margin-bottom: 4px;
+        font-size: 13px;
+      }
+    }
+  }
+}
