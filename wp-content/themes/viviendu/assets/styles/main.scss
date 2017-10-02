@@ -3,6 +3,8 @@
 @import "../../bower_components/bootstrap/scss/grid";
 //@import "../../bower_components/bootstrap-sass/assets/stylesheets/bootstrap";
 @import "../../bower_components/font-awesome/scss/font-awesome";
+@import "../../bower_components/lightgallery/src/sass/lightgallery";
+
 
 @import "common/variables";
 @import "common/mixins";
@@ -17,6 +19,7 @@
 @import "components/ratings";
 @import "layouts/page";
 @import "layouts/products";
+@import "layouts/photos";
 @import "components/pagination";
 @import "components/footer";
 @import "common/wp";

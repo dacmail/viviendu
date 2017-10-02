@@ -118,3 +118,7 @@ section {
         }
     }
 }
+
+.lg-outer, .lg-backdrop {
+    z-index: 9999 !important;
+}

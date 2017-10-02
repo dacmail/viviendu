@@ -27,7 +27,7 @@
     wp_enqueue_style('viviendu-style', get_stylesheet_uri() );
 
     if( !is_admin()){
-
+      wp_enqueue_script('cycle-js', asset_path('scripts/lightgallery.js'), array('jquery'), '1.6.1', true );
       wp_enqueue_script('cycle-js', asset_path('scripts/cycle.js'), array('jquery'), '2.0.1', true );
       wp_enqueue_script('viviendu-js', asset_path('scripts/main.js'), array('jquery'), null, true);
       wp_enqueue_script('addthis', '//s7.addthis.com/js/300/addthis_widget.js#pubid=ra-566e723b50e69a9e', '', '', true );
@@ -66,6 +66,15 @@
     return $query;
   }
   add_filter('pre_get_posts','viviendu_search_filter');
+
+  //Change posts per page in photos
+  function viviendu_photos_filter($query) {
+    if (is_post_type_archive('photo') || is_tax('photo-tag')) {
+      $query->set('posts_per_page', 24);
+    }
+    return $query;
+  }
+  add_filter('pre_get_posts','viviendu_photos_filter');
 
   //Cambiando URL provincias
   function viviendu_term_link_filter( $url, $term, $taxonomy ) {
