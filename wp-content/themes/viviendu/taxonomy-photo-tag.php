@@ -3,8 +3,8 @@
   <div class="container">
     <div class="row">
       <div id="content" class="col-md-12 col-sm-12">
-        <h1 class="post-title title tit-sep">Inspírate: <?php single_term_title() ?></h1>
-        <?php term_description(); ?>
+        <h1 class="post-title title tit-sep">Inspírate: Fotos de <?php single_term_title() ?></h1>
+        <?php echo term_description(); ?>
         <ul class="photos">
           <?php while (have_posts()) : the_post(); ?>
             <li <?php post_class('photos__photo'); ?>">
