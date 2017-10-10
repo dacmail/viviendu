@@ -97,10 +97,11 @@
         'capability_type' => 'post',
         'show_in_nav_menus' => false,
         'hierarchical' => false,
+        'has_archive' => true,
         'exclude_from_search' => false,
         'menu_position' => 5,
         'taxonomies' => array('wiki-section'),
-        "rewrite" => array( 'slug' => 'pregunta'),
+        "rewrite" => array( 'slug' => 'wiki'),
         'supports' => array('title', 'editor')
       );
       register_post_type('wiki',$args);
@@ -114,7 +115,7 @@
             "hierarchical" => true,
             "label" => esc_html__( "Sección", 'ungrynerd'),
             "singular_label" => esc_html__( "Sección", 'ungrynerd'),
-            "rewrite" => array( 'slug' => 'wiki', 'hierarchical' => true),
+            "rewrite" => array( 'slug' => 'wiki-pregunta', 'hierarchical' => true),
             'show_in_nav_menus' => false,
             )
         );

@@ -76,6 +76,44 @@
   }
   add_filter('pre_get_posts','viviendu_photos_filter');
 
+  //Change posts per page in wiki
+  function viviendu_wiki_limit($query) {
+    if (is_post_type_archive('wiki') || is_tax('wiki-section')) {
+      $query->set('posts_per_page', -1);
+    }
+    return $query;
+  }
+  add_filter('pre_get_posts','viviendu_wiki_limit');
+
+  //Order ramdom in photos
+  add_filter( 'posts_orderby', 'randomise_with_pagination' );
+  function randomise_with_pagination( $orderby ) {
+    if(is_post_type_archive('photo')) {
+        // Reset seed on load of initial archive page
+      if( ! get_query_var( 'paged' ) || get_query_var( 'paged' ) == 0 || get_query_var( 'paged' ) == 1 ) {
+        if( isset( $_SESSION['seed'] ) ) {
+          unset( $_SESSION['seed'] );
+        }
+      }
+
+      // Get seed from session variable if it exists
+      $seed = false;
+      if( isset( $_SESSION['seed'] ) ) {
+        $seed = $_SESSION['seed'];
+      }
+
+          // Set new seed if none exists
+          if ( ! $seed ) {
+              $seed = rand();
+              $_SESSION['seed'] = $seed;
+          }
+
+          // Update ORDER BY clause to use seed
+          $orderby = 'RAND(' . $seed . ')';
+    }
+    return $orderby;
+  }
+
   //Cambiando URL provincias
   function viviendu_term_link_filter( $url, $term, $taxonomy ) {
     if ($taxonomy=="provincia") {
@@ -84,5 +122,13 @@
       return $url;
   }
   add_filter('term_link', 'viviendu_term_link_filter', 10, 3);
+
+  /**
+ * Clean up the_excerpt()
+ */
+  function excerpt_more() {
+    return ' &hellip; <a class="excerpt-read-more" href="' . get_permalink() . '">' . __('Leer más', 'sage') . '</a>';
+  }
+  add_filter('excerpt_more','excerpt_more');
 
 ?>
