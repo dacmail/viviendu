@@ -23,11 +23,34 @@ class Meow_MFRH_Admin extends MeowApps_Admin {
 		}
 		$method = apply_filters( 'mfrh_method', 'media_title' );
 		$sync_alt = get_option( 'mfrh_sync_alt' );
+		$sync_meta_title = get_option( 'mfrh_sync_media_title' );
+
+		$force_rename = get_option( 'mfrh_force_rename', false );
+		$numbered_files = get_option( 'mfrh_numbered_files', false );
+
+		if ( $force_rename && $numbered_files ) {
+			update_option( 'mfrh_force_rename', false, false );
+			?>
+	    <div class="notice notice-warning is-dismissible">
+	      <p><?php _e( 'Force Rename and Numbered Files cannot be used at the same time. Please use Force Rename only when you are trying to repair a broken install. For now, Force Rename has been disabled.', 'media-file-renamer' ); ?></p>
+	    </div>
+	    <?php
+		}
+
 		if ( $sync_alt && $method == 'alt_text' ) {
 			update_option( 'mfrh_sync_alt', false, false );
 			?>
 	    <div class="notice notice-warning is-dismissible">
-	        <p><?php _e( 'The option Sync ALT was turned off since it does not make sense to have it with this Auto-Rename mode.', 'media-file-renamer' ); ?></p>
+	      <p><?php _e( 'The option Sync ALT was turned off since it does not make sense to have it with this Auto-Rename mode.', 'media-file-renamer' ); ?></p>
+	    </div>
+	    <?php
+		}
+
+		if ( $sync_meta_title && $method == 'media_title' ) {
+			update_option( 'mfrh_sync_media_title', false, false );
+			?>
+	    <div class="notice notice-warning is-dismissible">
+	        <p><?php _e( 'The option Sync Media Title was turned off since it does not make sense to have it with this Auto-Rename mode.', 'media-file-renamer' ); ?></p>
 	    </div>
 	    <?php
 		}
@@ -91,11 +114,17 @@ class Meow_MFRH_Admin extends MeowApps_Admin {
 					array( $this, 'admin_sync_alt_callback' ),
 					'mfrh_advanced_settings-menu', 'mfrh_advanced_settings' );
 			}
+			if ( $method == 'post_title' || $method == 'alt_text' ) {
+				add_settings_field( 'mfrh_sync_media_title', "Sync Media Title<br />(Pro)",
+					array( $this, 'admin_sync_media_title_callback' ),
+					'mfrh_advanced_settings-menu', 'mfrh_advanced_settings' );
+			}
 
 			register_setting( 'mfrh_advanced_settings', 'mfrh_undo' );
 			register_setting( 'mfrh_advanced_settings', 'mfrh_manual_rename' );
 			register_setting( 'mfrh_advanced_settings', 'mfrh_numbered_files' );
 			register_setting( 'mfrh_advanced_settings', 'mfrh_sync_alt' );
+			register_setting( 'mfrh_advanced_settings', 'mfrh_sync_media_title' );
 
 			// SUBMENU > Settings > Developer Settings
 			add_settings_section( 'mfrh_developer_settings', null, null, 'mfrh_developer_settings-menu' );
@@ -136,6 +165,11 @@ class Meow_MFRH_Admin extends MeowApps_Admin {
 					<h3>How to use</h3>
 					<div class="inside">
 						<?php echo _e( 'This plugin works out of the box, the default settings are the best for most installs. However, you should have a look at the <a target="_blank" href="https://meowapps.com/media-file-renamer/">tutorial</a>.', 'media-file-renamer' ) ?>
+						<p class="submit">
+							<a class="button button-primary" href="upload.php?page=rename_media_files">
+								<?php echo _e( "Access the Renamer Dashboard", 'media-file-renamer' ); ?>
+							</a>
+						</p>
 					</div>
 				</div>
 			</div>
@@ -246,7 +280,20 @@ class Meow_MFRH_Admin extends MeowApps_Admin {
 			$what = __( "Title of Media", 'media-file-renamer' );
 		else if ( $method == "post_title" )
 			$what = __( "Attached Post Title", 'media-file-renamer' );
-    $html .= __( "<label>ALT = <b>$what</b></label><br /><small>Keep in mind that the HTML in your posts and pages will be however not modified, that is too dangerous!</small>", 'media-file-renamer' );
+    $html .= __( "<label>ALT = <b>$what</b></label><br /><small>Keep in mind that the HTML of your posts and pages WILL NOT be modified, as that is simply too dangerous for a plug-in.</small>", 'media-file-renamer' );
+    echo $html;
+  }
+
+	function admin_sync_media_title_callback( $args ) {
+		$html = '<input ' . disabled( $this->is_registered(), false, false ) . ' type="checkbox" id="mfrh_sync_media_title" name="mfrh_sync_media_title" value="1" ' .
+			checked( 1, get_option( 'mfrh_sync_media_title' ), false ) . '/>';
+		$method = apply_filters( 'mfrh_method', 'media_title' );
+		$what = __( "Error!", 'media-file-renamer' );
+		if ( $method == "alt_text" )
+			$what = __( "Media ALT", 'media-file-renamer' );
+		else if ( $method == "post_title" )
+			$what = __( "Attached Post Title", 'media-file-renamer' );
+    $html .= __( "<label>Media Title = <b>$what</b></label><br /><small>Keep in mind that the HTML of your posts and pages WILL NOT be modified, as that is simply too dangerous for a plug-in.</small>", 'media-file-renamer' );
     echo $html;
   }
 
@@ -275,7 +322,7 @@ class Meow_MFRH_Admin extends MeowApps_Admin {
 	function admin_on_upload_callback( $args ) {
 		$html = '<input type="checkbox" id="mfrh_on_upload" name="mfrh_on_upload" value="1" ' .
 			checked( 1, get_option( 'mfrh_on_upload', false ), false ) . '/>';
-    $html .= __( '<label>Enable</label><br /><small>During upload, the filename will be renamed based on the title of the media.</small>', 'media-file-renamer' );
+    $html .= __( '<label>Enable</label><br /><small>During upload, the filename will be renamed based on the title of the media if there is any EXIF with the file. Otherwise, it will optimize the upload filename.</small>', 'media-file-renamer' );
     echo $html;
   }
 
@@ -312,7 +359,7 @@ class Meow_MFRH_Admin extends MeowApps_Admin {
   }
 
 	function admin_force_rename_callback( $args ) {
-    $value = get_option( 'mfrh_force_rename', null );
+    $value = get_option( 'mfrh_force_rename', false );
 		$html = '<input ' . disabled( $this->is_registered(), false, false ) . ' ' . disabled( $this->is_registered(), false, false ) . ' type="checkbox" id="mfrh_force_rename" name="mfrh_force_rename" value="1" ' .
 			checked( 1, get_option( 'mfrh_force_rename' ), false ) . '/>';
     $html .= __( '<label>Enabled</label><br/><small>Update the references to the file even if the file renaming itself was not successful. You might want to use that option if your install is broken and you are trying to link your Media to files for which the filenames has been altered (after a migration for exemple)</small>', 'media-file-renamer' );
@@ -323,7 +370,7 @@ class Meow_MFRH_Admin extends MeowApps_Admin {
     $value = get_option( 'mfrh_log', null );
 		$html = '<input type="checkbox" id="mfrh_log" name="mfrh_log" value="1" ' .
 			checked( 1, get_option( 'mfrh_log' ), false ) . '/>';
-    $html .= __( '<label>Enabled</label><br/><small>Simple logging that explains which actions has been run. The file is <a target="_blank" href="' . plugins_url("media-file-renamer") . '/media-file-renamer.log">media-file-renamer.log</a>.</small>', 'media-file-renamer' );
+    $html .= __( '<label>Enabled</label><br/><small>Simple logging that explains which actions has been run. The file is <a target="_blank" href="' . plugin_dir_url( __FILE__ ) . 'media-file-renamer.log">media-file-renamer.log</a>.</small>', 'media-file-renamer' );
     echo $html;
   }
 
@@ -331,7 +378,7 @@ class Meow_MFRH_Admin extends MeowApps_Admin {
     $value = get_option( 'mfrh_logsql', null );
 		$html = '<input ' . disabled( $this->is_registered(), false, false ) . ' type="checkbox" id="mfrh_logsql" name="mfrh_logsql" value="1" ' .
 			checked( 1, get_option( 'mfrh_logsql' ), false ) . '/>';
-    $html .= __( '<label>Enabled</label><br/><small>The files <a target="_blank" href="' . plugins_url( "media-file-renamer" ) . '/mfrh_sql.log">mfrh_sql.log</a> and <a target="_blank" href="' . plugins_url( "media-file-renamer" ) . '/mfrh_sql_revert.log">mfrh_sql_revert.log</a> will be created and they will include the raw SQL queries which were run by the plugin. If there is an issue, the revert file can help you reverting the changes more easily.</small>', 'media-file-renamer' );
+    $html .= __( '<label>Enabled</label><br/><small>The files <a target="_blank" href="' . plugin_dir_url( __FILE__ ) . 'mfrh_sql.log">mfrh_sql.log</a> and <a target="_blank" href="' . plugin_dir_url( __FILE__ ) . 'mfrh_sql_revert.log">mfrh_sql_revert.log</a> will be created and they will include the raw SQL queries which were run by the plugin. If there is an issue, the revert file can help you reverting the changes more easily.</small>', 'media-file-renamer' );
     echo $html;
   }
 

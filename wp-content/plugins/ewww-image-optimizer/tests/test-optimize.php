@@ -49,7 +49,6 @@ class EWWWIO_Optimize_Tests extends WP_UnitTestCase {
 		self::$test_pdf = download_url( 'https://s3-us-west-2.amazonaws.com/exactlywww/tomtempleartist-bio-2008.pdf' );
 		ewww_image_optimizer_set_defaults();
 		update_option( 'ewww_image_optimizer_jpg_level', '10' );
-		update_option( 'ewww_image_optimizer_png_level', '10' );
 		update_option( 'ewww_image_optimizer_gif_level', '10' );
 		update_option( 'ewww_image_optimizer_webp', true );
 		update_option( 'ewww_image_optimizer_png_level', 40 );
@@ -240,7 +239,7 @@ class EWWWIO_Optimize_Tests extends WP_UnitTestCase {
 		$results = $this->optimize_jpg();
 		update_option( 'ewww_image_optimizer_cloud_key', '' );
 		update_site_option( 'ewww_image_optimizer_cloud_key', '' );
-		$this->assertEquals( 698633, filesize( $results[0] ) );
+		$this->assertEquals( 344192, filesize( $results[0] ) );
 		unlink( $results[0] );
 	}
 
@@ -280,7 +279,7 @@ class EWWWIO_Optimize_Tests extends WP_UnitTestCase {
 		update_site_option( 'ewww_image_optimizer_webp', '' );
 		$this->assertEquals( 188043, filesize( $results[0] ) );
 		unlink( $results[0] );
-		$this->assertEquals( 137258, filesize( $results[0] . '.webp' ) );
+		$this->assertEquals( 137366, filesize( $results[0] . '.webp' ) );
 		if ( is_file( $results[0] . '.webp' ) ) {
 			unlink( $results[0] . '.webp' );
 		}
@@ -335,7 +334,7 @@ class EWWWIO_Optimize_Tests extends WP_UnitTestCase {
 		update_site_option( 'ewww_image_optimizer_optipng_level', 2 );
 		update_site_option( 'ewww_image_optimizer_jpegtran_copy', true );
 		$results = $this->optimize_png();
-		$this->assertEquals( 35105, filesize( $results[0] ) );
+		$this->assertEquals( 37428, filesize( $results[0] ) );
 		unlink( $results[0] );
 	}
 
@@ -357,27 +356,6 @@ class EWWWIO_Optimize_Tests extends WP_UnitTestCase {
 	}
 
 	/**
-	 * Test max lossless PNG with API.
-	 */
-	function test_optimize_png_30() {
-		update_option( 'ewww_image_optimizer_png_level', 30 );
-		update_option( 'ewww_image_optimizer_jpegtran_copy', true );
-		update_option( 'ewww_image_optimizer_cloud_key', 'abc123' );
-		update_site_option( 'ewww_image_optimizer_png_level', 30 );
-		update_site_option( 'ewww_image_optimizer_jpegtran_copy', true );
-		update_site_option( 'ewww_image_optimizer_cloud_key', 'abc123' );
-		$test_png = self::$test_png;
-		self::$test_png = download_url( 'https://s3-us-west-2.amazonaws.com/exactlywww/Opera_512x512.png' );
-		$results = $this->optimize_png();
-		update_option( 'ewww_image_optimizer_cloud_key', '' );
-		update_site_option( 'ewww_image_optimizer_cloud_key', '' );
-		$this->assertEquals( 37461, filesize( $results[0] ) );
-		unlink( self::$test_png );
-		self::$test_png = $test_png;
-		unlink( $results[0] );
-	}
-
-	/**
 	 * Test regular lossy PNG with API.
 	 */
 	function test_optimize_png_40() {
@@ -390,7 +368,7 @@ class EWWWIO_Optimize_Tests extends WP_UnitTestCase {
 		$results = $this->optimize_png();
 		update_option( 'ewww_image_optimizer_cloud_key', '' );
 		update_site_option( 'ewww_image_optimizer_cloud_key', '' );
-		$this->assertEquals( 37697, filesize( $results[0] ) );
+		$this->assertEquals( 37557, filesize( $results[0] ) );
 		unlink( $results[0] );
 	}
 

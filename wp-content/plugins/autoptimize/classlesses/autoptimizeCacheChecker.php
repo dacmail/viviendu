@@ -32,17 +32,18 @@ function ao_cachechecker_setup() {
 
 add_action('ao_cachechecker', 'ao_cachechecker_cronjob');
 function ao_cachechecker_cronjob() {
-    $maxSize = (int) apply_filters( "autoptimize_filter_cachecheck_maxsize", 512000);
+    $maxSize = (int) apply_filters( "autoptimize_filter_cachecheck_maxsize", 536870912);
     $doCacheCheck = (bool) apply_filters( "autoptimize_filter_cachecheck_do", true);
     $statArr=autoptimizeCache::stats(); 
-    $cacheSize=round($statArr[1]/1024);
+    $cacheSize=round($statArr[1]);
     if (($cacheSize>$maxSize) && ($doCacheCheck)) {
         update_option("autoptimize_cachesize_notice",true);
         if (apply_filters('autoptimize_filter_cachecheck_sendmail',true)) {
+            $saniSiteUrl=esc_url(site_url());
             $ao_mailto=apply_filters('autoptimize_filter_cachecheck_mailto',get_option('admin_email',''));
-            $ao_mailsubject=__('Autoptimize cache size warning','autoptimize');
-            $ao_mailbody=__('Autoptimize\'s cache size is getting big, consider purging the cache. Have a look at https://wordpress.org/plugins/autoptimize/faq/ to see how you can keep the cache size under control.', 'autoptimize');
-            
+            $ao_mailsubject=__('Autoptimize cache size warning','autoptimize')." (".$saniSiteUrl.")";
+            $ao_mailbody=__('Autoptimize\'s cache size is getting big, consider purging the cache. Have a look at https://wordpress.org/plugins/autoptimize/faq/ to see how you can keep the cache size under control.', 'autoptimize')." (site: ".$saniSiteUrl.")";
+
             if (!empty($ao_mailto)) {
                 $ao_mailresult=wp_mail($ao_mailto,$ao_mailsubject,$ao_mailbody);
                 if (!$ao_mailresult) {
