@@ -1,3 +1,156 @@
+= 4.1.0 =
+* SECURITY: gifsicle and optipng have been updated to address security flaws
+* added: full compatibility with Image Watermark plugin
+* added: dummy images for Essential Grid and Layer Slider whitelisted with ExactDN
+* added: compatibility with Visual Composer and Essential Grid async/AJAX loaders
+* added: compatibility with Media File Renamer
+* changed: ExactDN rewrites all wp-content and wp-includes urls by default
+* changed: mime-type detection function does not rely on fileinfo extension anymore
+* changed: Solaris/SunOS binary builds use OpenIndiana 2017.10, let me know if they break
+* fixed: wp-emoji script not rewritten by EXACTDN_ALL_THE_THINGS
+* fixed: resize detection script throws error when admin bar is hidden
+* fixed: warnings when WP Offload S3 set to delete local files, props ianmjones
+* updated: pngquant version 2.11.7
+
+= 4.0.6 =
+* changed: dummy images have no args appended with exactdn except for ssl flag
+* fixed: resize_detection.js being combined with other scripts by Autoptimize
+* fixed: retina optimization not deferred in async mode
+* fixed: PDF files could trigger license exceeded message
+* fixed: binary detection not fully functional with MacOS and PHP 7.2
+* fixed: compatibility with Regenerate Thumbnails version 3
+
+= 4.0.5 =
+* added: enable lossy compression with ExactDN: https://docs.ewww.io/article/47-getting-more-from-exactdn
+* added: CSS/JS minification with ExactDN, see https://docs.ewww.io/article/47-getting-more-from-exactdn
+* added: disable WebP for specific files with ewww_image_optimizer_bypass_webp filter
+* added: ExactDN obeys focus point from Theia Smart Thumbnails plugin
+* added: admin-ajax requests for eddvbugm loader work with ExactDN
+* fixed: multisite settings would not save in certain circumstances
+* fixed: compression levels reset for API users on multisite after toggling single-site override on and off
+* fixed: media library items with non-local images rewritten incorrectly by ExactDN
+* fixed: restoring images throws errors on PHP 7.1
+* fixed: has_cap with invalid argument not recognizing utf8-mb4 v5.2
+
+= 4.0.4 =
+* fixed: ExactDN domain validation failing on length check for some domains
+* updated: PEL for better EXIF preservation
+
+= 4.0.3 =
+* added: support for additional ExactDN root domains
+* added: button to remove WebP rewrite rules
+* added: informational notice on thumbnail rebuild pages of how the plugins interact
+* changed: WebP rewrite rules removed automatically when ExactDN is enabled, use Alt WebP instead
+* changed: ExactDN now removes metadata if option is enabled
+* fixed: multisite settings set to defaults when single-site resize settings are submitted
+
+= 4.0.2 =
+* fixed: WooCommerce images still not working with Alt WebP in all cases
+* fixed: ob_clean() breaks AJAX actions when there is no buffer to clean
+* fixed: notice on NextCellent gallery management pages
+* fixed: missing JS for AJAX actions in NextCellent
+
+= 4.0.1 =
+* fixed: ExactDN option not disabled when verification fails too many times
+* fixed: theme scanner sometimes skipped images on PHP 5.3
+* fixed: invalid (float) width parameters for srcset attributes
+* fixed: Jetpack lightbox and carousel were not fully working with Alt WebP
+* fixed: WooCommerce lightbox and gallery not working with Alt WebP
+* fixed: incorrect message about scanning scope when selecting images from media library for bulk optimization
+* security: fixed wildcard LIKE queries to allow proper escaping
+
+= 4.0.0 =
+* added: ExactDN with CDN and automatic image resizing
+* added: image resize detection for admin users
+* changed: WP core, theme, and plugin images are excluded from lossy optimization
+* fixed: files fetched from S3 not detected by PHP in some cases
+* fixed: option override conflict preventing webp conversion
+* fixed: Alt WebP breaks Draw Attention image maps
+* fixed: customized WP_Background_Process class conflicts with other plugins using the same class
+* fixed: image deletion could cause deletion of images on source site after cloning database
+* fixed: WebP .htaccess rules using REQUEST_FILENAME instead of REQUEST_URI does not work on some servers
+* fixed: per-site resize settings hidden when API is active network-wide
+* fixed: network-wide settings not saving properly
+* fixed: notice of undefined index with some configurations of the Shield security plugin
+* deprecated: PHP 5.3 support will be removed by March 2018
+
+= 3.6.1 =
+* fixed: bulk optimizer fails to initialize if the bulk_attachments array is set to an empty string
+* fixed: misplaced parenthesis breaks option overrides
+
+= 3.6.0 =
+In an effort to simplify the settings page and make room for new features, many settings have been "hidden" and/or rearranged. It is my hope that this will make it easier for new users to get going with EWWW IO.
+You can find more information about overriding options in the [Documentation](https://docs.ewww.io)
+* added: ability to override any boolean/integer options by defining constant of the same name
+* added: debug information included automatically with help beacon requests when debugging is enabled
+* added: use wp_raise_memory_limit (WP 4.6+) to avoid memory issues
+* added: use wp_is_ini_value_changeable (WP 4.6+) to avoid errors when raising max_execution_time
+* added: notice to use cloud version on Kinsta sites
+* changed: Better Lossless and Maximum Lossless have been combined for PNG images with more intelligent usage of advpng on the API
+* changed: resize settings moved to new tab
+* changed: various options have been removed from the settings page, but are still available via constants, see removals
+* changed: bulk optimizer will auto-adjust settings if an image fails to optimize
+* changed: bulk scanner will go into fall-back mode if the normal mode is too slow or if the image table takes longer than 5 seconds to load
+* changed: images previously compressed by TinyPNG/JPG will be skipped during bulk optimization
+* fixed: Optipng not working properly on Windows servers.
+* fixed: notice on settings and bulk pages when debug mode is disabled
+* removed: ewww_image_optimizer_delay (Bulk Delay), can be selected on the bulk page instead
+* removed: ewww_image_optimizer_optipng_level (OptiPNG level) option
+* removed: ewww_image_optimizer_pngout_level (PNGOUT level) option
+* removed: ewww_image_optimizer_disable_pngout (Disable PNGOUT) option
+* removed: ewww_image_optimizer_skip_size (Skip Small Images) option
+* removed: ewww_image_optimizer_skip_png_size (Skip Large PNG Images) option
+* removed: ewww_image_optimizer_lossy_skip_full (Exclude full-size images from lossy optimization) option
+* removed: ewww_image_optimizer_metadata_skip_full (Exclude full-size images from metadata removal) option
+* removed: ewww_image_optimizer_skip_bundle (Use System Paths) option
+
+= 3.5.1 =
+* added: optional help beacons on bulk and settings pages
+* added: disable deferring of WP Offload S3 uploads with EWWW_IMAGE_OPTIMIZER_NO_DEFER_S3
+* added: override use of wp_add_inline_script with non-standard jQuery by defining EWWW_IMAGE_OPTIMIZER_WEBP_INLINE_FALLBACK
+* fixed: javascript for bulk optimizers in NextGEN, NextCellent and FlaGallery
+
+= 3.5.0 =
+* added: compatibility with S3 Uploads by Human Made
+* added: MediaPress uploads fully optimized on upload
+* changed: WebP .htaccess rewrite rule verifier more flexible
+* changed: WebP .htaccess rewrite rules allow appending type=original to access non-WebP image
+* changed: if an image is too small for resizing, but the dimensions in the metadata are incorrect, it will attempt to update them
+* fixed: fatal error if image metadata cannot be read by PEL
+* fixed: WebP .htaccess rewrite rules work better on LiteSpeed
+* fixed: WP Symposium integration using old options, scanner now includes avatars folder by default
+
+= 3.4.1 =
+* added: move the Alt WebP script to an external resource by defining EWWW_IMAGE_OPTIMIZER_WEBP_EXTERNAL_SCRIPT
+* changed: API keys are partially revealed, for easier verification
+* changed: API key no longer uses password field to avoid problems with auto-fill
+* changed: API key activation raises JPG and PNG to lossy and enables backups
+* fixed: bulk delay setting not carried over to bulk optimizer
+* fixed: WP Offload S3 uploads images prior to background optimization, resulting in a second upload afterwards
+* fixed: single-site settings override not saving in certain cases on multisite
+* fixed: AMP pages are broken when Alt WebP is enabled with old versions of libxml (less than 2.8.0)
+* removed: unnecessary call to WP Offload S3 update function after optimization
+
+= 3.4.0 =
+* added: optional usage tracking
+* added: close sessions even earlier in background/async handling to prevent lock-ups
+* added: multisite option to network activate and allow individual site configuration
+* changed: disabling resizes must be done on individual sites even when network activated
+* changed: PNG files with empty alpha channels can be converted to JPG without setting a background/fill color
+* fixed: webp migration script sending wrong nonce variable
+* fixed: wp-cli help text was not being parsed properly
+* updated: bundled cwebp to version 0.6.0
+* updated: bundled pngquant to verision 2.9.1 (2.8.1 for Windows)
+* deprecated: cwebp will not be updated for Mac OS X 10.9 past 0.5.1
+* obsoleted: FreeBSD 9 and CentOS 5 are "End of Life" and will no longer be tested
+
+= 3.3.1 =
+* added: alt webp supports Jetpack Carousel for image galleries
+* added: hard crop images during resizing using ewww_image_optimizer_crop_image filter
+* changed: plugin status on settings revamped to rely less on javascript
+* fixed: regression with scheduled optimizer scanning causing timeouts
+* fixed: alt webp compatibility with Divi Builder in Visual mode
+
 = 3.3.0 =
 * added: optional image backups for API users, restore images from bulk optimize, or media library list view
 * added: relative file location support, automatically enabled for Pantheon, use EWWW_IMAGE_OPTIMIZER_RELATIVE and EWWW_IMAGE_OPTIMIZER_RELATIVE_FOLDER to enable elsewhere

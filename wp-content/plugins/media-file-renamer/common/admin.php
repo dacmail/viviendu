@@ -5,7 +5,7 @@ if ( !class_exists( 'MeowApps_Admin' ) ) {
 	class MeowApps_Admin {
 
 		public static $loaded = false;
-		public static $admin_version = "1.2";
+		public static $admin_version = "1.4";
 
 		public $prefix; 		// prefix used for actions, filters (mfrh)
 		public $mainfile; 	// plugin main file (media-file-renamer.php)
@@ -19,6 +19,7 @@ if ( !class_exists( 'MeowApps_Admin' ) ) {
 					add_action( 'admin_menu', array( $this, 'admin_menu_start' ) );
 					add_action( 'admin_enqueue_scripts', array( $this, 'admin_enqueue_scripts' ) );
 					add_action( 'plugins_loaded', array( $this, 'plugins_loaded' ) );
+					add_filter( 'updraftplus_com_link', array( $this, 'updraftplus_com_link' ) );
 				}
 				MeowApps_Admin::$loaded = true;
 			}
@@ -28,14 +29,100 @@ if ( !class_exists( 'MeowApps_Admin' ) ) {
 			$this->mainfile = $mainfile;
 			$this->domain = $domain;
 
-			// Check if the free version is installed but there is license
-			// TODO: In the future, this should be removed ideally
+			register_activation_hook( $mainfile, array( $this, 'show_meowapps_create_rating_date' ) );
+
 			if ( is_admin() ) {
 				$license = get_option( $this->prefix . '_license', "" );
 				if ( ( !empty( $license ) ) && !file_exists( plugin_dir_path( $this->mainfile ) . 'common/meowapps/admin.php' ) ) {
 					add_action( 'admin_notices', array( $this, 'admin_notices_licensed_free' ) );
 				}
+				$rating_date = $this->create_rating_date();
+				if ( time() > $rating_date ) {
+					add_action( 'admin_notices', array( $this, 'admin_notices_rating' ) );
+				}
 			}
+		}
+
+		function updraftplus_com_link( $url ) {
+			$url = $url . "?afref=460";
+			return $url;
+		}
+
+		function show_meowapps_create_rating_date() {
+			delete_option( 'meowapps_hide_meowapps' );
+			$this->create_rating_date();
+		}
+
+		function create_rating_date() {
+			$rating_date = get_option( $this->prefix . '_rating_date' );
+			if ( empty( $rating_date ) ) {
+				$two_months = strtotime( '+2 months' );
+				$six_months = strtotime( '+6 months' );
+				$rating_date = mt_rand( $two_months, $six_months );
+				update_option( $this->prefix . '_rating_date', $rating_date, false );
+			}
+			return $rating_date;
+		}
+
+		function admin_notices_rating() {
+			if ( isset( $_POST[$this->prefix . '_remind_me'] ) ) {
+				$two_weeks = strtotime( '+2 weeks' );
+				$six_weeks = strtotime( '+6 weeks' );
+				$future_date = mt_rand( $two_weeks, $six_weeks );
+				update_option( $this->prefix . '_rating_date', $future_date, false );
+				return;
+			}
+			else if ( isset( $_POST[$this->prefix . '_never_remind_me'] ) ) {
+				$twenty_years = strtotime( '+20 years' );
+				update_option( $this->prefix . '_rating_date', $twenty_years, false );
+				return;
+			}
+			else if ( isset( $_POST[$this->prefix . '_did_it'] ) ) {
+				$twenty_years = strtotime( '+100 years' );
+				update_option( $this->prefix . '_rating_date', $twenty_years, false );
+				return;
+			}
+			$rating_date = get_option( $this->prefix . '_rating_date' );
+			echo '<div class="notice notice-success" data-rating-date="' . date( 'Y-m-d', $rating_date ) . '">';
+				echo '<p style="font-size: 100%;">You have been using <b>' . $this->nice_name_from_file( $this->mainfile  ) . '</b> for some time now. If you enjoy it, could you share your thoughts and give the developers a sweet spike of motivation? In that case, please: <a target="_blank" href="https://wordpress.org/support/plugin/' . $this->nice_short_url_from_file( $this->mainfile ) . '/reviews/?rate=5#new-post">review it</a>. Thank you :)';
+			echo '<p>
+				<form method="post" action="" style="float: right;">
+					<input type="hidden" name="' . $this->prefix . '_never_remind_me" value="true">
+					<input type="submit" name="submit" id="submit" class="button button-red" value="Never remind me!">
+				</form>
+				<form method="post" action="" style="float: right; margin-right: 10px;">
+					<input type="hidden" name="' . $this->prefix . '_remind_me" value="true">
+					<input type="submit" name="submit" id="submit" class="button button-primary" value="Remind me in a few weeks...">
+				</form>
+				<form method="post" action="" style="float: right; margin-right: 10px;">
+					<input type="hidden" name="' . $this->prefix . '_did_it" value="true">
+					<input type="submit" name="submit" id="submit" class="button button-primary" value="Yes, I did it!">
+				</form>
+				<div style="clear: both;"></div>
+			</p>
+			';
+			echo '</div>';
+		}
+
+		function nice_short_url_from_file( $file ) {
+			$info = pathinfo( $file );
+			if ( !empty( $info ) ) {
+				$info['filename'] = str_replace( '-pro', '', $info['filename'] );
+				return $info['filename'];
+			}
+			return "";
+		}
+
+		function nice_name_from_file( $file ) {
+			$info = pathinfo( $file );
+			if ( !empty( $info ) ) {
+				if ( $info['filename'] == 'wplr-sync' ) {
+					return "WP/LR Sync";
+				}
+				$info['filename'] = str_replace( '-', ' ', $info['filename'] );
+				$file = ucwords( $info['filename'] );
+			}
+			return $file;
 		}
 
 		function admin_notices_licensed_free() {
@@ -45,7 +132,7 @@ if ( !class_exists( 'MeowApps_Admin' ) ) {
 				return;
 			}
 			echo '<div class="error">';
-			echo '<p>It looks like you are using the free version of the plugin (<b>' . $this->mainfile . '</b>) but a license for the Pro version was also found. The Pro version might have been replaced by the Free version during an update (might be caused by a temporarily issue). If it is the case, <b>please download it again</b> from the <a target="_blank" href="https://store.meowapps.com">Meow Store</a>. If you wish to continue using the free version and clear this message, click on this button.';
+			echo '<p>It looks like you are using the free version of the plugin (<b>' . $this->nice_name_from_file( $this->mainfile  )	 . '</b>) but a license for the Pro version was also found. The Pro version might have been replaced by the Free version during an update (might be caused by a temporarily issue). If it is the case, <b>please download it again</b> from the <a target="_blank" href="https://store.meowapps.com">Meow Store</a>. If you wish to continue using the free version and clear this message, click on this button.';
 			echo '<p>
 				<form method="post" action="">
 					<input type="hidden" name="' . $this->prefix . '_reset_sub" value="true">
@@ -61,7 +148,7 @@ if ( !class_exists( 'MeowApps_Admin' ) ) {
 		}
 
 		function display_title( $title = "Meow Apps",
-			$author = "By <a style='text-decoration: none;' href='http://meowapps.com' target='_blank'>Jordy Meow</a>" ) {
+			$author = "By <a style='text-decoration: none;' href='https://meowapps.com' target='_blank'>Jordy Meow</a>" ) {
 			if ( !empty( $this->prefix ) )
 				$title = apply_filters( $this->prefix . '_plugin_title', $title );
 			if ( $this->display_ads() ) {
@@ -104,9 +191,13 @@ if ( !class_exists( 'MeowApps_Admin' ) ) {
 			add_settings_field( 'meowapps_hide_meowapps', "Main Menu",
 				array( $this, 'meowapps_hide_dashboard_callback' ),
 				'meowapps_common_settings-menu', 'meowapps_common_settings' );
+			add_settings_field( 'meowapps_force_sslverify', "SSL Verify",
+				array( $this, 'meowapps_force_sslverify_callback' ),
+				'meowapps_common_settings-menu', 'meowapps_common_settings' );
 			add_settings_field( 'meowapps_hide_ads', "Ads",
 				array( $this, 'meowapps_hide_ads_callback' ),
 				'meowapps_common_settings-menu', 'meowapps_common_settings' );
+			register_setting( 'meowapps_common_settings', 'force_sslverify' );
 			register_setting( 'meowapps_common_settings', 'meowapps_hide_meowapps' );
 			register_setting( 'meowapps_common_settings', 'meowapps_hide_ads' );
 		}
@@ -115,7 +206,7 @@ if ( !class_exists( 'MeowApps_Admin' ) ) {
 			$value = get_option( 'meowapps_hide_ads', null );
 			$html = '<input type="checkbox" id="meowapps_hide_ads" name="meowapps_hide_ads" value="1" ' .
 				checked( 1, get_option( 'meowapps_hide_ads' ), false ) . '/>';
-	    $html .= __( '<label>Hide</label><br /><small>Doesn\'t display the ads.</small>', 'wp-retina-2x' );
+	    $html .= __( '<label>Hide</label><br /><small>Doesn\'t display the ads.</small>', 'meowapps' );
 	    echo $html;
 		}
 
@@ -123,7 +214,15 @@ if ( !class_exists( 'MeowApps_Admin' ) ) {
 			$value = get_option( 'meowapps_hide_meowapps', null );
 			$html = '<input type="checkbox" id="meowapps_hide_meowapps" name="meowapps_hide_meowapps" value="1" ' .
 				checked( 1, get_option( 'meowapps_hide_meowapps' ), false ) . '/>';
-	    $html .= __( '<label>Hide <b>Meow Apps</b> Menu</label><br /><small>Hide Meow Apps menu and all its components, for a nicer an faster WordPress admin UI. An option will be added in Settings > General to display it again.</small>', 'wp-retina-2x' );
+	    $html .= __( '<label>Hide <b>Meow Apps</b> Menu</label><br /><small>Hide Meow Apps menu and all its components, for a cleaner admin. This option will be reset if a new Meow Apps plugin is installed. <b>Once activated, an option will be added in your General settings to display it again.</b></small>', 'meowapps' );
+	    echo $html;
+		}
+
+		function meowapps_force_sslverify_callback() {
+			$value = get_option( 'force_sslverify', null );
+			$html = '<input type="checkbox" id="force_sslverify" name="force_sslverify" value="1" ' .
+				checked( 1, get_option( 'force_sslverify' ), false ) . '/>';
+	    $html .= __( '<label>Force</label><br /><small>Updates and licenses checks are usually made without checking SSL certificates and it is actually fine this way. But if you are intransigent when it comes to SSL matters, this option will force it.</small>', 'meowapps' );
 	    echo $html;
 		}
 
@@ -134,7 +233,7 @@ if ( !class_exists( 'MeowApps_Admin' ) ) {
       $html .= '<div class="inside">';
 			echo $html;
 			$html = apply_filters( $this->prefix . '_meowapps_license_input', ( 'More information about the Pro version here:
-				<a target="_blank" href="' . $url . '">' . $url . '</a>.' ), $url );
+				<a target="_blank" href="' . $url . '">' . $url . '</a>. If you actually bought the Pro version already, please remove the current plugin and download the Pro version from your account at the <a target="_blank" href="https://store.meowapps.com/account/downloads/">Meow Apps Store</a>.' ), $url );
       $html .= '</div>';
       $html .= '</div>';
 			echo $html;
@@ -146,9 +245,10 @@ if ( !class_exists( 'MeowApps_Admin' ) ) {
 
 		function check_install( $plugin ) {
 			$pro = false;
-			$pluginpath = get_home_path() . 'wp-content/plugins/' . $plugin . '-pro';
+
+			$pluginpath = trailingslashit( plugin_dir_path( __FILE__ ) ) . '../../' . $plugin . '-pro';
 			if ( !file_exists( $pluginpath ) ) {
-				$pluginpath = get_home_path() . 'wp-content/plugins/' . $plugin;
+				$pluginpath = trailingslashit( plugin_dir_path( __FILE__ ) ) . '../../' . $plugin;
 				if ( !file_exists( $pluginpath ) ) {
 					$url = wp_nonce_url( "update.php?action=install-plugin&plugin=$plugin", "install-plugin_$plugin" );
 					return "<a href='$url'><small><span class='' style='float: right;'>install</span></small></a>";
@@ -161,6 +261,8 @@ if ( !class_exists( 'MeowApps_Admin' ) ) {
 
 			$plugin_file = $plugin . '/' . $plugin . '.php';
 			if ( is_plugin_active( $plugin_file ) ) {
+				if ( $plugin == 'wplr-sync' )
+					$pro = true;
 				if ( $pro )
 					return "<small><span style='float: right;'><span class='dashicons dashicons-heart' style='color: rgba(255, 63, 0, 1); font-size: 30px !important; margin-right: 10px;'></span></span></small>";
 				else
@@ -237,26 +339,24 @@ if ( !class_exists( 'MeowApps_Admin' ) ) {
 						<h3 class=""><span class="dashicons dashicons-camera"></span> UI Plugins </h3>
 						<ul class="">
 							<li><b>WP/LR Sync</b> <?php echo $this->check_install( 'wplr-sync' ) ?><br />
-								Bring synchronization from Lightroom to WordPress.</li>
+								Synchronize photos (folders, collections, keywords) from Lightroom to WordPress.</li>
 							<li><b>Meow Lightbox</b> <?php echo $this->check_install( 'meow-lightbox' ) ?><br />
-								Lightbox with EXIF information nicely displayed.</li>
+								Light but powerful lightbox that can also display photo information (EXIF).</li>
 							<li><b>Meow Gallery</b> <?php echo $this->check_install( 'meow-gallery' ) ?><br />
-								Simple gallery to make your photos look better (Masonry and others).</li>
-							<li><b>Audio Story for Images</b> <?php echo $this->check_install( 'audio-story-images' ) ?><br />
-								Add audio to your images.</li>
+								Gallery (using the built-in WP gallery) that makes your website look better.</li>
+							<!-- <li><b>Audio Story for Images</b> <?php echo $this->check_install( 'audio-story-images' ) ?><br />
+								Add audio (music, explanation, ambiance) to your images.</li> -->
 						</ul>
 					</div>
 					<div class="meow-box meow-col meow-span_1_of_2">
 						<h3 class=""><span class="dashicons dashicons-admin-tools"></span> System Plugins</h3>
 						<ul class="">
 							<li><b>Media File Renamer</b> <?php echo $this->check_install( 'media-file-renamer' ) ?><br />
-								Nicer filenames and better SEO, automatically.</li>
+								For nicer filenames and better SEO.</li>
 							<li><b>Media Cleaner</b> <?php echo $this->check_install( 'media-cleaner' ) ?><br />
 								Detect the files which are not in use.</li>
 							<li><b>WP Retina 2x</b> <?php echo $this->check_install( 'wp-retina-2x' ) ?><br />
 								The famous plugin that adds Retina support.</li>
-							<li><b>WP Category Permalink</b> <?php echo $this->check_install( 'wp-category-permalink' ) ?><br />
-								Allows you to select a main category (or taxonomy) for nicer permalinks.</li>
 						</ul>
 					</div>
 				</div>

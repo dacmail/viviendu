@@ -326,7 +326,8 @@ class CSSmin
 
         // Put the space back in some cases, to support stuff like
         // @media screen and (-webkit-min-device-pixel-ratio:0){
-        $css = preg_replace('/\band\(/i', 'and (', $css);
+        // based on regex from https://github.com/tubalmartin/YUI-CSS-compressor-PHP-port/blob/v3.2.0/src/Minifier.php#L479
+        $css = preg_replace('/(\s|\)\s)(and|not|or)\(/i', '$1$2 (', $css);
 
         // Remove the spaces after the things that should not have spaces after them.
         $css = preg_replace('/([\!\{\}\:;\>\+\(\[\~\=,])\s+/S', '$1', $css);
@@ -592,7 +593,7 @@ class CSSmin
 
     private function replace_calc($matches)
     {
-        $this->preserved_tokens[] = preg_replace('/([\+\-]{1})\(/','$1 (',trim(preg_replace('/\s*([\*\/\(\),])\s*/', '$1', $matches[2])));
+        $this->preserved_tokens[] = preg_replace('/\)([\+\-]{1})/',') $1',preg_replace('/([\+\-]{1})\(/','$1 (',trim(preg_replace('/\s*([\*\/\(\),])\s*/', '$1', $matches[2]))));
         return 'calc('. self::TOKEN . (count($this->preserved_tokens) - 1) . '___' . ')';
     }
     
@@ -778,9 +779,9 @@ class CSSmin
     {
         if (is_string($size)) {
             switch (substr($size, -1)) {
-                case 'M': case 'm': return $size * 1048576;
-                case 'K': case 'k': return $size * 1024;
-                case 'G': case 'g': return $size * 1073741824;
+                case 'M': case 'm': return (int) $size * 1048576;
+                case 'K': case 'k': return (int) $size * 1024;
+                case 'G': case 'g': return (int) $size * 1073741824;
             }
         }
 

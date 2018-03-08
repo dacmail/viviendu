@@ -320,12 +320,56 @@
 	//wiki breadcrumb
 	function viviendu_wiki_breadcrumb() {
 		global $post;
-		if ( is_tax() ) {
+		echo '<a href="' . get_post_type_archive_link('wiki') . '" >WIKI</a>';
+		if (is_tax() ) {
 			$cat = get_term_by( 'slug', get_query_var( 'term' ), 'wiki-section');
 			if ($cat->parent != 0) {
 				$cats = get_term( $cat->parent,'wiki-section');
-				echo '<a href="' . esc_url( get_term_link( $cats ) ) . '" alt="' . esc_attr( sprintf( __( 'View all post filed under %s', 'my_localization_domain' ), $cats->name ) ) . '">' . $cats->name . '</a>';
+				echo '  &raquo; <a href="' . esc_url( get_term_link($cats)) . '" >' . $cats->name . '</a>';
+			}
+		} elseif (is_single()) {
+			$sections = get_the_terms( $post, 'wiki-section' );
+			$last = end($sections);
+			foreach ($sections as $section) {
+				echo '  &raquo;  <a href="' . esc_url(get_term_link( $section)) . '" >' . $section->name . '</a>';
 			}
 		}
+	}
+
+	function table_contents($post_id) {
+		$custom_terms = get_the_terms($post_id, 'wiki-section');
+    if($custom_terms) {
+        // going to hold our tax_query params
+        $tax_query = array();
+        // add the relation parameter (not sure if it causes trouble if only 1 term so what the heck)
+        if( count( $custom_terms > 1 ) )
+            $tax_query['relation'] = 'AND' ;
+
+        // loop through venus and build a tax query
+        foreach( $custom_terms as $custom_term ) {
+            $tax_query[] = array(
+                'taxonomy' => 'wiki-section',
+                'field' => 'slug',
+                'terms' => $custom_term->slug,
+            );
+        }
+
+        // put all the WP_Query args together
+        $args = array('post_type' => 'wiki',
+                      'posts_per_page' => -1,
+                      'tax_query' => $tax_query );
+
+        // finally run the query
+        $loop = new WP_Query($args);
+        if( $loop->have_posts() ) { ?>
+          <ul class="wiki-list">
+          <?php while( $loop->have_posts() ) : $loop->the_post(); ?>
+            <li class="wiki-list__item"><a href="<?php the_permalink(); ?>"><?php the_title(); ?></a></li>
+          <?php endwhile; ?>
+          </ul>
+        <?php }
+
+        wp_reset_query();
+    }
 	}
 ?>

@@ -189,6 +189,7 @@
 				'description' => '
 									How do you want the legend of the ratings to be shown? <br />
 									<strong>Variables</strong> <br />
+                                    <code>[best]</code>=max stars <br />
 									<code>[total]</code>=total ratings <br />
 									<code>[avg]</code>=average <br />
 									<code>[per]</code>=percentage <br />

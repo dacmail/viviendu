@@ -239,7 +239,6 @@
 		);
 		$shortcode_tax->Finish();
 
-
 	}
 
 	// Taxonomy description tinyMCE

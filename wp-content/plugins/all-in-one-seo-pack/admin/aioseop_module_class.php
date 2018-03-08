@@ -503,11 +503,14 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Module' ) ) {
 			$regex = '';
 			$cont  = 0;
 			foreach ( $list as $l ) {
-				if ( $cont && ! empty( $l ) ) {
-					$regex .= '|';
+				$trim_l = trim ( $l );
+				if ( ! empty( $trim_l ) ) {
+					if ( $cont ) {
+						$regex .= '|';
+					}
+					$cont = 1;
+					$regex .= preg_quote( trim( $l ), $quote );
 				}
-				$cont = 1;
-				$regex .= preg_quote( trim( $l ), $quote );
 			}
 
 			return $regex;
@@ -926,16 +929,18 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Module' ) ) {
 		/**
 		 * Handles exporting settings data for a module.
 		 *
+		 * @since 2.4.13 Fixed bug on empty options.
+		 *
 		 * @param $buf
 		 *
 		 * @return string
 		 */
 		function settings_export( $buf ) {
 			global $aiosp;
-			$post_types       = null;
+			$post_types       = apply_filters( 'aioseop_export_settings_exporter_post_types', null );
 			$has_data         = null;
 			$general_settings = null;
-			$exporter_choices = '';
+			$exporter_choices = apply_filters( 'aioseop_export_settings_exporter_choices', '' );
 			if ( ! empty( $_REQUEST['aiosp_importer_exporter_export_choices'] ) ) {
 				$exporter_choices = $_REQUEST['aiosp_importer_exporter_export_choices'];
 			}
@@ -954,6 +959,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Module' ) ) {
 				$buf .= $this->post_data_export( '_aioseop', array(
 					'posts_per_page' => - 1,
 					'post_type'      => $post_types,
+					'post_status' => array( 'publish', 'pending', 'draft', 'future', 'private', 'inherit' ),
 				) );
 			}
 
@@ -1332,8 +1338,12 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Module' ) ) {
 		}
 
 		/**
-		 * @param null $options
-		 * @param null $p
+		 * Returns available social seo images.
+		 *
+		 * @since 2.4 #1079 Fixes array_flip warning on opengraph module.
+		 *
+		 * @param array  $options Plugin/module options.
+		 * @param object $p       Post.
 		 *
 		 * @return array
 		 */
@@ -1380,10 +1390,9 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Module' ) ) {
 					}
 
 					if ( ! empty( $meta_key ) && ! empty( $post ) ) {
-						$meta_key = explode( ',', $meta_key );
 						$image    = $this->get_the_image_by_meta_key( array(
 							'post_id'  => $post->ID,
-							'meta_key' => $meta_key,
+							'meta_key' => explode( ',', $meta_key ),
 						) );
 						if ( ! empty( $image ) ) {
 							$img[] = array( 'type' => 'meta_key', 'id' => $meta_key, 'link' => $image );
@@ -1540,6 +1549,8 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Module' ) ) {
 		}
 
 		/**
+		 * @since 2.4.13 Fixes when content is taxonomy.
+		 *
 		 * @param null $p
 		 *
 		 * @return bool
@@ -1551,6 +1562,9 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Module' ) ) {
 			} else {
 				$post = $p;
 			}
+
+			if ( is_category() || is_tag() || is_tax() )
+				return false;
 
 			$post_thumbnail_id = null;
 			if ( function_exists( 'get_post_thumbnail_id' ) ) {
@@ -1698,9 +1712,10 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Module' ) ) {
 
 		/**
 		 * Load scripts and styles for metaboxes.
-		 *
 		 * edit-tags exists only for pre 4.5 support... remove when we drop 4.5 support.
-		 * Also, that check and others should be pulled out into their own functions
+		 * Also, that check and others should be pulled out into their own functions.
+		 *
+		 * @since 2.4.14 Added term as screen base.
 		 */
 		function enqueue_metabox_scripts() {
 			$screen = '';
@@ -1732,7 +1747,11 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Module' ) ) {
 			foreach ( $this->locations as $k => $v ) {
 				if ( $v['type'] === 'metabox' && isset( $v['display'] ) && ! empty( $v['display'] ) ) {
 					$enqueue_scripts = false;
-					$enqueue_scripts = ( ( ( $screen->base == 'toplevel_page_shopp-products' ) && in_array( 'shopp_product', $v['display'] ) ) ) || in_array( $screen->post_type, $v['display'] );
+					$enqueue_scripts = ( ( ( $screen->base == 'toplevel_page_shopp-products' ) && in_array( 'shopp_product', $v['display'] ) ) )
+						|| in_array( $screen->post_type, $v['display'] )
+						|| $screen->base == 'edit-category'
+						|| $screen->base == 'edit-post_tag'
+						|| $screen->base == 'term';
 					$enqueue_scripts = apply_filters( $prefix . 'enqueue_metabox_scripts', $enqueue_scripts, $screen, $v );
 					if ( $enqueue_scripts ) {
 						add_filter( 'aioseop_localize_script_data', array( $this, 'localize_script_data' ) );
@@ -2000,12 +2019,26 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Module' ) ) {
 						foreach ( $v['display'] as $posttype ) {
 							$v['location'] = $k;
 							$v['posttype'] = $posttype;
+
+							if ( post_type_exists( $posttype ) ) {
+							    // Metabox priority/context on edit post screen.
+								$v['context']  = apply_filters( 'aioseop_post_metabox_context', 'normal' );
+								$v['priority'] = apply_filters( 'aioseop_post_metabox_priority', 'high' );
+							}
+							if ( false !== strpos( $posttype, 'edit-' ) ) {
+								// Metabox priority/context on edit taxonomy screen.
+								$v['context'] = 'advanced';
+								$v['priority'] = 'default';
+							}
+
+							// Metabox priority for everything else.
 							if ( ! isset( $v['context'] ) ) {
 								$v['context'] = 'advanced';
 							}
 							if ( ! isset( $v['priority'] ) ) {
 								$v['priority'] = 'default';
 							}
+
 							if ( $this->tabbed_metaboxes ) {
 								$this->post_metaboxes[] = array(
 									'id'            => $v['prefix'] . $k,
@@ -2101,6 +2134,9 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Module' ) ) {
 			$setsel = $strings['selected'];
 			if ( isset( $options['initial_options'] ) && is_array( $options['initial_options'] ) ) {
 				foreach ( $options['initial_options'] as $l => $option ) {
+					$option_check = strip_tags( is_array( $option ) ? implode( ' ', $option ) : $option );
+					if ( empty( $l ) && empty( $option_check ) )
+						continue;
 					$is_group = is_array( $option );
 					if ( ! $is_group ) {
 						$option = array( $l => $option );
@@ -2154,15 +2190,16 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Module' ) ) {
 				return apply_filters( "{$prefix}output_option", '', $args );
 			}
 			if ( in_array( $options['type'], array(
-					'multiselect',
-					'select',
-					'multicheckbox',
-					'radio',
-					'checkbox',
-					'textarea',
-					'text',
-					'submit',
-					'hidden',
+				'multiselect',
+				'select',
+				'multicheckbox',
+				'radio',
+				'checkbox',
+				'textarea',
+				'text',
+				'submit',
+				'hidden',
+				'date',
 				) ) && is_string( $value )
 			) {
 				$value = esc_attr( $value );
@@ -2176,6 +2213,9 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Module' ) ) {
 			}
 			if ( isset( $opts['id'] ) ) {
 				$attr .= " id=\"{$opts['id']}\" ";
+			}
+			if ( isset( $options['required'] ) && true === $options['required'] ) {
+				$attr .= ' required';
 			}
 			switch ( $options['type'] ) {
 				case 'multiselect':
@@ -2201,7 +2241,10 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Module' ) ) {
 					$buf .= "<textarea name='$name' $attr>$value</textarea>";
 					break;
 				case 'image':
-					$buf .= "<input class='aioseop_upload_image_button button-primary' type='button' value='Upload Image' style='float:left;' />" .
+					$buf .= '<input class="aioseop_upload_image_checker" type="hidden" name="' . $name . '_checker" value="0">' .
+					        "<input class='aioseop_upload_image_button button-primary' type='button' value='";
+					$buf .= __( 'Upload Image', 'all-in-one-seo-pack' );
+					$buf .= "' style='float:left;' />" .
 					        "<input class='aioseop_upload_image_label' name='$name' type='text' $attr value='$value' size=57 style='float:left;clear:left;'>\n";
 					break;
 				case 'html':
@@ -2210,6 +2253,10 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Module' ) ) {
 				case 'esc_html':
 					$buf .= "<pre>" . esc_html( $value ) . "</pre>\n";
 					break;
+				case 'date':
+					// firefox and IE < 11 do not have support for HTML5 date, so we will fall back to the datepicker.
+					wp_enqueue_script( 'jquery-ui-datepicker' );
+					// fall through.
 				default:
 					$buf .= "<input name='$name' type='{$options['type']}' $attr value='$value'>\n";
 			}
@@ -2219,6 +2266,9 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Module' ) ) {
 					$size = $options['size'];
 				} elseif ( isset( $options['rows'] ) && isset( $options['cols'] ) ) {
 					$size = $options['rows'] * $options['cols'];
+				} 
+				if ( 'Description' === $options['name'] && isset( $options['name'] ) ) {
+					$size = ( $size - 90 ) . '-' . $size;
 				}
 				if ( isset( $options['count_desc'] ) ) {
 					$count_desc = $options['count_desc'];
@@ -2531,8 +2581,14 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Module' ) ) {
 			$this->settings_page_init();
 			?>
 			<div class="wrap <?php echo get_class( $this ); ?>">
+				<?php
+				ob_start();
+				do_action( $this->prefix . 'settings_header_errors', $location );
+				$errors = ob_get_clean();
+				echo $errors;
+				?>
 				<div id="aioseop_settings_header">
-					<?php if ( ! empty( $message ) ) {
+					<?php if ( ! empty( $message ) && empty( $errors ) ) {
 						echo "<div id=\"message\" class=\"updated fade\"><p>$message</p></div>";
 					} ?>
 					<div id="icon-aioseop" class="icon32"><br></div>
@@ -2762,7 +2818,10 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Module' ) ) {
 			return $opts;
 		}
 
-		/** Generates just the default option names and values
+		/**
+		 * Generates just the default option names and values
+		 *
+		 * @since 2.4.13 Applies filter before final return.
 		 *
 		 * @param null $location
 		 * @param null $defaults
@@ -2770,6 +2829,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Module' ) ) {
 		 * @return array
 		 */
 		function default_options( $location = null, $defaults = null ) {
+			$prefix  = $this->get_prefix( $location );
 			$options = $this->setting_options( $location, $defaults );
 			$opts    = array();
 			foreach ( $options as $k => $v ) {
@@ -2777,11 +2837,13 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Module' ) ) {
 					$opts[ $k ] = $v['default'];
 				}
 			}
-
-			return $opts;
+			return apply_filters( $prefix . 'default_options', $opts, $location );
 		}
 
-		/** Gets the current options stored for a given location.
+		/**
+		 * Gets the current options stored for a given location.
+		 *
+		 * @since 2.4.14 Added taxonomy options.
 		 *
 		 * @param array $opts
 		 * @param null  $location
@@ -2806,17 +2868,25 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Module' ) ) {
 				}
 
 				if ( ( isset( $_GET['taxonomy'] ) && isset( $_GET['tag_ID'] ) ) || is_category() || is_tag() || is_tax() ) {
-
+					$term_id = isset( $_GET['tag_ID'] ) ? (int) $_GET['tag_ID'] : 0;
+					$term_id = $term_id ? $term_id : get_queried_object()->term_id;
 					if ( AIOSEOPPRO ) {
 						$get_opts = AIO_ProGeneral::getprotax( $get_opts );
+						$get_opts = get_term_meta( $term_id, '_' . $prefix . $location, true );
 					}
 
 				} elseif ( isset( $post ) ) {
 					$get_opts = get_post_meta( $post->ID, '_' . $prefix . $location, true );
 				}
 			}
+
+			if ( is_home() && ! is_front_page() ) {
+			    // If we're on the non-front page blog page, WP doesn't really know its post meta data so we need to get that manually for social meta.
+				$get_opts = get_post_meta( get_option( 'page_for_posts' ), '_' . $prefix . $location, true );
+			}
+
 			$defs = $this->default_options( $location, $defaults );
-			if ( $get_opts == '' ) {
+			if ( empty( $get_opts ) ) {
 				$get_opts = $defs;
 			} else {
 				$get_opts = wp_parse_args( $get_opts, $defs );
