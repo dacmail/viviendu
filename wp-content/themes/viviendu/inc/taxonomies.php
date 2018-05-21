@@ -251,6 +251,7 @@
 		// ADD EVENTS
 		if(
 		$pagenow == 'edit-tags.php' ||
+		$pagenow == 'term.php' ||
 		$pagenow == 'categories.php' ||
 		$pagenow == 'media.php' ||
 		$pagenow == 'profile.php' ||
