@@ -47,3 +47,4 @@ Temporary Items
 sftp-config.json
 .DS_Store
 *.sublime-*
+wp-content/autoptimize_404_handler.php
