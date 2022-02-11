@@ -1,5 +1,6 @@
 <?php
 	//Includes
+	include get_template_directory() . '/inc/acf.php';
 	require get_template_directory() . '/meta-box/meta-box.php';
 	include get_template_directory() . '/inc/meta-boxes.php';
 	include get_template_directory() . '/inc/assets.php';
