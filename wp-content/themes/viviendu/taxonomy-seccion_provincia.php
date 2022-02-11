@@ -8,9 +8,10 @@
 				<div class="text main">
 					<?php echo viviendu_get_paragraph(apply_filters('the_content',$seccion_provincia->description)); ?>
 				</div>
-				<div class="row">
-					<?php $htitle = 'h2'; ?>
-					<?php include(locate_template('templates/list-col-4.php')); ?>
+				<?php $htitle = 'h2'; ?>
+				<?php include(locate_template('templates/list-col-4.php')); ?>
+				<div class="text main">
+					<?php echo viviendu_get_paragraph(apply_filters('the_content',$seccion_provincia->description), false); ?>
 				</div>
 			</div>
 			<?php get_sidebar('seccion_provincia'); ?>
