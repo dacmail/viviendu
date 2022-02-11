@@ -16,3 +16,7 @@
 	} else {
 		include get_template_directory() . '/inc/production.php';
 	}
+
+add_filter('flamingo_csv_value_separator', function($seperator) {
+  return ';';
+}, 999);

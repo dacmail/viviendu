@@ -1,4 +1,4 @@
-<? $secciones = get_terms("category", array(
+<?php $secciones = get_terms("category", array(
 	'orderby'    => 'id',
 	'hide_empty' => 0
 )); ?>

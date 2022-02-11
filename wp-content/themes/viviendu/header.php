@@ -7,6 +7,13 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<meta name="google-site-verification" content="1fXx-EMkArSR64VzTzdGzgelML8veS1ejluAGGO_9ts" />
 	<link rel="shortcut icon" href="<?php echo get_template_directory_uri(); ?>/favicon.png" />
+<script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+    (adsbygoogle = window.adsbygoogle || []).push({
+         google_ad_client: "ca-pub-4011847837717513",
+         enable_page_level_ads: true
+    });
+</script>
 	<?php wp_head(); ?>
 </head>
 <body <?php body_class(); ?>>

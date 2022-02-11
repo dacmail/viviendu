@@ -38,7 +38,7 @@
 				<div class="col-md-6 howto-item">
 					<img src="<?php echo asset_path('images/statistic.png'); ?>" alt="Configura">
 					<h3 class="title mini">Viviendu para empresas</h3>
-					<div class="text">Miles de usuarios buscan en Viviendu las mejores propuestas en casas prefabricadas y viviendas móviles. Contacta con potenciales compradores y aumenta tus ventas. <br><a href="<?php echo get_permalink(7476); ?>">SABER MÁS <i class="fa fa-angle-right"></i></a></div>
+					<div class="text">Miles de usuarios buscan en Viviendu las mejores propuestas en casas prefabricadas y viviendas móviles. Contacta con potenciales compradores y aumenta tus ventas. <br><a>SABER MÁS <i class="fa fa-angle-right"></i></a></div>
 				</div>
 			</div>
 		</div>
