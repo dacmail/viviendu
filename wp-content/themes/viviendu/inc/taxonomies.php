@@ -172,28 +172,3 @@
 	}
 	add_action('init','custom_taxonomies_rewrite');
 
-	add_action("comercio_provincia_edit_form_fields", 'viviendu_add_form_tinymce', 10, 2);
-	add_action("comercio_edit_form_fields", 'viviendu_add_form_tinymce', 10, 2);
-	add_action("comercio_seccion_edit_form_fields", 'viviendu_add_form_tinymce', 10, 2);
-	add_action("category_edit_form_fields", 'viviendu_add_form_tinymce', 10, 2);
-	add_action("post_tag_edit_form_fields", 'viviendu_add_form_tinymce', 10, 2);
-	add_action("provincia_edit_form_fields", 'viviendu_add_form_tinymce', 10, 2);
-	add_action("seccion_provincia_edit_form_fields", 'viviendu_add_form_tinymce', 10, 2);
-	add_action("oferta_edit_form_fields", 'viviendu_add_form_tinymce', 10, 2);
-
-	function viviendu_add_form_tinymce($term, $taxonomy){
-		?>
-		<tr valign="top">
-			<th scope="row">Description</th>
-			<td>
-				<?php wp_editor(html_entity_decode($term->description), 'description', array('media_buttons' => false)); ?>
-				<script>
-					jQuery(window).ready(function(){
-							jQuery('label[for=description]').parent().parent().remove();
-					});
-				</script>
-			</td>
-		</tr>
-		<?php
-	}
-?>
