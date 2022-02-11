@@ -7,297 +7,291 @@
  */
 
 /** WordPress Administration Bootstrap */
-require_once( dirname( __FILE__ ) . '/admin.php' );
+require_once __DIR__ . '/admin.php';
 
-wp_enqueue_script( 'underscore' );
-
-$title = __( 'About' );
+// Used in the HTML title tag.
+/* translators: Page title of the About WordPress page in the admin. */
+$title = _x( 'About', 'page title' );
 
 list( $display_version ) = explode( '-', get_bloginfo( 'version' ) );
 
-include( ABSPATH . 'wp-admin/admin-header.php' );
+require_once ABSPATH . 'wp-admin/admin-header.php';
 ?>
-	<div class="wrap about-wrap full-width-layout">
-		<h1><?php printf( __( 'Welcome to WordPress&nbsp;%s' ), $display_version ); ?></h1>
+	<div class="wrap about__container">
 
-		<p class="about-text"><?php printf( __( 'Thank you for updating to the latest version! WordPress %s will smooth your design workflow and keep you safe from coding errors.' ), $display_version ); ?></p>
-		<div class="wp-badge"><?php printf( __( 'Version %s' ), $display_version ); ?></div>
+		<div class="about__header">
+			<div class="about__header-title">
+				<h1>
+					<?php _e( 'WordPress' ); ?>
+					<span class="screen-reader-text"><?php echo $display_version; ?></span>
+				</h1>
+			</div>
 
-		<h2 class="nav-tab-wrapper wp-clearfix">
-			<a href="about.php" class="nav-tab nav-tab-active"><?php _e( 'What&#8217;s New' ); ?></a>
-			<a href="credits.php" class="nav-tab"><?php _e( 'Credits' ); ?></a>
-			<a href="freedoms.php" class="nav-tab"><?php _e( 'Freedoms' ); ?></a>
-			<a href="privacy.php" class="nav-tab"><?php _e( 'Privacy' ); ?></a>
-		</h2>
+			<div class="about__header-text">
+				<?php _e( 'Build the site you&#8217;ve always wanted &#8212; with blocks' ); ?>
+			</div>
 
-		<div class="changelog point-releases">
-			<h3><?php _e( 'Maintenance and Security Releases' ); ?></h3>
-			<p>
-				<?php
-				printf(
-					/* translators: 1: WordPress version number, 2: plural number of bugs. */
-					_n(
-						'<strong>Version %1$s</strong> addressed %2$s bug.',
-						'<strong>Version %1$s</strong> addressed %2$s bugs.',
-						1
-					),
-					'4.9.4',
-					number_format_i18n( 1 )
-				);
-				?>
-				<?php
-				/* translators: %s: Codex URL */
-				printf( __( 'For more information, see <a href="%s">the release notes</a>.' ), 'https://codex.wordpress.org/Version_4.9.4' );
-				?>
-			</p>
-			<p>
-				<?php
-				printf(
-					/* translators: 1: WordPress version number, 2: plural number of bugs. */
-					_n(
-						'<strong>Version %1$s</strong> addressed %2$s bug.',
-						'<strong>Version %1$s</strong> addressed %2$s bugs.',
-						34
-					),
-					'4.9.3',
-					number_format_i18n( 34 )
-				);
-				?>
-				<?php
-				/* translators: %s: Codex URL */
-				printf( __( 'For more information, see <a href="%s">the release notes</a>.' ), 'https://codex.wordpress.org/Version_4.9.3' );
-				?>
-			</p>
-			<p>
-				<?php
-				printf(
-					/* translators: 1: WordPress version number, 2: plural number of bugs. */
-					_n(
-						'<strong>Version %1$s</strong> addressed some security issues and fixed %2$s bug.',
-						'<strong>Version %1$s</strong> addressed some security issues and fixed %2$s bugs.',
-						22
-					),
-					'4.9.2',
-					number_format_i18n( 22 )
-				);
-				?>
-				<?php
-				/* translators: %s: Codex URL */
-				printf( __( 'For more information, see <a href="%s">the release notes</a>.' ), 'https://codex.wordpress.org/Version_4.9.2' );
-				?>
-			</p>
-			<p>
-				<?php
-				printf(
-					/* translators: 1: WordPress version number, 2: plural number of bugs. */
-					_n(
-						'<strong>Version %1$s</strong> addressed some security issues and fixed %2$s bug.',
-						'<strong>Version %1$s</strong> addressed some security issues and fixed %2$s bugs.',
-						11
-					),
-					'4.9.1',
-					number_format_i18n( 11 )
-				);
-				?>
-				<?php
-				/* translators: %s: Codex URL */
-				printf( __( 'For more information, see <a href="%s">the release notes</a>.' ), 'https://codex.wordpress.org/Version_4.9.1' );
-				?>
-			</p>
+			<nav class="about__header-navigation nav-tab-wrapper wp-clearfix" aria-label="<?php esc_attr_e( 'Secondary menu' ); ?>">
+				<a href="about.php" class="nav-tab nav-tab-active" aria-current="page"><?php _e( 'What&#8217;s New' ); ?></a>
+				<a href="credits.php" class="nav-tab"><?php _e( 'Credits' ); ?></a>
+				<a href="freedoms.php" class="nav-tab"><?php _e( 'Freedoms' ); ?></a>
+				<a href="privacy.php" class="nav-tab"><?php _e( 'Privacy' ); ?></a>
+			</nav>
 		</div>
 
-		<div class="feature-section one-col">
-			<div class="col">
-				<h2>
-					<?php
-						printf(
-							/* translators: %s: party popper emoji */
-							__( 'Major Customizer Improvements, Code Error Checking, and More! %s' ),
-							'&#x1F389'
-						);
-					?>
-				</h2>
-				<p><?php _e( 'Welcome to an improved Customizer workflow with design drafts, locking, scheduling, and preview links. What&#8217;s more, code syntax highlighting and error checking will make for a clean and smooth site building experience. Finally, if all that wasn&#8217;t pretty great, we&#8217;ve got a great new Gallery widget and improvements to theme browsing and switching.' ); ?></p>
-			</div>
-		</div>
+		<hr class="is-large" />
 
-		<div class="inline-svg full-width">
-			<picture>
-				<source media="(max-width: 500px)" srcset="<?php echo 'https://s.w.org/images/core/4.9/banner-mobile.svg'; ?>">
-				<img src="https://s.w.org/images/core/4.9/banner.svg" alt="">
-			</picture>
-		</div>
-
-		<div class="floating-header-section">
-			<div class="section-header">
-				<h2><?php _e( 'Customizer Workflow Improved' ); ?></h2>
-			</div>
-
-			<div class="section-content">
-				<div class="section-item">
-					<div class="inline-svg">
-						<img src="https://s.w.org/images/core/4.9/draft-and-schedule.svg" alt="">
-					</div>
-					<h3><?php _e( 'Draft and Schedule Site Design Customizations' ); ?></h3>
-					<p><?php _e( 'Yes, you read that right. Just like you can draft and revise posts and schedule them to go live on the date and time you choose, you can now tinker with your site&#8217;s design and schedule those design changes to go live as you please.' ); ?></p>
-				</div>
-				<div class="section-item">
-					<div class="inline-svg">
-						<img src="https://s.w.org/images/core/4.9/design-preview-links.svg" alt="">
-					</div>
-					<h3><?php _e( 'Collaborate with Design Preview Links' ); ?></h3>
-					<p><?php _e( 'Need to get some feedback on proposed site design changes? WordPress 4.9 gives you a preview link you can send to your team and customers so that you can collect and integrate feedback before you schedule the changes to go live. Can we say collaboration&#43;&#43;?' ); ?></p>
-				</div>
-				<div class="section-item">
-					<div class="inline-svg">
-						<img src="https://s.w.org/images/core/4.9/locking.svg" alt="">
-					</div>
-					<h3><?php _e( 'Design Locking To Guard Your Changes' ); ?></h3>
-					<p><?php _e( 'Ever encounter a scenario where two designers walk into a project and designer A overrides designer B&#8217;s beautiful changes? WordPress 4.9&#8217;s design lock feature (similar to post locking) secures your draft design so that no one can make changes to it or erase all your hard work.' );?></p>
-				</div>
-				<div class="section-item">
-					<div class="inline-svg">
-						<img src="https://s.w.org/images/core/4.9/prompt.svg" alt="">
-					</div>
-					<h3><?php _e( 'A Prompt to Protect Your Work' ); ?></h3>
-					<p><?php _e( 'Were you lured away from your desk before you saved your new draft design? Fear not, when you return, WordPress 4.9 will politely ask whether or not you&#8217;d like to save your unsaved changes.' ); ?></p>
-				</div>
-			</div>
-		</div>
-
-		<div class="floating-header-section">
-			<div class="section-header">
-				<h2><?php _e( 'Coding Enhancements' ); ?></h2>
-			</div>
-
-			<div class="section-content">
-				<div class="section-item">
-					<div class="inline-svg">
-						<img src="https://s.w.org/images/core/4.9/syntax-highlighting.svg" alt="">
-					</div>
-					<h3><?php _e( 'Syntax Highlighting and Error Checking? Yes, Please!' ); ?></h3>
-					<p><?php _e( 'You&#8217;ve got a display problem but can&#8217;t quite figure out exactly what went wrong in the CSS you lovingly wrote. With syntax highlighting and error checking for CSS editing and the Custom HTML widget introduced in WordPress 4.8.1, you&#8217;ll pinpoint coding errors quickly. Practically guaranteed to help you scan code more easily and suss out and fix code errors quickly.' ); ?></p>
-				</div>
-				<div class="section-item">
-					<div class="inline-svg">
-						<img src="https://s.w.org/images/core/4.9/sandbox.svg" alt="">
-					</div>
-					<h3><?php _e( 'Sandbox for Safety' ); ?></h3>
-					<p><?php _e( 'The dreaded white screen. You&#8217;ll avoid it when working on themes and plugin code because WordPress 4.9 will warn you about saving an error. You&#8217;ll sleep better at night.' ); ?></p>
-				</div>
-				<div class="section-item">
-					<div class="inline-svg">
-						<img src="https://s.w.org/images/core/4.9/warning.svg" alt="">
-					</div>
-					<h3><?php _e( 'Warning: Potential Danger Ahead!' ); ?></h3>
-					<p><?php _e( 'When you edit themes and plugins directly, WordPress 4.9 will politely warn you that this is a dangerous practice. It will recommend that you backup your files before saving, so they don&#8217;t get overwritten by the next update. Take the safe route: your future self will thank you. Your team and customers will thank you.' );?></p>
-				</div>
-			</div>
-		</div>
-
-		<div class="floating-header-section">
-			<div class="section-header">
-				<h2><?php _e( 'Even More Widget Updates' ); ?></h2>
-			</div>
-
-			<div class="section-content">
-				<div class="section-item">
-					<div class="inline-svg">
-						<img src="https://s.w.org/images/core/4.9/gallery-widget.svg" alt="">
-					</div>
-					<h3><?php _e( 'The New Gallery Widget' ); ?></h3>
-					<p><?php _e( 'An incremental improvement to the media changes hatched in WordPress 4.8, you can now add a gallery via widget. Yes!' ); ?></p>
-				</div>
-				<div class="section-item">
-					<div class="inline-svg">
-						<img src="https://s.w.org/images/core/4.9/media-button.svg" alt="">
-					</div>
-					<h3><?php _e( 'Press a Button, Add Media' ); ?></h3>
-					<p><?php _e( 'Want to add media to your text widget? Embed images, video, and audio directly into the widget along with your text, with our simple but useful Add Media button. Woo!' ); ?></p>
-				</div>
-			</div>
-		</div>
-
-		<div class="floating-header-section">
-			<div class="section-header">
-				<h2><?php _e( 'Site Building Improvements' ); ?></h2>
-			</div>
-
-			<div class="section-content">
-				<div class="section-item">
-					<div class="inline-svg">
-						<img src="https://s.w.org/images/core/4.9/theme-switching.svg" alt="">
-					</div>
-					<h3><?php _e( 'More Reliable Theme Switching' ); ?></h3>
-					<p><?php _e( 'When you switch themes, widgets sometimes think they can just up and move location. Improvements in WordPress 4.9 offer more persistent menu and widget placement when you decide it&#8217;s time for a new theme. Additionally, you can preview installed themes or download, install, and preview new themes right. Nothing says handy like being able to preview before you deploy. ' ); ?></p>
-				</div>
-				<div class="section-item">
-					<div class="inline-svg">
-						<img src="https://s.w.org/images/core/4.9/menu-flow.svg" alt="">
-					</div>
-					<h3><?php _e( 'Better Menu Instructions = Less Confusion' ); ?></h3>
-					<p><?php _e( 'Were you confused by the steps to create a new menu? Perhaps no longer! We&#8217;ve ironed out the UX for a smoother menu creation process. Newly updated copy will guide you.' ); ?></p>
-				</div>
-			</div>
-		</div>
-
-		<div class="inline-svg">
-			<picture>
-				<source media="(max-width: 500px)" srcset="<?php echo 'https://s.w.org/images/core/4.9/gutenberg-mobile.svg'; ?>">
-				<img src="https://s.w.org/images/core/4.9/gutenberg.svg" alt="">
-			</picture>
-		</div>
-
-		<div class="feature-section">
-			<h2>
-				<?php
-					printf(
-						/* translators: %s: handshake emoji */
-						__( 'Lend a Hand with Gutenberg %s' ),
-						'&#x1F91D'
-					);
-				?>
+		<div class="about__section">
+			<h2 class="aligncenter">
+				<?php _e( 'Full Site Editing is here' ); ?>
 			</h2>
-			<p><?php printf(
-				__( 'WordPress is working on a new way to create and control your content and we&#8217;d love to have your help. Interested in being an <a href="%s">early tester</a> or getting involved with the Gutenberg project? <a href="%s">Contribute on GitHub</a>.' ),
-				__( 'https://wordpress.org/plugins/gutenberg/' ),
-				'https://github.com/WordPress/gutenberg' ); ?></p>
+			<p class="aligncenter is-subheading">
+				<?php _e( 'It puts you in control of your whole site, right in the WordPress Admin.' ); ?>
+			</p>
 		</div>
 
 		<hr />
 
-		<div class="changelog">
-			<h2><?php
-				printf(
-					/* translators: %s: smiling face with smiling eyes emoji */
-					__( 'Developer Happiness %s' ),
-					'&#x1F60A'
-				);
-			?></h2>
+		<div class="about__section has-2-columns has-gutters is-wider-left">
+			<div class="column about__image is-vertically-aligned-center is-edge-to-edge">
+				<img src="https://s.w.org/images/core/5.9/twenty-twenty-two.png" alt="" />
+			</div>
+			<div class="column is-edge-to-edge">
+				<h3>
+					<?php _e( 'Say hello to Twenty Twenty&#8209;Two' ); ?>
+				</h3>
+				<p>
+					<?php _e( 'And say hello to the first default block theme in the history of WordPress. This is more than just a new default theme. It&#8217;s a brand-new way to work with WordPress themes.' ); ?>
+				</p>
+				<p>
+					<?php _e( 'Block themes put a wide array of visual choices in your hands, from color schemes and typeface combinations to page templates and image filters &#8212; all together, in the site editing interface. By making changes in one place, you can give Twenty Twenty&#8209;Two the same look and feel as your brand or other websites &#8212; or take your site&#8217;s look in another direction.' ); ?>
+				</p>
+				<?php if ( current_user_can( 'switch_themes' ) ) : ?>
+				<p>
+					<?php
+					printf(
+						/* translators: %s: Link to Themes screen. */
+						__( 'The Twenty Twenty&#8209;Two theme is already available to you. It came installed with WordPress 5.9, and you will find it with <a href="%s">your other installed themes</a>.' ),
+						admin_url( 'themes.php' )
+					);
+					?>
+				</p>
+				<?php endif; ?>
+			</div>
+		</div>
 
-			<div class="under-the-hood two-col">
-				<div class="col">
-					<h3><a href="https://make.wordpress.org/core/2017/11/01/improvements-to-the-customize-js-api-in-4-9/"><?php _e( 'Customizer JS API Improvements' ); ?></a></h3>
-					<p><?php
-						printf(
-							/* translators: %s: https://make.wordpress.org/core/2017/11/01/improvements-to-the-customize-js-api-in-4-9/  */
-							__( 'We&#8217;ve made numerous improvements to the Customizer JS API in WordPress 4.9, eliminating many pain points and making it just as easy to work with as the PHP API. There are also new base control templates, a date/time control, and section/panel/global notifications to name a few. <a href="%s">Check out the full list.</a>' ),
-							'https://make.wordpress.org/core/2017/11/01/improvements-to-the-customize-js-api-in-4-9/'
-						);
-					?></p>
-				</div>
-				<div class="col">
-					<h3><a href="https://make.wordpress.org/core/2017/10/22/code-editing-improvements-in-wordpress-4-9/"><?php _e( 'CodeMirror available for use in your themes and plugins' ); ?></a></h3>
-					<p><?php _e( 'We&#8217;ve introduced a new code editing library, CodeMirror, for use within core. Use it to improve any code writing or editing experiences within your plugins, like CSS or JavaScript include fields.' ); ?></p>
-				</div>
-				<div class="col">
-					<h3><a href="https://make.wordpress.org/core/2017/10/30/mediaelement-upgrades-in-wordpress-4-9/"><?php _e( 'MediaElement.js upgraded to 4.2.6' ); ?></a></h3>
-					<p><?php _e( 'WordPress 4.9 includes an upgraded version of MediaElement.js, which removes dependencies on jQuery, improves accessibility, modernizes the UI, and fixes many bugs.' ); ?></p>
-				</div>
-				<div class="col">
-					<h3><a href="https://make.wordpress.org/core/2017/10/15/improvements-for-roles-and-capabilities-in-4-9/"><?php _e( 'Improvements to Roles and Capabilities' ); ?></a></h3>
-					<p><?php _e( 'New capabilities have been introduced that allow granular management of plugins and translation files. In addition, the site switching process in multisite has been fine-tuned to update the available roles and capabilities in a more reliable and coherent way.' ); ?></p>
-				</div>
+		<div class="about__section has-2-columns has-gutters is-wider-right">
+			<div class="column is-edge-to-edge">
+				<h3>
+					<?php _e( 'Your personal paintbox awaits' ); ?>
+				</h3>
+				<p>
+					<?php _e( 'More block themes built for full site editing features are in the Theme Directory alongside the Twenty Twenty&#8209;Two theme, just waiting to be explored. Expect more to come!' ); ?>
+				</p>
+				<p>
+					<?php _e( 'When you use any of those new themes, you no longer need the Customizer. Instead, you have all the power of the Styles interface inside the Site Editor. Just as in Twenty Twenty&#8209;Two, you build your site&#8217;s look and feel there, with the tools you need for the job in a fluid interface that practically comes alive in your hands.' ); ?>
+				</p>
+			</div>
+			<div class="column about__image is-vertically-aligned-center is-edge-to-edge">
+				<img src="https://s.w.org/images/core/5.9/global-styles.png" alt="" />
+			</div>
+		</div>
+
+		<div class="about__section has-2-columns has-gutters is-wider-left">
+			<div class="column about__image is-vertically-aligned-center is-edge-to-edge">
+				<img src="https://s.w.org/images/core/5.9/navigation-block.png" alt="" />
+			</div>
+			<div class="column is-edge-to-edge">
+				<h3>
+					<?php _e( 'The Navigation block' ); ?>
+				</h3>
+				<p>
+					<?php _e( 'Blocks come to site navigation, the heart of user experience.' ); ?>
+				</p>
+				<p>
+					<?php _e( 'The new Navigation block gives you the power to choose: an always-on responsive menu or one that adapts to your user&#8217;s screen size. Whatever you create, know it&#8217;s there to reuse wherever you like, whether in a brand new template or after switching themes.' ); ?>
+				</p>
+			</div>
+		</div>
+
+		<hr class="is-large" />
+
+		<div class="about__section">
+			<h2 class="aligncenter">
+				<?php _e( 'More improvements and updates' ); ?>
+			</h2>
+			<p class="aligncenter is-subheading">
+				<?php _e( 'Do you love to blog or produce content? New tweaks to the publishing flow help you say more, faster.' ); ?>
+			</p>
+		</div>
+
+		<hr />
+
+		<div class="about__section has-2-columns has-gutters is-wider-left">
+			<div class="column about__image is-vertically-aligned-center is-edge-to-edge">
+				<img src="https://s.w.org/images/core/5.9/block-controls.png" alt="" />
+			</div>
+			<div class="column is-edge-to-edge">
+				<h3>
+					<?php _e( 'Better block controls' ); ?>
+				</h3>
+				<p>
+					<?php _e( 'WordPress 5.9 features new typography tools, flexible layout controls, and finer control over details like spacing, borders, and more &#8212; to help you get not just the look, but the polish that says you care about details.' ); ?>
+				</p>
+			</div>
+		</div>
+
+		<div class="about__section has-2-columns has-gutters is-wider-right">
+			<div class="column is-edge-to-edge">
+				<h3>
+					<?php _e( 'The power of patterns' ); ?>
+				</h3>
+				<p>
+					<?php _e( 'The WordPress Pattern Directory is the home of a wide range of block patterns built to save you time and add core site functionality. And you can edit them as you see fit. Need something different in the header or footer for your theme? Swap it out with a new one in a few clicks.' ); ?>
+				</p>
+				<p>
+					<?php _e( 'With a near full-screen view that draws you in to see fine details, the Pattern Explorer makes it easy to compare patterns and choose the one your users will expect.' ); ?>
+				</p>
+			</div>
+			<div class="column about__image is-vertically-aligned-center is-edge-to-edge">
+				<img src="https://s.w.org/images/core/5.9/pattern-explorer.png" alt="" />
+			</div>
+		</div>
+
+		<div class="about__section has-2-columns has-gutters is-wider-left">
+			<div class="column about__image is-vertically-aligned-center is-edge-to-edge">
+				<img src="https://s.w.org/images/core/5.9/list-view.png" alt="" />
+			</div>
+			<div class="column is-edge-to-edge">
+				<h3>
+					<?php _e( 'A revamped List View' ); ?>
+				</h3>
+				<p>
+					<?php _e( 'In 5.9, the List View lets you drag and drop your content exactly where you want it. Managing complex documents is easier, too: simple controls let you expand and collapse sections as you build your site &#8212; and add HTML anchors to your blocks to help users get around the page.' ); ?>
+				</p>
+			</div>
+		</div>
+
+		<div class="about__section has-2-columns has-gutters is-wider-right">
+			<div class="column is-edge-to-edge">
+				<h3>
+					<?php _e( 'A better Gallery block' ); ?>
+				</h3>
+				<p>
+					<?php _e( 'Treat every image in a Gallery block the same way you would treat it in the Image block.' ); ?>
+				</p>
+				<p>
+					<?php _e( 'Style every image in your gallery differently from the next (with different crops, or duotones, for instance) or make them all the same. And change the layout with drag-and-drop.' ); ?>
+				</p>
+			</div>
+			<div class="column about__image is-vertically-aligned-center is-edge-to-edge">
+				<img src="https://s.w.org/images/core/5.9/gallery-block.png" alt="" />
+			</div>
+		</div>
+
+		<hr class="is-large" />
+
+		<div class="about__section">
+			<h2 class="aligncenter" style="margin-bottom:0;">
+				<?php
+				printf(
+					/* translators: %s: Version number. */
+					__( 'WordPress %s for developers' ),
+					$display_version
+				);
+				?>
+			</h2>
+		</div>
+
+		<div class="about__section has-gutters has-2-columns">
+			<div class="column is-edge-to-edge">
+				<h3>
+					<?php _e( 'Introducing block themes' ); ?>
+				</h3>
+				<p>
+					<?php
+					printf(
+						/* translators: %s: Block-based themes dev note link. */
+						__( 'A new way to build themes: Block themes use blocks to define the templates that structure your entire site. The new templates and template parts are defined in HTML and use the custom styling offered in theme.json. More information is available in the <a href="%s">block themes dev note</a>.' ),
+						'https://make.wordpress.org/core/2022/01/04/block-themes-a-new-way-to-build-themes-in-wordpress-5-9/'
+					);
+					?>
+				</p>
+			</div>
+			<div class="column is-edge-to-edge">
+				<h3>
+					<?php _e( 'Multiple stylesheets for a block' ); ?>
+				</h3>
+				<p>
+					<?php
+					printf(
+						/* translators: %s: Multiple stylesheets dev note link. */
+						__( 'Now you can register more than one stylesheet per block. You can use this to share styles across blocks you write, or to load styles for individual blocks, so your styles are only loaded when the block is used. Find out more about <a href="%s">using multiple stylesheets in a block</a>.' ),
+						'https://make.wordpress.org/core/2021/12/15/using-multiple-stylesheets-per-block/'
+					);
+					?>
+				</p>
+			</div>
+		</div>
+		<div class="about__section has-gutters has-2-columns">
+			<div class="column is-edge-to-edge">
+				<h3>
+					<?php _e( 'Block&#8209;level locking' ); ?>
+				</h3>
+				<p>
+					<?php _e( 'Now you can lock any block (or a few of them) in a pattern, just by adding a lock attribute to its settings in block.json &#8212; leaving the rest of the pattern free for site editors to adapt to their content.' ); ?>
+				</p>
+			</div>
+			<div class="column is-edge-to-edge">
+				<h3>
+					<?php _e( 'A refactored Gallery block' ); ?>
+				</h3>
+				<p>
+					<?php
+					printf(
+						/* translators: %s: Gallery Refactor dev note link. */
+						__( 'The changes to the Gallery block listed above are the result of a near-complete refactoring. Have you built a plugin or theme on the Gallery block functionality? Be sure to read the <a href="%s">Gallery block compatibility dev note</a>.' ),
+						'https://make.wordpress.org/core/2021/08/20/gallery-block-refactor-dev-note/'
+					);
+					?>
+				</p>
+			</div>
+		</div>
+
+		<hr class="is-large" />
+
+		<div class="about__section has-subtle-background-color has-2-columns is-wider-right">
+			<div class="column about__image is-vertically-aligned-center">
+				<img src="https://s.w.org/images/core/5.9/learn-video.png" alt="" />
+			</div>
+			<div class="column">
+				<h3><?php _e( 'Learn more about the new features in 5.9' ); ?></h3>
+				<p>
+					<?php
+					printf(
+						/* translators: %s: Learn WordPress link. */
+						__( 'Want to dive into 5.9 but don&#8217;t know where to start? Visit <a href="%s">learn.wordpress.org</a> for expanding resources on new features in WordPress 5.9.' ),
+						'https://learn.wordpress.org'
+					);
+					?>
+				</p>
+			</div>
+		</div>
+
+		<hr class="is-large" />
+
+		<div class="about__section">
+			<div class="column">
+				<h3><?php _e( 'Check the Field Guide for more!' ); ?></h3>
+				<p>
+					<?php
+					printf(
+						/* translators: %s: WordPress 5.9 Field Guide link. */
+						__( 'Check out the latest version of the WordPress Field Guide. It highlights developer notes for each change you may want to be aware of. <a href="%s">WordPress 5.9 Field Guide.</a>' ),
+						'https://make.wordpress.org/core/2022/01/10/wordpress-5-9-field-guide/'
+					);
+					?>
+				</p>
 			</div>
 		</div>
 
@@ -306,109 +300,16 @@ include( ABSPATH . 'wp-admin/admin-header.php' );
 		<div class="return-to-dashboard">
 			<?php if ( current_user_can( 'update_core' ) && isset( $_GET['updated'] ) ) : ?>
 				<a href="<?php echo esc_url( self_admin_url( 'update-core.php' ) ); ?>">
-					<?php is_multisite() ? _e( 'Return to Updates' ) : _e( 'Return to Dashboard &rarr; Updates' ); ?>
+					<?php is_multisite() ? _e( 'Go to Updates' ) : _e( 'Go to Dashboard &rarr; Updates' ); ?>
 				</a> |
 			<?php endif; ?>
 			<a href="<?php echo esc_url( self_admin_url() ); ?>"><?php is_blog_admin() ? _e( 'Go to Dashboard &rarr; Home' ) : _e( 'Go to Dashboard' ); ?></a>
 		</div>
 	</div>
 
-	<script>
-		(function( $ ) {
-			$( function() {
-				var $window = $( window );
-				var $adminbar = $( '#wpadminbar' );
-				var $sections = $( '.floating-header-section' );
-				var offset = 0;
-
-				// Account for Admin bar.
-				if ( $adminbar.length ) {
-					offset += $adminbar.height();
-				}
-
-				function setup() {
-					$sections.each( function( i, section ) {
-						var $section = $( section );
-						// If the title is long, switch the layout
-						var $title = $section.find( 'h2' );
-						if ( $title.innerWidth() > 300 ) {
-							$section.addClass( 'has-long-title' );
-						}
-					} );
-				}
-
-				var adjustScrollPosition = _.throttle( function adjustScrollPosition() {
-					$sections.each( function( i, section ) {
-						var $section = $( section );
-						var $header = $section.find( 'h2' );
-						var width = $header.innerWidth();
-						var height = $header.innerHeight();
-
-						if ( $section.hasClass( 'has-long-title' ) ) {
-							return;
-						}
-
-						var sectionStart = $section.offset().top - offset;
-						var sectionEnd = sectionStart + $section.innerHeight();
-						var scrollPos = $window.scrollTop();
-
-						// If we're scrolled into a section, stick the header
-						if ( scrollPos >= sectionStart && scrollPos < sectionEnd - height ) {
-							$header.css( {
-								position: 'fixed',
-								top: offset + 'px',
-								bottom: 'auto',
-								width: width + 'px'
-							} );
-						// If we're at the end of the section, stick the header to the bottom
-						} else if ( scrollPos >= sectionEnd - height && scrollPos < sectionEnd ) {
-							$header.css( {
-								position: 'absolute',
-								top: 'auto',
-								bottom: 0,
-								width: width + 'px'
-							} );
-						// Unstick the header
-						} else {
-							$header.css( {
-								position: 'static',
-								top: 'auto',
-								bottom: 'auto',
-								width: 'auto'
-							} );
-						}
-					} );
-				}, 100 );
-
-				function enableFixedHeaders() {
-					if ( $window.width() > 782 ) {
-						setup();
-						adjustScrollPosition();
-						$window.on( 'scroll', adjustScrollPosition );
-					} else {
-						$window.off( 'scroll', adjustScrollPosition );
-						$sections.find( '.section-header' )
-							.css( {
-								width: 'auto'
-							} );
-						$sections.find( 'h2' )
-							.css( {
-								position: 'static',
-								top: 'auto',
-								bottom: 'auto',
-								width: 'auto'
-							} );
-					}
-				}
-				$( window ).resize( enableFixedHeaders );
-				enableFixedHeaders();
-			} );
-		})( jQuery );
-	</script>
+<?php require_once ABSPATH . 'wp-admin/admin-footer.php'; ?>
 
 <?php
-
-include( ABSPATH . 'wp-admin/admin-footer.php' );
 
 // These are strings we may use to describe maintenance/security releases, where we aim for no new strings.
 return;
@@ -422,22 +323,28 @@ __( 'Security Releases' );
 __( 'Maintenance and Security Release' );
 __( 'Maintenance and Security Releases' );
 
-/* translators: %s: WordPress version number */
+/* translators: %s: WordPress version number. */
 __( '<strong>Version %s</strong> addressed one security issue.' );
-/* translators: %s: WordPress version number */
+/* translators: %s: WordPress version number. */
 __( '<strong>Version %s</strong> addressed some security issues.' );
 
-/* translators: 1: WordPress version number, 2: plural number of bugs. */
-_n_noop( '<strong>Version %1$s</strong> addressed %2$s bug.',
-         '<strong>Version %1$s</strong> addressed %2$s bugs.' );
+/* translators: 1: WordPress version number, 2: Plural number of bugs. */
+_n_noop(
+	'<strong>Version %1$s</strong> addressed %2$s bug.',
+	'<strong>Version %1$s</strong> addressed %2$s bugs.'
+);
 
-/* translators: 1: WordPress version number, 2: plural number of bugs. Singular security issue. */
-_n_noop( '<strong>Version %1$s</strong> addressed a security issue and fixed %2$s bug.',
-         '<strong>Version %1$s</strong> addressed a security issue and fixed %2$s bugs.' );
+/* translators: 1: WordPress version number, 2: Plural number of bugs. Singular security issue. */
+_n_noop(
+	'<strong>Version %1$s</strong> addressed a security issue and fixed %2$s bug.',
+	'<strong>Version %1$s</strong> addressed a security issue and fixed %2$s bugs.'
+);
 
-/* translators: 1: WordPress version number, 2: plural number of bugs. More than one security issue. */
-_n_noop( '<strong>Version %1$s</strong> addressed some security issues and fixed %2$s bug.',
-         '<strong>Version %1$s</strong> addressed some security issues and fixed %2$s bugs.' );
+/* translators: 1: WordPress version number, 2: Plural number of bugs. More than one security issue. */
+_n_noop(
+	'<strong>Version %1$s</strong> addressed some security issues and fixed %2$s bug.',
+	'<strong>Version %1$s</strong> addressed some security issues and fixed %2$s bugs.'
+);
 
-/* translators: %s: Codex URL */
+/* translators: %s: Documentation URL. */
 __( 'For more information, see <a href="%s">the release notes</a>.' );
