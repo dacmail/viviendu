@@ -25,27 +25,30 @@ class EWWWIO_CLI extends WP_CLI_Command {
 	 * : valid values are 'all' (default), 'media', 'nextgen', and 'flagallery'
 	 * : media: Media Library, theme, and configured folders
 	 * : nextgen: Nextcellent and NextGEN 2.x
-	 * : flagallery: Grand FlaGallery
+	 * : flagallery: Grand FlAGallery
 	 *
 	 * <delay>
 	 * : optional, number of seconds to pause between images
 	 *
 	 * <force>
 	 * : optional, should the plugin re-optimize images that have already been processed.
-	 * * <reset>
+	 *
+	 * <reset>
 	 * : optional, start the optimizer back at the beginning instead of resuming from last position
+	 *
+	 * <webp-only>
+	 * : optional, only do WebP Conversion, skip all other operations
 	 *
 	 * <noprompt>
 	 * : do not prompt, just start optimizing
 	 *
 	 * ## EXAMPLES
 	 *
-	 *     wp-cli ewwwio optimize media 5 --force --reset --noprompt
+	 *     wp-cli ewwwio optimize media 5 --force --reset --webp-only --noprompt
 	 *
-	 * @synopsis <library> [<delay>] [--force] [--reset] [--noprompt]
+	 * @synopsis <library> [<delay>] [--force] [--reset] [--webp-only] [--noprompt]
 	 *
 	 * @global bool $ewww_defer Gets set to false to make sure optimization happens inline.
-	 * @global object $ngg
 	 *
 	 * @param array $args A numeric array of required arguments.
 	 * @param array $assoc_args An associative array of optional arguments.
@@ -53,6 +56,8 @@ class EWWWIO_CLI extends WP_CLI_Command {
 	function optimize( $args, $assoc_args ) {
 		global $ewww_defer;
 		$ewww_defer = false;
+		global $ewww_webp_only;
+		$ewww_webp_only = false;
 		// because NextGEN hasn't flushed it's buffers...
 		while ( @ob_end_flush() ) {
 		}
@@ -69,6 +74,15 @@ class EWWWIO_CLI extends WP_CLI_Command {
 		if ( ! empty( $assoc_args['force'] ) ) {
 			WP_CLI::line( __( 'Forcing re-optimization of previously processed images.', 'ewww-image-optimizer' ) );
 			$_REQUEST['ewww_force'] = true;
+			global $ewww_force;
+			$ewww_force = 1;
+		}
+		if ( ! empty( $assoc_args['webp-only'] ) ) {
+			if ( empty( ewww_image_optimizer_get_option( 'ewww_image_optimizer_webp' ) ) ) {
+				WP_CLI::error( __( 'WebP Conversion is not enabled.', 'ewww-image-optimizer' ) );
+			}
+			WP_CLI::line( __( 'Running WebP conversion only.', 'ewww-image-optimizer' ) );
+			$ewww_webp_only = true;
 		}
 		/* translators: 1: type of images, like media, or nextgen 2: number of seconds */
 		WP_CLI::line( sprintf( _x( 'Optimizing %1$s with a %2$d second pause between images.', 'string will be something like "media" or "nextgen"', 'ewww-image-optimizer' ), $library, $delay ) );
@@ -97,44 +111,37 @@ class EWWWIO_CLI extends WP_CLI_Command {
 				// Do a filter to increase the timeout to 999 or something crazy.
 				add_filter( 'ewww_image_optimizer_timeout', 'ewww_image_optimizer_cli_timeout', 200 );
 				ewww_image_optimizer_media_scan( 'ewww-image-optimizer-cli' );
-				$pending_count = ewww_image_optimizer_aux_images_script( 'ewww-image-optimizer-auto' );
-				if ( class_exists( 'EwwwNgg' ) ) {
-					global $ngg;
-					if ( preg_match( '/^2/', $ngg->version ) ) {
-						list( $fullsize_count, $unoptimized_count, $resize_count, $unoptimized_resize_count ) = ewww_image_optimizer_count_optimized( 'ngg' );
-						/* translators: 1-4: number of images */
-						WP_CLI::line( 'Nextgen: ' . sprintf( __( '%1$d images have been selected (%2$d unoptimized), with %3$d resizes (%4$d unoptimized).', 'ewww-image-optimizer' ), $fullsize_count, $unoptimized_count, $resize_count, $unoptimized_resize_count ) );
-					} else {
-						$attachments = ewww_image_optimizer_scan_next();
-						/* translators: %d: number of images */
-						WP_CLI::line( 'Nextgen: ' . sprintf( _n( 'There is %d image ready to optimize.', 'There are %d images ready to optimize.', count( $attachments ), 'ewww-image-optimizer' ), count( $attachments ) ) );
-					}
+				$pending_count = ewww_image_optimizer_aux_images_script( 'ewww-image-optimizer-cli' );
+				if ( class_exists( 'EWWW_Nextgen' ) ) {
+					list( $fullsize_count, $resize_count ) = ewww_image_optimizer_count_optimized( 'ngg' );
+					/* translators: 1-2: number of images */
+					WP_CLI::line( 'Nextgen: ' . sprintf( __( '%1$d images have been selected, with %2$d resized versions.', 'ewww-image-optimizer' ), $fullsize_count, $resize_count ) );
+				} elseif ( class_exists( 'EWWW_Nextcellent' ) ) {
+					$attachments = ewww_image_optimizer_scan_next();
+					/* translators: %d: number of images */
+					WP_CLI::line( 'Nextgen: ' . sprintf( _n( 'There is %d image ready to optimize.', 'There are %d images ready to optimize.', count( $attachments ), 'ewww-image-optimizer' ), count( $attachments ) ) );
 				}
-				if ( class_exists( 'ewwwflag' ) ) {
-					list( $fullsize_count, $unoptimized_count, $resize_count, $unoptimized_resize_count ) = ewww_image_optimizer_count_optimized( 'flag' );
-					/* translators: 1-4: number of images */
-					WP_CLI::line( 'Flagallery: ' . sprintf( __( '%1$d images have been selected (%2$d unoptimized), with %3$d resizes (%4$d unoptimized).', 'ewww-image-optimizer' ), $fullsize_count, $unoptimized_count, $resize_count, $unoptimized_resize_count ) );
+				if ( class_exists( 'EWWW_Flag' ) ) {
+					list( $fullsize_count, $resize_count ) = ewww_image_optimizer_count_optimized( 'flag' );
+					/* translators: 1-2: number of images */
+					WP_CLI::line( 'FlAGallery: ' . sprintf( __( '%1$d images have been selected, with %2$d resized versions.', 'ewww-image-optimizer' ), $fullsize_count, $resize_count ) );
 				}
 				if ( empty( $assoc_args['noprompt'] ) ) {
 					/* translators: %d: number of images */
 					WP_CLI::confirm( sprintf( _n( 'There is %d image ready to optimize.', 'There are %d images ready to optimize.', $pending_count, 'ewww-image-optimizer' ), $pending_count ) );
 				}
-				/* ewww_image_optimizer_bulk_media( $delay ); */
 				$_REQUEST['ewww_batch_limit'] = 1;
 				while ( ewww_image_optimizer_bulk_loop( 'ewww-image-optimizer-cli', $delay ) ) {
 					$something = 1;
 				}
 				ewww_image_optimizer_bulk_media_cleanup();
-				if ( class_exists( 'Ewwwngg' ) ) {
-					global $ngg;
-					if ( preg_match( '/^2/', $ngg->version ) ) {
-						ewww_image_optimizer_bulk_ngg( $delay );
-					} else {
-						$attachments = ewww_image_optimizer_scan_next();
-						ewww_image_optimizer_bulk_next( $delay, $attachments );
-					}
+				if ( class_exists( 'EWWW_Nextgen' ) ) {
+					ewww_image_optimizer_bulk_ngg( $delay );
+				} elseif ( class_exists( 'EWWW_Nextcellent' ) ) {
+					$attachments = ewww_image_optimizer_scan_next();
+					ewww_image_optimizer_bulk_next( $delay, $attachments );
 				}
-				if ( class_exists( 'ewwwflag' ) ) {
+				if ( class_exists( 'EWWW_Flag' ) ) {
 					ewww_image_optimizer_bulk_flag( $delay );
 				}
 				break;
@@ -157,7 +164,7 @@ class EWWWIO_CLI extends WP_CLI_Command {
 				// Do a filter to increase the timeout to 999 or something crazy.
 				add_filter( 'ewww_image_optimizer_timeout', 'ewww_image_optimizer_cli_timeout', 200 );
 				ewww_image_optimizer_media_scan( 'ewww-image-optimizer-cli' );
-				$pending_count = ewww_image_optimizer_aux_images_script( 'ewww-image-optimizer-auto' );
+				$pending_count = ewww_image_optimizer_aux_images_script( 'ewww-image-optimizer-cli' );
 				if ( empty( $assoc_args['noprompt'] ) ) {
 					/* translators: %d: number of images */
 					WP_CLI::confirm( sprintf( _n( 'There is %d image ready to optimize.', 'There are %d images ready to optimize.', $pending_count, 'ewww-image-optimizer' ), $pending_count ) );
@@ -173,23 +180,20 @@ class EWWWIO_CLI extends WP_CLI_Command {
 					update_option( 'ewww_image_optimizer_bulk_ngg_resume', '' );
 					WP_CLI::line( __( 'Bulk status has been reset, starting from the beginning.', 'ewww-image-optimizer' ) );
 				}
-				if ( class_exists( 'EwwwNgg' ) ) {
-					global $ngg;
-					if ( preg_match( '/^2/', $ngg->version ) ) {
-						list( $fullsize_count, $unoptimized_count, $resize_count, $unoptimized_resize_count ) = ewww_image_optimizer_count_optimized( 'ngg' );
-						if ( empty( $assoc_args['noprompt'] ) ) {
-							/* translators: 1-4: number of images */
-							WP_CLI::confirm( sprintf( __( '%1$d images have been selected (%2$d unoptimized), with %3$d resizes (%4$d unoptimized).', 'ewww-image-optimizer' ), $fullsize_count, $unoptimized_count, $resize_count, $unoptimized_resize_count ) );
-						}
-						ewww_image_optimizer_bulk_ngg( $delay );
-					} else {
-						$attachments = ewww_image_optimizer_scan_next();
-						if ( empty( $assoc_args['noprompt'] ) ) {
-							/* translators: %d: number of images */
-							WP_CLI::confirm( sprintf( _n( 'There is %d image ready to optimize.', 'There are %d images ready to optimize.', count( $attachments ), 'ewww-image-optimizer' ), count( $attachments ) ) );
-						}
-						ewww_image_optimizer_bulk_next( $delay, $attachments );
+				if ( class_exists( 'EWWW_Nextgen' ) ) {
+					list( $fullsize_count, $resize_count ) = ewww_image_optimizer_count_optimized( 'ngg' );
+					if ( empty( $assoc_args['noprompt'] ) ) {
+						/* translators: 1-2: number of images */
+						WP_CLI::confirm( sprintf( __( '%1$d images have been selected, with %2$d resized versions.', 'ewww-image-optimizer' ), $fullsize_count, $resize_count ) );
 					}
+					ewww_image_optimizer_bulk_ngg( $delay );
+				} elseif ( class_exists( 'EWWW_Nextcellent' ) ) {
+					$attachments = ewww_image_optimizer_scan_next();
+					if ( empty( $assoc_args['noprompt'] ) ) {
+						/* translators: %d: number of images */
+						WP_CLI::confirm( sprintf( _n( 'There is %d image ready to optimize.', 'There are %d images ready to optimize.', count( $attachments ), 'ewww-image-optimizer' ), count( $attachments ) ) );
+					}
+					ewww_image_optimizer_bulk_next( $delay, $attachments );
 				} else {
 					WP_CLI::error( __( 'NextGEN/Nextcellent not installed.', 'ewww-image-optimizer' ) );
 				}
@@ -199,11 +203,11 @@ class EWWWIO_CLI extends WP_CLI_Command {
 					update_option( 'ewww_image_optimizer_bulk_flag_resume', '' );
 					WP_CLI::line( __( 'Bulk status has been reset, starting from the beginning.', 'ewww-image-optimizer' ) );
 				}
-				if ( class_exists( 'ewwwflag' ) ) {
-					list( $fullsize_count, $unoptimized_count, $resize_count, $unoptimized_resize_count ) = ewww_image_optimizer_count_optimized( 'flag' );
+				if ( class_exists( 'EWWW_Flag' ) ) {
+					list( $fullsize_count, $resize_count ) = ewww_image_optimizer_count_optimized( 'flag' );
 					if ( empty( $assoc_args['noprompt'] ) ) {
-						/* translators: 1-4: number of images */
-						WP_CLI::confirm( sprintf( __( '%1$d images have been selected (%2$d unoptimized), with %3$d resizes (%4$d unoptimized).', 'ewww-image-optimizer' ), $fullsize_count, $unoptimized_count, $resize_count, $unoptimized_resize_count ) );
+						/* translators: 1-2: number of images */
+						WP_CLI::confirm( 'FlAGallery: ' . sprintf( __( '%1$d images have been selected, with %2$d resized versions.', 'ewww-image-optimizer' ), $fullsize_count, $resize_count ) );
 					}
 					ewww_image_optimizer_bulk_flag( $delay );
 				} else {
@@ -233,7 +237,6 @@ function ewww_image_optimizer_bulk_media_cleanup() {
 	// All done, so we can update the bulk options with empty values...
 	update_option( 'ewww_image_optimizer_bulk_resume', '' );
 	update_option( 'ewww_image_optimizer_aux_resume', '' );
-	update_option( 'ewww_image_optimizer_bulk_attachments', '', false );
 	// and let the user know we are done.
 	WP_CLI::success( __( 'Finished Optimization!', 'ewww-image-optimizer' ) );
 }
@@ -257,6 +260,7 @@ function ewww_image_optimizer_bulk_flag( $delay = 0 ) {
 		// Store the IDs to optimize in the options table of the db.
 		update_option( 'ewww_image_optimizer_bulk_flag_attachments', $ids, false );
 	}
+	$attachments = $ids; // Use this separately to keep track of progress in the db.
 	// Set the resume flag to indicate the bulk operation is in progress.
 	update_option( 'ewww_image_optimizer_bulk_flag_resume', 'true' );
 	// Need this file to work with flag meta.
@@ -272,8 +276,10 @@ function ewww_image_optimizer_bulk_flag( $delay = 0 ) {
 		// Record the starting time for the current image (in microseconds).
 		$started = microtime( true );
 		// Retrieve the meta for the current ID.
-		$meta      = new flagMeta( $id );
-		$file_path = $meta->image->imagePath;
+		$meta               = new flagMeta( $id );
+		$file_path          = $meta->image->imagePath;
+		$ewww_image         = new EWWW_Image( $id, 'flag', $file_path );
+		$ewww_image->resize = 'full';
 		// Optimize the full-size version.
 		$fres = ewww_image_optimizer( $file_path, 3, false, false, true );
 		WP_CLI::line( __( 'Optimized image:', 'ewww-image-optimizer' ) . ' ' . esc_html( $meta->image->filename ) );
@@ -281,12 +287,16 @@ function ewww_image_optimizer_bulk_flag( $delay = 0 ) {
 		WP_CLI::line( sprintf( __( 'Full size – %s', 'ewww-image-optimizer' ), html_entity_decode( $fres[1] ) ) );
 		if ( ! empty( $meta->image->meta_data['webview'] ) ) {
 			// Determine path of the webview.
-			$web_path = $meta->image->webimagePath;
-			$wres     = ewww_image_optimizer( $web_path, 3, false, true );
+			$web_path           = $meta->image->webimagePath;
+			$ewww_image         = new EWWW_Image( $id, 'flag', $web_path );
+			$ewww_image->resize = 'webview';
+			$wres               = ewww_image_optimizer( $web_path, 3, false, true );
 			/* translators: %s: compression results */
 			WP_CLI::line( sprintf( __( 'Optimized size – %s', 'ewww-image-optimizer' ), html_entity_decode( $wres[1] ) ) );
 		}
-		$thumb_path = $meta->image->thumbPath;
+		$thumb_path         = $meta->image->thumbPath;
+		$ewww_image         = new EWWW_Image( $id, 'flag', $thumb_path );
+		$ewww_image->resize = 'thumbnail';
 		// Optimize the thumbnail.
 		$tres = ewww_image_optimizer( $thumb_path, 3, false, true );
 		/* translators: %s: compression results */
@@ -295,9 +305,7 @@ function ewww_image_optimizer_bulk_flag( $delay = 0 ) {
 		$elapsed = microtime( true ) - $started;
 		// and output it to the user.
 		/* translators: %s: localized number of seconds */
-		WP_CLI::line( sprintf( _n( 'Elapsed: %s second', 'Elapsed: %s seconds', $elapsed, 'ewww-image-optimizer' ), number_format_i18n( $elapsed ) ) );
-		// Retrieve the list of attachments left to work on.
-		$attachments = get_option( 'ewww_image_optimizer_bulk_flag_attachments' );
+		WP_CLI::line( sprintf( _n( 'Elapsed: %s second', 'Elapsed: %s seconds', $elapsed, 'ewww-image-optimizer' ), number_format_i18n( $elapsed, 2 ) ) );
 		// Take the first image off the list.
 		if ( ! empty( $attachments ) ) {
 			array_shift( $attachments );
@@ -357,7 +365,10 @@ function ewww_image_optimizer_bulk_ngg( $delay = 0 ) {
 		WP_CLI::line( __( 'You do not appear to have uploaded any images yet.', 'ewww-image-optimizer' ) );
 		return;
 	}
+	$attachments = $images; // Kept separate to update status in db.
 	global $ewwwngg;
+	global $ewww_defer;
+	$ewww_defer = false;
 	foreach ( $images as $id ) {
 		if ( ewww_image_optimizer_function_exists( 'sleep' ) ) {
 			sleep( $delay );
@@ -373,30 +384,29 @@ function ewww_image_optimizer_bulk_ngg( $delay = 0 ) {
 		$image = $ewwwngg->ewww_added_new_image( $image, $storage );
 		// Output the results of the optimization.
 		WP_CLI::line( __( 'Optimized image:', 'ewww-image-optimizer' ) . ' ' . basename( $storage->object->get_image_abspath( $image, 'full' ) ) );
-		// Get an array of sizes available for the $image.
-		$sizes = $storage->get_image_sizes();
-		if ( ewww_image_optimizer_iterable( $sizes ) ) {
+		if ( ewww_image_optimizer_iterable( $ewwwngg->bulk_sizes ) ) {
 			// Output the results for each $size.
-			foreach ( $sizes as $size ) {
-				if ( 'full' === $size ) {
+			foreach ( $ewwwngg->bulk_sizes as $size => $results_msg ) {
+				if ( 'backup' === $size ) {
+					continue;
+				} elseif ( 'full' === $size ) {
 					/* translators: %s: compression results */
-					WP_CLI::line( sprintf( __( 'Full size - %s', 'ewww-image-optimizer' ), html_entity_decode( $image->meta_data['ewww_image_optimizer'] ) ) );
+					WP_CLI::line( sprintf( __( 'Full size - %s', 'ewww-image-optimizer' ), html_entity_decode( $results_msg ) ) );
 				} elseif ( 'thumbnail' === $size ) {
 					// Output the results of the thumb optimization.
 					/* translators: %s: compression results */
-					WP_CLI::line( sprintf( __( 'Thumbnail - %s', 'ewww-image-optimizer' ), html_entity_decode( $image->meta_data[ $size ]['ewww_image_optimizer'] ) ) );
+					WP_CLI::line( sprintf( __( 'Thumbnail - %s', 'ewww-image-optimizer' ), html_entity_decode( $results_msg ) ) );
 				} else {
 					// Output savings for any other sizes, if they ever exist...
-					WP_CLI::line( ucfirst( $size ) . ' - ' . html_entity_decode( $image->meta_data[ $size ]['ewww_image_optimizer'] ) );
+					WP_CLI::line( ucfirst( $size ) . ' - ' . html_entity_decode( $results_msg ) );
 				}
 			}
+			$ewwwngg->bulk_sizes = array();
 		}
 		// Output how much time we spent.
 		$elapsed = microtime( true ) - $started;
 		/* translators: %s: number of seconds */
-		WP_CLI::line( sprintf( _n( 'Elapsed: %s second', 'Elapsed: %s seconds', $elapsed, 'ewww-image-optimizer' ), number_format_i18n( $elapsed ) ) );
-		// Get the list of attachments remaining from the db.
-		$attachments = get_option( 'ewww_image_optimizer_bulk_ngg_attachments' );
+		WP_CLI::line( sprintf( _n( 'Elapsed: %s second', 'Elapsed: %s seconds', $elapsed, 'ewww-image-optimizer' ), number_format_i18n( $elapsed, 2 ) ) );
 		// Remove the first item.
 		if ( ! empty( $attachments ) ) {
 			array_shift( $attachments );
@@ -434,12 +444,15 @@ function ewww_image_optimizer_scan_next() {
 }
 
 /**
- * Bulk Optimize all NextGEN uploads from WP-CLI.
+ * Bulk Optimize all Nextcellent uploads from WP-CLI.
  *
  * @param int   $delay Number of seconds to pause between images.
  * @param array $attachments A list of image IDs to optimize.
  */
 function ewww_image_optimizer_bulk_next( $delay, $attachments ) {
+	global $ewwwngg;
+	global $ewww_defer;
+	$ewww_defer = false;
 	// Toggle the resume flag to indicate an operation is in progress.
 	update_option( 'ewww_image_optimizer_bulk_ngg_resume', 'true' );
 	// Need this file to work with metadata.
@@ -450,33 +463,21 @@ function ewww_image_optimizer_bulk_next( $delay, $attachments ) {
 		}
 		// Find out what time we started, in microseconds.
 		$started = microtime( true );
-		// Get the metadata.
-		$meta = new nggMeta( $id );
-		// Retrieve the filepath.
-		$file_path = $meta->image->imagePath;
-		// Run the optimizer on the current image.
-		$fres = ewww_image_optimizer( $file_path, 2, false, false, true );
-		// Update the metadata of the optimized image.
-		nggdb::update_image_meta( $id, array(
-			'ewww_image_optimizer' => $fres[1],
-		) );
-		// Output the results of the optimization.
-		WP_CLI::line( __( 'Optimized image:', 'ewww-image-optimizer' ) . $meta->image->filename );
+		// Optimize by ID.
+		list( $fres, $tres ) = $ewwwngg->ewww_ngg_optimize( $id );
+		if ( $fres[0] ) {
+			// Output the results of the optimization.
+			WP_CLI::line( __( 'Optimized image:', 'ewww-image-optimizer' ) . $fres[0] );
+		}
 		/* translators: %s: compression results */
 		WP_CLI::line( sprintf( __( 'Full size - %s', 'ewww-image-optimizer' ), html_entity_decode( $fres[1] ) ) );
-		// Get the filepath of the thumbnail image.
-		$thumb_path = $meta->image->thumbPath;
-		// Run the optimization on the thumbnail.
-		$tres = ewww_image_optimizer( $thumb_path, 2, false, true );
 		// Output the results of the thumb optimization.
 		/* translators: %s: compression results */
 		WP_CLI::line( sprintf( __( 'Thumbnail - %s', 'ewww-image-optimizer' ), html_entity_decode( $tres[1] ) ) );
 		// Output how much time we spent.
 		$elapsed = microtime( true ) - $started;
 		/* translators: %s: number of seconds */
-		WP_CLI::line( sprintf( _n( 'Elapsed: %s second', 'Elapsed: %s seconds', $elapsed, 'ewww-image-optimizer' ), number_format_i18n( $elapsed ) ) );
-		// Get the list of attachments remaining from the db.
-		$attachments = get_option( 'ewww_image_optimizer_bulk_ngg_attachments' );
+		WP_CLI::line( sprintf( _n( 'Elapsed: %s second', 'Elapsed: %s seconds', $elapsed, 'ewww-image-optimizer' ), number_format_i18n( $elapsed, 2 ) ) );
 		// Remove the first item.
 		if ( ! empty( $attachments ) ) {
 			array_shift( $attachments );

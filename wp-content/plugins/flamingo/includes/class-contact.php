@@ -5,9 +5,9 @@ class Flamingo_Contact {
 	const post_type = 'flamingo_contact';
 	const contact_tag_taxonomy = 'flamingo_contact_tag';
 
-	public static $found_items = 0;
+	private static $found_items = 0;
 
-	public $id;
+	private $id;
 	public $email;
 	public $name;
 	public $props = array();
@@ -74,6 +74,19 @@ class Flamingo_Contact {
 		return $objs;
 	}
 
+	public static function count( $args = '' ) {
+		if ( $args ) {
+			$args = wp_parse_args( $args, array(
+				'offset' => 0,
+				'post_status' => 'publish',
+			) );
+
+			self::find( $args );
+		}
+
+		return absint( self::$found_items );
+	}
+
 	public static function search_by_email( $email ) {
 		$objs = self::find( array(
 			'posts_per_page' => 1,
@@ -90,16 +103,16 @@ class Flamingo_Contact {
 	}
 
 	public static function add( $args = '' ) {
-		$defaults = array(
+		$args = wp_parse_args( $args, array(
 			'email' => '',
 			'name' => '',
 			'props' => array(),
-		);
+			'last_contacted' => '0000-00-00 00:00:00',
+		) );
 
-		$args = apply_filters( 'flamingo_add_contact',
-			wp_parse_args( $args, $defaults ) );
+		$args = apply_filters( 'flamingo_add_contact', $args );
 
-		if ( empty( $args['email'] ) || ! is_email( $args['email'] ) ) {
+		if ( empty( $args['email'] ) or ! is_email( $args['email'] ) ) {
 			return;
 		}
 
@@ -113,10 +126,10 @@ class Flamingo_Contact {
 			$obj->props = (array) $args['props'];
 		}
 
-		if ( ! empty( $args['last_contacted'] ) ) {
+		if ( '0000-00-00 00:00:00' !== $args['last_contacted'] ) {
 			$obj->last_contacted = $args['last_contacted'];
-		} else {
-			$obj->last_contacted = current_time( 'mysql' );
+		} elseif ( $datetime = date_create_immutable( 'now', wp_timezone() ) ) {
+			$obj->last_contacted = $datetime->format( 'Y-m-d H:i:s' );
 		}
 
 		$obj->save();
@@ -125,7 +138,7 @@ class Flamingo_Contact {
 	}
 
 	public function __construct( $post = null ) {
-		if ( ! empty( $post ) && ( $post = get_post( $post ) ) ) {
+		if ( ! empty( $post ) and $post = get_post( $post ) ) {
 			$this->id = $post->ID;
 			$this->email = get_post_meta( $post->ID, '_email', true );
 			$this->name = get_post_meta( $post->ID, '_name', true );
@@ -135,12 +148,35 @@ class Flamingo_Contact {
 
 			$terms = wp_get_object_terms( $this->id, self::contact_tag_taxonomy );
 
-			if ( ! empty( $terms ) && ! is_wp_error( $terms ) ) {
+			if ( ! empty( $terms ) and ! is_wp_error( $terms ) ) {
 				foreach ( $terms as $term ) {
 					$this->tags[] = $term->name;
 				}
 			}
 		}
+	}
+
+	public function __get( $name ) {
+		/* translators: 1: Property, 2: Version, 3: Class, 4: Method. */
+		$message = __( 'The visibility of the %1$s property has been changed in %2$s. Now the property may only be accessed by the %3$s class. You can use the %4$s method instead.', 'flamingo' );
+
+		if ( 'id' == $name ) {
+			if ( WP_DEBUG ) {
+				trigger_error( sprintf(
+					$message,
+					sprintf( '<code>%s</code>', 'id' ),
+					esc_html( __( 'Flamingo 2.2', 'flamingo' ) ),
+					sprintf( '<code>%s</code>', self::class ),
+					sprintf( '<code>%s</code>', 'id()' )
+				) );
+			}
+
+			return $this->id;
+		}
+	}
+
+	public function id() {
+		return $this->id;
 	}
 
 	public function save() {

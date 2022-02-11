@@ -6,11 +6,11 @@ class Flamingo_Inbound_Message {
 	const spam_status = 'flamingo-spam';
 	const channel_taxonomy = 'flamingo_inbound_channel';
 
-	public static $found_items = 0;
+	private static $found_items = 0;
 
-	public $id;
+	private $id;
 	public $channel;
-	public $date;
+	public $submission_status;
 	public $subject;
 	public $from;
 	public $from_name;
@@ -18,8 +18,12 @@ class Flamingo_Inbound_Message {
 	public $fields;
 	public $meta;
 	public $akismet;
+	public $recaptcha;
 	public $spam;
+	public $spam_log;
 	public $consent;
+	private $timestamp = null;
+	private $hash = null;
 
 	public static function register_post_type() {
 		register_post_type( self::post_type, array(
@@ -63,6 +67,7 @@ class Flamingo_Inbound_Message {
 			'tax_query' => array(),
 			'channel' => '',
 			'channel_id' => 0,
+			'hash' => '',
 		);
 
 		$args = wp_parse_args( $args, $defaults );
@@ -85,6 +90,13 @@ class Flamingo_Inbound_Message {
 			);
 		}
 
+		if ( ! empty( $args['hash'] ) ) {
+			$args['meta_query'][] = array(
+				'key' => '_hash',
+				'value' => $args['hash'],
+			);
+		}
+
 		$q = new WP_Query();
 		$posts = $q->query( $args );
 
@@ -100,21 +112,24 @@ class Flamingo_Inbound_Message {
 	}
 
 	public static function count( $args = '' ) {
-		$args = wp_parse_args( $args, array(
-			'offset' => 0,
-			'channel' => '',
-			'channel_id' => 0,
-			'post_status' => 'publish',
-		) );
+		if ( $args ) {
+			$args = wp_parse_args( $args, array(
+				'offset' => 0,
+				'channel' => '',
+				'channel_id' => 0,
+				'post_status' => 'publish',
+			) );
 
-		self::find( $args );
+			self::find( $args );
+		}
 
 		return absint( self::$found_items );
 	}
 
 	public static function add( $args = '' ) {
-		$defaults = array(
+		$args = wp_parse_args( $args, array(
 			'channel' => '',
+			'status' => '',
 			'subject' => '',
 			'from' => '',
 			'from_name' => '',
@@ -122,16 +137,20 @@ class Flamingo_Inbound_Message {
 			'fields' => array(),
 			'meta' => array(),
 			'akismet' => array(),
+			'recaptcha' => array(),
 			'spam' => false,
+			'spam_log' => array(),
 			'consent' => array(),
-		);
+			'timestamp' => null,
+			'posted_data_hash' => null,
+		) );
 
-		$args = apply_filters( 'flamingo_add_inbound',
-			wp_parse_args( $args, $defaults ) );
+		$args = apply_filters( 'flamingo_add_inbound', $args );
 
 		$obj = new self();
 
 		$obj->channel = $args['channel'];
+		$obj->submission_status = $args['status'];
 		$obj->subject = $args['subject'];
 		$obj->from = $args['from'];
 		$obj->from_name = $args['from_name'];
@@ -139,12 +158,17 @@ class Flamingo_Inbound_Message {
 		$obj->fields = $args['fields'];
 		$obj->meta = $args['meta'];
 		$obj->akismet = $args['akismet'];
+		$obj->recaptcha = $args['recaptcha'];
+		$obj->spam = $args['spam'];
+		$obj->spam_log = $args['spam_log'];
 		$obj->consent = $args['consent'];
 
-		if ( $args['spam'] ) {
-			$obj->spam = true;
-		} else {
-			$obj->spam = isset( $obj->akismet['spam'] ) && $obj->akismet['spam'];
+		if ( $args['timestamp'] ) {
+			$obj->timestamp = $args['timestamp'];
+		}
+
+		if ( $args['posted_data_hash'] ) {
+			$obj->hash = $args['posted_data_hash'];
 		}
 
 		$obj->save();
@@ -153,11 +177,8 @@ class Flamingo_Inbound_Message {
 	}
 
 	public function __construct( $post = null ) {
-		if ( ! empty( $post ) && ( $post = get_post( $post ) ) ) {
+		if ( ! empty( $post ) and $post = get_post( $post ) ) {
 			$this->id = $post->ID;
-
-			$this->date = get_the_time(
-				__( 'Y/m/d g:i:s A', 'flamingo' ), $this->id );
 			$this->subject = get_post_meta( $post->ID, '_subject', true );
 			$this->from = get_post_meta( $post->ID, '_from', true );
 			$this->from_name = get_post_meta( $post->ID, '_from_name', true );
@@ -175,13 +196,19 @@ class Flamingo_Inbound_Message {
 				}
 			}
 
+			$this->submission_status = get_post_meta( $post->ID,
+				'_submission_status', true
+			);
+
 			$this->meta = get_post_meta( $post->ID, '_meta', true );
 			$this->akismet = get_post_meta( $post->ID, '_akismet', true );
+			$this->recaptcha = get_post_meta( $post->ID, '_recaptcha', true );
+			$this->spam_log = get_post_meta( $post->ID, '_spam_log', true );
 			$this->consent = get_post_meta( $post->ID, '_consent', true );
 
 			$terms = wp_get_object_terms( $this->id, self::channel_taxonomy );
 
-			if ( ! empty( $terms ) && ! is_wp_error( $terms ) ) {
+			if ( ! empty( $terms ) and ! is_wp_error( $terms ) ) {
 				$this->channel = $terms[0]->slug;
 			}
 
@@ -190,7 +217,32 @@ class Flamingo_Inbound_Message {
 			} else {
 				$this->spam = isset( $this->akismet['spam'] ) && $this->akismet['spam'];
 			}
+
+			$this->hash = get_post_meta( $post->ID, '_hash', true );
 		}
+	}
+
+	public function __get( $name ) {
+		/* translators: 1: Property, 2: Version, 3: Class, 4: Method. */
+		$message = __( 'The visibility of the %1$s property has been changed in %2$s. Now the property may only be accessed by the %3$s class. You can use the %4$s method instead.', 'flamingo' );
+
+		if ( 'id' == $name ) {
+			if ( WP_DEBUG ) {
+				trigger_error( sprintf(
+					$message,
+					sprintf( '<code>%s</code>', 'id' ),
+					esc_html( __( 'Flamingo 2.2', 'flamingo' ) ),
+					sprintf( '<code>%s</code>', self::class ),
+					sprintf( '<code>%s</code>', 'id()' )
+				) );
+			}
+
+			return $this->id;
+		}
+	}
+
+	public function id() {
+		return $this->id;
 	}
 
 	public function save() {
@@ -200,10 +252,15 @@ class Flamingo_Inbound_Message {
 			$post_title = __( '(No Title)', 'flamingo' );
 		}
 
-		$fields = flamingo_array_flatten( $this->fields );
-		$fields = array_filter( array_map( 'trim', $fields ) );
+		$post_content = array_merge(
+			(array) $this->fields,
+			(array) $this->consent,
+			(array) $this->meta
+		);
 
-		$post_content = implode( "\n", $fields );
+		$post_content = flamingo_array_flatten( $post_content );
+		$post_content = array_filter( array_map( 'trim', $post_content ) );
+		$post_content = implode( "\n", $post_content );
 
 		$post_status = $this->spam ? self::spam_status : 'publish';
 
@@ -213,12 +270,34 @@ class Flamingo_Inbound_Message {
 			'post_status' => $post_status,
 			'post_title' => $post_title,
 			'post_content' => $post_content,
+			'post_date' => $this->get_post_date(),
 		);
+
+		if ( $this->timestamp
+		and $datetime = date_create( '@' . $this->timestamp ) ) {
+			$datetime->setTimezone( wp_timezone() );
+			$postarr['post_date'] = $datetime->format( 'Y-m-d H:i:s' );
+		}
 
 		$post_id = wp_insert_post( $postarr );
 
 		if ( $post_id ) {
 			$this->id = $post_id;
+
+			if ( $post_status === self::spam_status ) {
+
+				// set spam meta time for later use to trash
+				update_post_meta( $post_id, '_spam_meta_time', time() );
+			} else {
+
+				// delete spam meta time to stop trashing in cron job
+				delete_post_meta( $post_id, '_spam_meta_time' );
+			}
+
+			update_post_meta( $post_id, '_submission_status',
+				$this->submission_status
+			);
+
 			update_post_meta( $post_id, '_subject', $this->subject );
 			update_post_meta( $post_id, '_from', $this->from );
 			update_post_meta( $post_id, '_from_name', $this->from_name );
@@ -233,7 +312,10 @@ class Flamingo_Inbound_Message {
 			update_post_meta( $post_id, '_fields', $this->fields );
 			update_post_meta( $post_id, '_meta', $this->meta );
 			update_post_meta( $post_id, '_akismet', $this->akismet );
+			update_post_meta( $post_id, '_recaptcha', $this->recaptcha );
+			update_post_meta( $post_id, '_spam_log', $this->spam_log );
 			update_post_meta( $post_id, '_consent', $this->consent );
+			update_post_meta( $post_id, '_hash', $this->hash );
 
 			if ( term_exists( $this->channel, self::channel_taxonomy ) ) {
 				wp_set_object_terms( $this->id, $this->channel,
@@ -242,6 +324,20 @@ class Flamingo_Inbound_Message {
 		}
 
 		return $post_id;
+	}
+
+	private function get_post_date() {
+		if ( empty( $this->id ) ) {
+			return false;
+		}
+
+		$post = get_post( $this->id );
+
+		if ( ! $post ) {
+			return false;
+		}
+
+		return $post->post_date;
 	}
 
 	public function trash() {
@@ -288,15 +384,34 @@ class Flamingo_Inbound_Message {
 		$this->akismet_submit_spam();
 		$this->spam = true;
 
+		$user_name = get_user_option( 'user_login' );
+
+		if ( false === $user_name ) {
+			$user_name = __( 'Unknown', 'flamingo' );
+		}
+
+		if ( empty( $this->spam_log ) ) {
+			$this->spam_log = array();
+		}
+
+		$this->spam_log[] = array(
+			'agent' => 'flamingo',
+			'reason' => sprintf(
+				/* translators: %s: WordPress user name */
+				__( '%s has marked this message as spam.', 'flamingo' ),
+				$user_name
+			),
+		);
+
 		return $this->save();
 	}
 
 	public function akismet_submit_spam() {
-		if ( empty( $this->id ) || empty( $this->akismet ) ) {
+		if ( empty( $this->id ) or empty( $this->akismet ) ) {
 			return;
 		}
 
-		if ( isset( $this->akismet['spam'] ) && $this->akismet['spam'] ) {
+		if ( isset( $this->akismet['spam'] ) and $this->akismet['spam'] ) {
 			return;
 		}
 
@@ -323,11 +438,11 @@ class Flamingo_Inbound_Message {
 	}
 
 	public function akismet_submit_ham() {
-		if ( empty( $this->id ) || empty( $this->akismet ) ) {
+		if ( empty( $this->id ) or empty( $this->akismet ) ) {
 			return;
 		}
 
-		if ( isset( $this->akismet['spam'] ) && ! $this->akismet['spam'] ) {
+		if ( isset( $this->akismet['spam'] ) and ! $this->akismet['spam'] ) {
 			return;
 		}
 

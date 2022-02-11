@@ -46,12 +46,16 @@
 		var $form = $( form );
 
 		$form.submit( function( event ) {
-			if ( typeof window.FormData !== 'function' ) {
-				return;
+			if ( ! wpcf7.supportHtml5.placeholder ) {
+				$( '[placeholder].placeheld', $form ).each( function( i, n ) {
+					$( n ).val( '' ).removeClass( 'placeheld' );
+				} );
 			}
 
-			wpcf7.submit( $form );
-			event.preventDefault();
+			if ( typeof window.FormData === 'function' ) {
+				wpcf7.submit( $form );
+				event.preventDefault();
+			}
 		} );
 
 		$( '.wpcf7-submit', $form ).after( '<span class="ajax-loader"></span>' );
@@ -132,42 +136,7 @@
 		}
 
 		// Character Count
-		$( '.wpcf7-character-count', $form ).each( function() {
-			var $count = $( this );
-			var name = $count.attr( 'data-target-name' );
-			var down = $count.hasClass( 'down' );
-			var starting = parseInt( $count.attr( 'data-starting-value' ), 10 );
-			var maximum = parseInt( $count.attr( 'data-maximum-value' ), 10 );
-			var minimum = parseInt( $count.attr( 'data-minimum-value' ), 10 );
-
-			var updateCount = function( target ) {
-				var $target = $( target );
-				var length = $target.val().length;
-				var count = down ? starting - length : length;
-				$count.attr( 'data-current-value', count );
-				$count.text( count );
-
-				if ( maximum && maximum < length ) {
-					$count.addClass( 'too-long' );
-				} else {
-					$count.removeClass( 'too-long' );
-				}
-
-				if ( minimum && length < minimum ) {
-					$count.addClass( 'too-short' );
-				} else {
-					$count.removeClass( 'too-short' );
-				}
-			};
-
-			$( ':input[name="' + name + '"]', $form ).each( function() {
-				updateCount( this );
-
-				$( this ).keyup( function() {
-					updateCount( this );
-				} );
-			} );
-		} );
+		wpcf7.resetCounter( $form );
 
 		// URL Input Correction
 		$form.on( 'change', '.wpcf7-validates-as-url', function() {
@@ -192,10 +161,6 @@
 		var $form = $( form );
 
 		$( '.ajax-loader', $form ).addClass( 'is-active' );
-
-		$( '[placeholder].placeheld', $form ).each( function( i, n ) {
-			$( n ).val( '' );
-		} );
 
 		wpcf7.clearResponse( $form );
 
@@ -266,13 +231,6 @@
 					$message.addClass( 'wpcf7-spam-blocked' );
 					$form.addClass( 'spam' );
 
-					$( '[name="g-recaptcha-response"]', $form ).each( function() {
-						if ( '' === $( this ).val() ) {
-							var $recaptcha = $( this ).closest( '.wpcf7-form-control-wrap' );
-							wpcf7.notValidTip( $recaptcha, wpcf7.recaptcha.messages.empty );
-						}
-					} );
-
 					wpcf7.triggerEvent( data.into, 'spam', detail );
 					break;
 				case 'aborted':
@@ -308,11 +266,16 @@
 				$form.each( function() {
 					this.reset();
 				} );
+
+				wpcf7.toggleSubmit( $form );
+				wpcf7.resetCounter( $form );
 			}
 
-			$form.find( '[placeholder].placeheld' ).each( function( i, n ) {
-				$( n ).val( $( n ).attr( 'placeholder' ) );
-			} );
+			if ( ! wpcf7.supportHtml5.placeholder ) {
+				$form.find( '[placeholder].placeheld' ).each( function( i, n ) {
+					$( n ).val( $( n ).attr( 'placeholder' ) );
+				} );
+			}
 
 			$message.html( '' ).append( data.message ).slideDown( 'fast' );
 			$message.attr( 'role', 'alert' );
@@ -403,11 +366,56 @@
 		} );
 	};
 
+	wpcf7.resetCounter = function( form ) {
+		var $form = $( form );
+
+		$( '.wpcf7-character-count', $form ).each( function() {
+			var $count = $( this );
+			var name = $count.attr( 'data-target-name' );
+			var down = $count.hasClass( 'down' );
+			var starting = parseInt( $count.attr( 'data-starting-value' ), 10 );
+			var maximum = parseInt( $count.attr( 'data-maximum-value' ), 10 );
+			var minimum = parseInt( $count.attr( 'data-minimum-value' ), 10 );
+
+			var updateCount = function( target ) {
+				var $target = $( target );
+				var length = $target.val().length;
+				var count = down ? starting - length : length;
+				$count.attr( 'data-current-value', count );
+				$count.text( count );
+
+				if ( maximum && maximum < length ) {
+					$count.addClass( 'too-long' );
+				} else {
+					$count.removeClass( 'too-long' );
+				}
+
+				if ( minimum && length < minimum ) {
+					$count.addClass( 'too-short' );
+				} else {
+					$count.removeClass( 'too-short' );
+				}
+			};
+
+			$( ':input[name="' + name + '"]', $form ).each( function() {
+				updateCount( this );
+
+				$( this ).keyup( function() {
+					updateCount( this );
+				} );
+			} );
+		} );
+	};
+
 	wpcf7.notValidTip = function( target, message ) {
 		var $target = $( target );
 		$( '.wpcf7-not-valid-tip', $target ).remove();
-		$( '<span role="alert" class="wpcf7-not-valid-tip"></span>' )
-			.text( message ).appendTo( $target );
+
+		$( '<span></span>' ).attr( {
+			'class': 'wpcf7-not-valid-tip',
+			'role': 'alert',
+			'aria-hidden': 'true',
+		} ).text( message ).appendTo( $target );
 
 		if ( $target.is( '.use-floating-validation-tip *' ) ) {
 			var fadeOut = function( target ) {

@@ -30,5 +30,9 @@ function flamingo_akismet_submit( $comment, $as = 'spam' ) {
 }
 
 function flamingo_akismet_is_active() {
-	return (bool) Akismet::get_api_key();
+	if ( is_callable( array( 'Akismet', 'get_api_key' ) ) ) {
+		return (bool) Akismet::get_api_key();
+	}
+
+	return false;
 }

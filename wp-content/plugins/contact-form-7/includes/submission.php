@@ -13,6 +13,7 @@ class WPCF7_Submission {
 	private $invalid_fields = array();
 	private $meta = array();
 	private $consent = array();
+	private $spam_log = array();
 
 	private function __construct() {}
 
@@ -119,8 +120,8 @@ class WPCF7_Submission {
 			}
 
 			if ( WPCF7_USE_PIPE
-			&& $pipes instanceof WPCF7_Pipes
-			&& ! $pipes->zero() ) {
+			and $pipes instanceof WPCF7_Pipes
+			and ! $pipes->zero() ) {
 				if ( is_array( $value_orig ) ) {
 					$value = array();
 
@@ -136,6 +137,11 @@ class WPCF7_Submission {
 				$value_orig, $tag );
 
 			$posted_data[$name] = $value;
+
+			if ( $tag->has_option( 'consent_for:storage' )
+			and empty( $posted_data[$name] ) ) {
+				$this->meta['do_not_store'] = true;
+			}
 		}
 
 		$this->posted_data = apply_filters( 'wpcf7_posted_data', $posted_data );
@@ -159,20 +165,24 @@ class WPCF7_Submission {
 			return $this->status;
 		}
 
-		$this->meta = array(
+		$this->meta = array_merge( $this->meta, array(
 			'remote_ip' => $this->get_remote_ip_addr(),
 			'user_agent' => isset( $_SERVER['HTTP_USER_AGENT'] )
 				? substr( $_SERVER['HTTP_USER_AGENT'], 0, 254 ) : '',
 			'url' => $this->get_request_url(),
-			'timestamp' => current_time( 'timestamp' ),
+			'timestamp' => time(),
 			'unit_tag' =>
 				isset( $_POST['_wpcf7_unit_tag'] ) ? $_POST['_wpcf7_unit_tag'] : '',
 			'container_post_id' => isset( $_POST['_wpcf7_container_post'] )
 				? (int) $_POST['_wpcf7_container_post'] : 0,
 			'current_user_id' => get_current_user_id(),
-		);
+		) );
 
 		$contact_form = $this->contact_form;
+
+		if ( $contact_form->is_true( 'do_not_store' ) ) {
+			$this->meta['do_not_store'] = true;
+		}
 
 		if ( ! $this->validate() ) { // Validation error occured
 			$this->set_status( 'validation_failed' );
@@ -219,7 +229,7 @@ class WPCF7_Submission {
 		$ip_addr = '';
 
 		if ( isset( $_SERVER['REMOTE_ADDR'] )
-		&& WP_Http::is_ip_address( $_SERVER['REMOTE_ADDR'] ) ) {
+		and WP_Http::is_ip_address( $_SERVER['REMOTE_ADDR'] ) ) {
 			$ip_addr = $_SERVER['REMOTE_ADDR'];
 		}
 
@@ -233,7 +243,8 @@ class WPCF7_Submission {
 			$referer = isset( $_SERVER['HTTP_REFERER'] )
 				? trim( $_SERVER['HTTP_REFERER'] ) : '';
 
-			if ( $referer && 0 === strpos( $referer, $home_url ) ) {
+			if ( $referer
+			and 0 === strpos( $referer, $home_url ) ) {
 				return esc_url_raw( $referer );
 			}
 		}
@@ -283,7 +294,7 @@ class WPCF7_Submission {
 		$spam = false;
 
 		if ( $this->contact_form->is_true( 'subscribers_only' )
-		&& current_user_can( 'wpcf7_submit', $this->contact_form->id() ) ) {
+		and current_user_can( 'wpcf7_submit', $this->contact_form->id() ) ) {
 			return $spam;
 		}
 
@@ -291,17 +302,45 @@ class WPCF7_Submission {
 
 		if ( strlen( $user_agent ) < 2 ) {
 			$spam = true;
+
+			$this->add_spam_log( array(
+				'agent' => 'wpcf7',
+				'reason' => __( "User-Agent string is unnaturally short.", 'contact-form-7' ),
+			) );
 		}
 
 		if ( ! $this->verify_nonce() ) {
 			$spam = true;
+
+			$this->add_spam_log( array(
+				'agent' => 'wpcf7',
+				'reason' => __( "Submitted nonce is invalid.", 'contact-form-7' ),
+			) );
 		}
 
 		if ( $this->is_blacklisted() ) {
 			$spam = true;
+
+			$this->add_spam_log( array(
+				'agent' => 'wpcf7',
+				'reason' => __( "Blacklisted words are used.", 'contact-form-7' ),
+			) );
 		}
 
 		return apply_filters( 'wpcf7_spam', $spam );
+	}
+
+	public function add_spam_log( $args = '' ) {
+		$args = wp_parse_args( $args, array(
+			'agent' => '',
+			'reason' => '',
+		) );
+
+		$this->spam_log[] = $args;
+	}
+
+	public function get_spam_log() {
+		return $this->spam_log;
 	}
 
 	private function verify_nonce() {
@@ -351,7 +390,8 @@ class WPCF7_Submission {
 		if ( $result ) {
 			$additional_mail = array();
 
-			if ( ( $mail_2 = $contact_form->prop( 'mail_2' ) ) && $mail_2['active'] ) {
+			if ( $mail_2 = $contact_form->prop( 'mail_2' )
+			and $mail_2['active'] ) {
 				$additional_mail['mail_2'] = $mail_2;
 			}
 
@@ -384,9 +424,9 @@ class WPCF7_Submission {
 		foreach ( (array) $this->uploaded_files as $name => $path ) {
 			wpcf7_rmdir_p( $path );
 
-			if ( ( $dir = dirname( $path ) )
-			&& false !== ( $files = scandir( $dir ) )
-			&& ! array_diff( $files, array( '.', '..' ) ) ) {
+			if ( $dir = dirname( $path )
+			and false !== ( $files = scandir( $dir ) )
+			and ! array_diff( $files, array( '.', '..' ) ) ) {
 				// remove parent dir if it's empty.
 				rmdir( $dir );
 			}
