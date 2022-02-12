@@ -56,9 +56,9 @@
 					} else {
 						$term_id = $tag_exists->term_id;
 					}
-					update_field('viviendu_provincia', $prov->term_id, 'post_tag_' . $term_id);
-					update_field('viviendu_comercio', $com->term_id, 'post_tag_' . $term_id);
-					update_field('viviendu_seccion', $cat->term_id, 'post_tag_' . $term_id);
+					update_term_meta($term_id, 'viviendu_provincia', $prov->term_id);
+					update_term_meta($term_id, 'viviendu_comercio', $com->term_id);
+					update_term_meta($term_id, 'viviendu_seccion', $cat->term_id);
 					$tags[] = $tag_slug;
 				endforeach;
 			endforeach;
@@ -85,8 +85,8 @@
 					} else {
 						$term_id = $tag_exists->term_id;
 					}
-					update_field('viviendu_comercio_provincia_provincia', $prov->term_id, 'comercio_provincia_' . $term_id);
-					update_field('viviendu_comercio_provincia_comercio', $com->term_id, 'comercio_provincia_' . $term_id);
+					update_term_meta($term_id, 'viviendu_comercio_provincia_provincia', $prov->term_id);
+					update_term_meta($term_id, 'viviendu_comercio_provincia_comercio', $com->term_id);
 					$tags[] = $tag_slug;
 			endforeach;
 		endforeach;
@@ -143,8 +143,8 @@
 				} else {
 					$term_id = $tag_exists->term_id;
 				}
-				update_field('viviendu_seccion_provincia_seccion', $cat->term_id, 'seccion_provincia_' .$term_id);
-				update_field('viviendu_seccion_provincia_provincia', $prov->term_id, 'seccion_provincia_' .$term_id);
+				update_term_meta($term_id, 'viviendu_seccion_provincia_seccion', $cat->term_id);
+				update_term_meta($term_id, 'viviendu_seccion_provincia_provincia', $prov->term_id);
 				$tags[] = $tag_slug;
 			endforeach;
 		endforeach;
