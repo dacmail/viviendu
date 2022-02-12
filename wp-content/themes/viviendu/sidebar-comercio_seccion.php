@@ -21,11 +21,11 @@
 	<?php if (!get_post_meta(get_the_ID(),'_ungrynerd_baja', true )  || !get_post_meta(get_the_ID(),'_ungrynerd_no_cta', true )) :?>
 	<div class="widget location">
 		<?php if (is_tax('comercio_seccion')): ?>
-			<?php $location_info = viviendu_location_info(get_tax_meta(get_queried_object()->term_id, 'viviendu_comercio_seccion_comercio', true));  ?>
+			<?php $location_info = viviendu_location_info(get_field('viviendu_comercio_seccion_comercio', 'comercio_'. get_queried_object()->term_id));  ?>
 		<?php elseif (is_tax('comercio')) : ?>
 			<?php $location_info = viviendu_location_info(get_queried_object()->term_id);  ?>
 		<?php elseif (is_tag()) : ?>
-			<?php $location_info = viviendu_location_info(get_tax_meta(get_queried_object()->term_id, 'viviendu_comercio', true));  ?>
+			<?php $location_info = viviendu_location_info(get_field('viviendu_comercio', 'comercio_'. get_queried_object()->term_id));  ?>
 		<?php endif ?>
 		<p><a href="#popup_contacto" class="btn btn-block btn-contact btn-primary" id="btn-contact-sidebar">Contactar</a></p>
 	</div>

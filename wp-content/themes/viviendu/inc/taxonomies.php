@@ -37,7 +37,6 @@
 
 	/* Add auto taxonomies on save posts: provincia-comercio-seccion */
 	function viviendu_add_auto_tags($post_ID) {
-		global $wpdb;
 		$tags = array();
 		$comercios = wp_get_object_terms($post_ID, 'comercio');
 		$provincias = wp_get_object_terms($post_ID, 'provincia');
@@ -57,9 +56,9 @@
 					} else {
 						$term_id = $tag_exists->term_id;
 					}
-					update_tax_meta($term_id, 'viviendu_provincia', $prov->term_id);
-					update_tax_meta($term_id, 'viviendu_comercio', $com->term_id);
-					update_tax_meta($term_id, 'viviendu_seccion', $cat->term_id);
+					update_field('viviendu_provincia', $prov->term_id, 'post_tag_' . $term_id);
+					update_field('viviendu_comercio', $com->term_id, 'post_tag_' . $term_id);
+					update_field('viviendu_seccion', $cat->term_id, 'post_tag_' . $term_id);
 					$tags[] = $tag_slug;
 				endforeach;
 			endforeach;
@@ -69,7 +68,6 @@
 
 	/* Add auto taxonomies on save posts: provincia-comercio */
 	function viviendu_add_comercio_provincia($post_ID) {
-		global $wpdb;
 		$tags = array();
 		$comercios = wp_get_object_terms($post_ID, 'comercio');
 		$provincias = wp_get_object_terms($post_ID, 'provincia');
@@ -87,18 +85,16 @@
 					} else {
 						$term_id = $tag_exists->term_id;
 					}
-					update_tax_meta($term_id, 'viviendu_comercio_provincia_provincia', $prov->term_id);
-					update_tax_meta($term_id, 'viviendu_comercio_provincia_comercio', $com->term_id);					$tags[] = $tag_slug;
+					update_field('viviendu_comercio_provincia_provincia', $prov->term_id, 'comercio_provincia_' . $term_id);
+					update_field('viviendu_comercio_provincia_comercio', $com->term_id, 'comercio_provincia_' . $term_id);
 					$tags[] = $tag_slug;
 			endforeach;
-
 		endforeach;
 		wp_set_object_terms( $post_ID, $tags, 'comercio_provincia' , false );
 	}
 
 	/* Add auto taxonomies on save posts: comercio-seccion */
 	function viviendu_add_comercio_seccion($post_ID) {
-		global $wpdb;
 		$tags = array();
 		$comercios = wp_get_object_terms($post_ID, 'comercio');
 		$categorias = wp_get_object_terms($post_ID, 'category');
@@ -120,8 +116,9 @@
 				} else {
 					$term_id = $tag_exists->term_id;
 				}
-				update_tax_meta($term_id, 'viviendu_comercio_seccion_seccion', $cat->term_id);
-				update_tax_meta($term_id, 'viviendu_comercio_seccion_comercio', $com->term_id);
+			//error_log('Error al crear comercio_seccion viviendu_comercio_seccion_seccion: ' . $cat->term_id . ' comercio_seccion_' . $term_id);
+				uptate_field('viviendu_comercio_seccion_seccion', $cat->term_id, 'comercio_seccion_' . $term_id);
+				uptate_field('viviendu_comercio_seccion_comercio', $com->term_id, 'comercio_seccion_' . $term_id);
 				$tags[] = $tag_slug;
 			endforeach;
 		endforeach;
@@ -130,9 +127,7 @@
 
 	/* Add auto taxonomies on save posts: provincia-comercio-seccion */
 	function viviendu_add_seccion_provincia($post_ID) {
-		global $wpdb;
 		$tags = array();
-		$comercios = wp_get_object_terms($post_ID, 'comercio');
 		$provincias = wp_get_object_terms($post_ID, 'provincia');
 		$categorias = wp_get_object_terms($post_ID, 'category');
 		foreach ($provincias as $prov) :
@@ -149,8 +144,8 @@
 				} else {
 					$term_id = $tag_exists->term_id;
 				}
-				update_tax_meta($term_id, 'viviendu_seccion_provincia_seccion', $cat->term_id);
-				update_tax_meta($term_id, 'viviendu_seccion_provincia_provincia', $prov->term_id);
+				update_field('viviendu_seccion_provincia_seccion', $cat->term_id, 'seccion_provincia_' .$term_id);
+				update_field('viviendu_seccion_provincia_provincia', $prov->term_id, 'seccion_provincia_' .$term_id);
 				$tags[] = $tag_slug;
 			endforeach;
 		endforeach;
@@ -158,10 +153,10 @@
 	}
 
 	//Auto generated taxonomies
-	add_action('save_post', 'viviendu_generated_tax');
+	add_action('save_post', 'viviendu_generated_tax', 20, 1);
 	function viviendu_generated_tax($post_ID) {
-		viviendu_add_seccion_provincia($post_ID);
 		viviendu_add_comercio_seccion($post_ID);
+		viviendu_add_seccion_provincia($post_ID);
 		viviendu_add_comercio_provincia($post_ID);
 		viviendu_add_auto_tags($post_ID);
 	}

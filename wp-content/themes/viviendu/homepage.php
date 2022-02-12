@@ -1,5 +1,8 @@
 <?php /* Template Name: Pagina de inicio */ ?>
 <?php get_header() ?>
+<?php
+update_field('viviendu_comercio_seccion_seccion', 83, 'comercio_seccion_23495');
+?>
 <div id="container" class="clearfix">
 	<section id="featureds" class="container section">
 		<h2 class="title nm">Casas prefabricadas y viviendas móviles destacadas</h2>

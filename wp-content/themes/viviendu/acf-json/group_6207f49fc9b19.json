@@ -1,0 +1,63 @@
+{
+    "key": "group_6207f49fc9b19",
+    "title": "Enlaces comercio_provincia",
+    "fields": [
+        {
+            "key": "field_6207f4c9a3c0e",
+            "label": "viviendu_comercio_provincia_provincia",
+            "name": "viviendu_comercio_provincia_provincia",
+            "type": "text",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "",
+            "placeholder": "",
+            "prepend": "",
+            "append": "",
+            "maxlength": ""
+        },
+        {
+            "key": "field_6207f4cfa3c0f",
+            "label": "viviendu_comercio_provincia_comercio",
+            "name": "viviendu_comercio_provincia_comercio",
+            "type": "text",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "",
+            "placeholder": "",
+            "prepend": "",
+            "append": "",
+            "maxlength": ""
+        }
+    ],
+    "location": [
+        [
+            {
+                "param": "taxonomy",
+                "operator": "==",
+                "value": "comercio_provincia"
+            }
+        ]
+    ],
+    "menu_order": 0,
+    "position": "normal",
+    "style": "default",
+    "label_placement": "top",
+    "instruction_placement": "label",
+    "hide_on_screen": "",
+    "active": true,
+    "description": "",
+    "show_in_rest": 0,
+    "modified": 1644688596
+}

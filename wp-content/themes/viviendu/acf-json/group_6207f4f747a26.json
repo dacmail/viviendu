@@ -1,0 +1,63 @@
+{
+    "key": "group_6207f4f747a26",
+    "title": "Enlace sección_provincia",
+    "fields": [
+        {
+            "key": "field_6207f508074d6",
+            "label": "viviendu_seccion_provincia_seccion",
+            "name": "viviendu_seccion_provincia_seccion",
+            "type": "text",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "",
+            "placeholder": "",
+            "prepend": "",
+            "append": "",
+            "maxlength": ""
+        },
+        {
+            "key": "field_6207f518074d7",
+            "label": "viviendu_seccion_provincia_provincia",
+            "name": "viviendu_seccion_provincia_provincia",
+            "type": "text",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "",
+            "placeholder": "",
+            "prepend": "",
+            "append": "",
+            "maxlength": ""
+        }
+    ],
+    "location": [
+        [
+            {
+                "param": "taxonomy",
+                "operator": "==",
+                "value": "seccion_provincia"
+            }
+        ]
+    ],
+    "menu_order": 0,
+    "position": "normal",
+    "style": "default",
+    "label_placement": "top",
+    "instruction_placement": "label",
+    "hide_on_screen": "",
+    "active": true,
+    "description": "",
+    "show_in_rest": 0,
+    "modified": 1644688670
+}

@@ -11,42 +11,50 @@
 
 	function viviendu_tax_link($post_id, $tax) {
 		$terms = get_the_terms( $post_id, $tax );
-		$term = array_pop($terms);
-		if (!is_wp_error($term)) {
-			return get_term_link($term->slug, $tax);
+		if ($terms) {
+			$term = array_pop($terms);
+			if (!is_wp_error($term)) {
+				return get_term_link($term->slug, $tax);
+			}
 		}
 	}
 
 	function viviendu_tax_anchor($post_id, $tax, $anchor_text='') {
 		$terms = get_the_terms( $post_id, $tax );
-		$term = array_pop($terms);
-		if (!is_wp_error($term)) {
-			$anchor_text = empty($anchor_text) ? $term->name : $anchor_text;
-			return '<a href="'. get_term_link($term->slug, $tax).'">'. $anchor_text .'</a>';
+		if ($terms) {
+			$term = array_pop($terms);
+			if (!is_wp_error($term)) {
+				$anchor_text = empty($anchor_text) ? $term->name : $anchor_text;
+				return '<a href="'. get_term_link($term->slug, $tax).'">'. $anchor_text .'</a>';
+			}
 		}
 	}
 
 	function viviendu_tax_name($post_id, $tax) {
 		$terms = get_the_terms( $post_id, $tax );
-		$term = array_pop($terms);
-		if (!is_wp_error($term)) {
-			return $term->name;
+		if ($terms) {
+			$term = array_pop($terms);
+			if (!is_wp_error($term)) {
+				return $term->name;
+			}
 		}
 	}
 
 	function viviendu_tax_desc($post_id, $tax, $excerpt=true) {
 		$terms = get_the_terms( $post_id, $tax );
-		$term = array_pop($terms);
-		if (!is_wp_error($term)) {
-			$desc = $excerpt ? wp_trim_words($term->description, LIMIT_WORDS) : $term->description;
-			return $desc;
+		if ($terms) {
+			$term = array_pop($terms);
+			if (!is_wp_error($term)) {
+				$desc = $excerpt ? wp_trim_words($term->description, LIMIT_WORDS) : $term->description;
+				return $desc;
+			}
 		}
 	}
 
 	function viviendu_comercio_seccion_content($tax_id) {
 		$comercio_seccion_desc = term_description($tax_id);
 		if (empty($comercio_seccion_desc)) {
-			$comercio_id = get_tax_meta($tax_id, 'viviendu_comercio_seccion_comercio', true);
+			$comercio_id = get_field('viviendu_comercio_seccion_comercio', 'comercio_seccion_'.$tax_id);
 			$comercio = get_term( $comercio_id, 'comercio');
 			return $comercio->description;
 		} else {
@@ -68,11 +76,11 @@
 
 	function viviendu_location_info($comercio_id) {
 		return array(
-			'url' => get_tax_meta($comercio_id, 'viviendu_comercio_url', true),
-			'address' => get_tax_meta($comercio_id, 'viviendu_comercio_address', true),
-			'phone' => get_tax_meta($comercio_id, 'viviendu_comercio_phone', true),
-			'email' => get_tax_meta($comercio_id, 'viviendu_comercio_email', true),
-			'logo' => get_tax_meta($comercio_id, 'viviendu_comercio_logo', true)
+			'url' => get_field('viviendu_comercio_url', 'comercio_' . $comercio_id),
+			'address' => get_field('viviendu_comercio_address', 'comercio_' . $comercio_id),
+			'phone' => get_field('viviendu_comercio_phone', 'comercio_' . $comercio_id),
+			'email' => get_field('viviendu_comercio_email', 'comercio_' . $comercio_id),
+			'logo' => get_field('viviendu_comercio_logo', 'comercio_' . $comercio_id)
 		);
 	}
 

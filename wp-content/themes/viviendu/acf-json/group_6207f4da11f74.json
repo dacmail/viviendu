@@ -1,0 +1,63 @@
+{
+    "key": "group_6207f4da11f74",
+    "title": "Enlaces comercio_sección",
+    "fields": [
+        {
+            "key": "field_6207f4e7658db",
+            "label": "viviendu_comercio_seccion_seccion",
+            "name": "viviendu_comercio_seccion_seccion",
+            "type": "text",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "",
+            "placeholder": "",
+            "prepend": "",
+            "append": "",
+            "maxlength": ""
+        },
+        {
+            "key": "field_6207f4ee658dc",
+            "label": "viviendu_comercio_seccion_comercio",
+            "name": "viviendu_comercio_seccion_comercio",
+            "type": "text",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "",
+            "placeholder": "",
+            "prepend": "",
+            "append": "",
+            "maxlength": ""
+        }
+    ],
+    "location": [
+        [
+            {
+                "param": "taxonomy",
+                "operator": "==",
+                "value": "comercio_seccion"
+            }
+        ]
+    ],
+    "menu_order": 0,
+    "position": "normal",
+    "style": "default",
+    "label_placement": "top",
+    "instruction_placement": "label",
+    "hide_on_screen": "",
+    "active": true,
+    "description": "",
+    "show_in_rest": 0,
+    "modified": 1644690886
+}
