@@ -362,3 +362,66 @@ input[type="checkbox"] {
     font-weight: 500;
     font-size: 16px;
 }
+
+#contact-form-editor .contact-form-editor-panel {
+    float: none;
+    overflow: auto;
+    clear: both;
+}
+
+.gsh_cf7_pro_fatur_int1{
+    width: 35%;
+    float: left;
+}
+.gsh_cf7_pro_img_int{
+    width: 25%;
+    float: left;
+    margin-right:30px;
+}
+.gsh_cf7_pro_fatur_int2{
+    width: 35%;
+    float: left;
+}
+@media only screen and (max-width: 425px) {
+	  .gsh_cf7_pro_img_int{
+		margin-top: -409px;
+		width: 100%;
+		float: right;
+		margin-right: -62px;
+	  }
+	  /*.gsh_cf7_pro_img_int img{
+		width: 216px;
+		height: 160px;
+	  }*/
+	  .gsh_cf7_pro_fatur_int1{
+		margin-top: 193px;
+		width: 100%;
+		float: left;
+	  }
+	  .gsh_cf7_pro_fatur_int2{
+		width: 100%;
+		float: left;
+		margin-top: -19px;
+		margin-left:-36px;
+	  }
+	.gs-sidebar-block, .gs-support {
+	   margin-left: 0px;
+	   margin-top: 0px;
+	   width:100%;
+	}
+	.gs-card{
+		width: 100%;
+	}
+	.gs-parts {
+		display: initial;
+	}
+}
+a.cf7_gs_link{
+	padding: 5px;
+    background: #13540f;
+    color: #fff;
+    border: 1px solid #13540f;
+    border-radius: 5px;
+    margin-left: 20px;
+    text-decoration: none;
+}

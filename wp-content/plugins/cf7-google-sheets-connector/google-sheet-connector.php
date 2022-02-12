@@ -3,7 +3,7 @@
   Plugin Name: CF7 Google Sheet Connector
   Plugin URI: https://wordpress.org/plugins/cf7-google-sheets-connector/
   Description: Send your Contact Form 7 data to your Google Sheets spreadsheet.
-  Version: 4.7
+  Version: 4.9.1
   Author: GSheetConnector
   Author URI: https://www.gsheetconnector.com/
   Text Domain: gsconnector
@@ -14,8 +14,8 @@ if ( !defined( 'ABSPATH' ) ) {
 }
 
 // Declare some global constants
-define( 'GS_CONNECTOR_VERSION', '4.7' );
-define( 'GS_CONNECTOR_DB_VERSION', '4.7' );
+define( 'GS_CONNECTOR_VERSION', '4.9.1' );
+define( 'GS_CONNECTOR_DB_VERSION', '4.9.1' );
 define( 'GS_CONNECTOR_ROOT', dirname( __FILE__ ) );
 define( 'GS_CONNECTOR_URL', plugins_url( '/', __FILE__ ) );
 define( 'GS_CONNECTOR_BASE_FILE', basename( dirname( __FILE__ ) ) . '/google-sheet-connector.php' );
@@ -243,7 +243,10 @@ class Gs_Connector_Free_Init {
 						
 						if( $email_account ) { ?>
 							<p class="connected-account"><?php printf( __( 'Connected email account: %s', 'gsheetconnector-gravityforms' ), $email_account ); ?><p>
-						<?php } 
+						<?php }else{?>
+                      <p style="color:red" ><?php echo esc_html(__('Something wrong ! Your Auth Code may be wrong or expired. Please deactivate and do Re-Authentication again. ', 'gsconnector')); ?></p>
+                    <?php 
+                   } 
 					}?>
 
                   <p>
@@ -381,16 +384,17 @@ class Gs_Connector_Free_Init {
     */
    public function gs_connector_plugin_action_links( $links ) {
       // We shouldn't encourage editing our plugin directly.
-      unset( $links['edit'] );
-
+		unset( $links['edit'] );
+		
       // Add our custom links to the returned array value.
       return array_merge( array(
-         '<a href="' . admin_url( 'admin.php?page=wpcf7-google-sheet-config' ) . '">' . __( 'Settings', 'gsconnector' ) . '</a>'
+       '<a href="' . admin_url( 'admin.php?page=wpcf7-google-sheet-config' ) . '">' . __( 'Settings', 'gsconnector' ) . '</a>',
+		 '<a class="upgradeProSet" style="color: red;font-weight: 600;font-style: italic;" href="https://www.gsheetconnector.com/cf7-google-sheet-connector-pro?gsheetconnector-ref=17"  target="__blank">' . __( 'Upgrade to PRO', 'gsconnector' ) . '</a>',
               ), $links );
    }
 
    public function add_gs_connector_summary_widget() {
-      wp_add_dashboard_widget( 'gs_dashboard', __( 'Google Sheet Connector', 'gsconnector' ), array( $this, 'gs_connector_summary_dashboard' ) );
+      wp_add_dashboard_widget( 'gs_dashboard', __( 'CF7 Google Sheet Connector', 'gsconnector' )."<img style='width:60px' src='".GS_CONNECTOR_URL."assets/img/CF7GSheet-Connector-logo.png'>", array( $this, 'gs_connector_summary_dashboard' ) );
    }
 
    public function gs_connector_summary_dashboard() {

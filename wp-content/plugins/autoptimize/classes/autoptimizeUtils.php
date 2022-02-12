@@ -401,45 +401,49 @@ class autoptimizeUtils
      *
      * @return bool
      */    
-    public static function find_pagecache() {
+    public static function find_pagecache( $disregard_transient = false ) {
         static $_found_pagecache = null;
 
         if ( null === $_found_pagecache ) {
-            $_page_cache_constants   = array( 'NGINX_HELPER_BASENAME', 'KINSTA_CACHE_ZONE', 'PL_INSTANCE_REF', 'WP_NINUKIS_WP_NAME', 'CACHE_ENABLER_VERSION', 'SBP_PLUGIN_NAME', 'SERVEBOLT_PLUGIN_FILE', 'SWCFPC_PLUGIN_PATH' );
-            $_page_cache_classes     = array( 'Swift_Performance_Cache', 'WpFastestCache', 'c_ws_plugin__qcache_purging_routines', 'zencache', 'comet_cache', 'WpeCommon', 'FlywheelNginxCompat', 'PagelyCachePurge' );
-            $_page_cache_functions   = array( 'wp_cache_clear_cache', 'cachify_flush_cache', 'w3tc_pgcache_flush', 'wp_fast_cache_bulk_delete_all', 'rapidcache_clear_cache', 'sg_cachepress_purge_cache', 'prune_super_cache', 'after_rocket_clean_domain', 'wpo_cache_flush', 'rt_nginx_helper_after_fastcgi_purge_all', 'hyper_cache_purged' );
-            $_ao_pagecache_transient = 'autoptimize_pagecache_check';
-            $_found_pagecache        = get_transient( $_ao_pagecache_transient );
+            $_page_cache_constants   = array( 'NgInx' => 'NGINX_HELPER_BASENAME', 'Kinsta' => 'KINSTA_CACHE_ZONE', 'Presslabs' => 'PL_INSTANCE_REF', '' => 'Pressidium', 'Cache Enabler' => 'CACHE_ENABLER_VERSION', 'Speed Booster Pack' => 'SBP_PLUGIN_NAME', 'Servebolt' => 'SERVEBOLT_PLUGIN_FILE', 'WP CloudFlare Super Page Cache' => 'SWCFPC_PLUGIN_PATH', 'Cachify' => 'CACHIFY_CACHE_DIR', 'WP Rocket' => 'WP_ROCKET_CACHE_PATH', 'WP Optimize' => 'WPO_VERSION', 'Autoptimize Pro' => 'AO_PRO_PAGECACHE_CACHE_DIR' );
+            $_page_cache_classes     = array( 'Swift Performance' => 'Swift_Performance_Cache', 'WP Fastest Cache' => 'WpFastestCache', 'Quick Cache' => 'c_ws_plugin__qcache_purging_routines', 'ZenCache' => 'zencache', 'Comet Cache' => 'comet_cache', 'WP Engine' => 'WpeCommon', 'Flywheel' => 'FlywheelNginxCompat', 'Pagely' => 'PagelyCachePurge' );
+            $_page_cache_functions   = array( 'WP Super Cache' => 'wp_cache_clear_cache', 'W3 Total Cache' => 'w3tc_pgcache_flush', 'WP Fast Cache' => 'wp_fast_cache_bulk_delete_all', 'Rapidcache' => 'rapidcache_clear_cache', 'Siteground' => 'sg_cachepress_purge_cache', 'WP Super Cache' => 'prune_super_cache' );
+
+            $_found_pagecache = false;
+            if ( true !== $disregard_transient ) {
+                $_ao_pagecache_transient = 'autoptimize_pagecache_check';
+                $_found_pagecache        = get_transient( $_ao_pagecache_transient );
+            }
 
             if ( current_user_can( 'manage_options' ) && false === $_found_pagecache ) {
                 // loop through known pagecache constants.
-                foreach ( $_page_cache_constants as $_constant ) {
+                foreach ( $_page_cache_constants as $_name => $_constant ) {
                     if ( defined( $_constant ) ) {
-                        $_found_pagecache = true;
+                        $_found_pagecache = $_name;
                         break;
                     }
                 }
                 // and loop through known pagecache classes.
                 if ( false === $_found_pagecache ) {
-                    foreach ( $_page_cache_classes as $_class ) {
+                    foreach ( $_page_cache_classes as $_name => $_class ) {
                         if ( class_exists( $_class ) ) {
-                            $_found_pagecache = true;
+                            $_found_pagecache = $_name;
                             break;
                         }
                     }
                 }
                 // and loop through known pagecache functions.
                 if ( false === $_found_pagecache ) {
-                    foreach ( $_page_cache_functions as $_function ) {
+                    foreach ( $_page_cache_functions as $_name => $_function ) {
                         if ( function_exists( $_function ) ) {
-                            $_found_pagecache = true;
+                            $_found_pagecache = $_name;
                             break;
                         }
                     }
                 }
                 
                 // store in transient for 1 week if pagecache found.
-                if ( true === $_found_pagecache ) {
+                if ( true === $_found_pagecache && true !== $disregard_transient ) {
                     set_transient( $_ao_pagecache_transient, true, WEEK_IN_SECONDS );
                 }
             }
@@ -457,5 +461,51 @@ class autoptimizeUtils
     public static function is_ao_settings() {
         $_is_ao_settings = ( str_replace( array( 'autoptimize', 'autoptimize_imgopt', 'ao_critcss', 'autoptimize_extra', 'ao_partners' ), '', $_SERVER['REQUEST_URI'] ) !== $_SERVER['REQUEST_URI'] ? true : false );
         return $_is_ao_settings;
+    }
+
+    /**
+     * Returns false if no conflicting plugins are found, the name if the plugin if found.
+     *
+     * @return bool|string
+     */
+    public static function find_potential_conflicts() {
+        if ( defined( 'WPFC_WP_CONTENT_BASENAME' ) ) {
+            $_wpfc_options =  json_decode( get_option( 'WpFastestCache' ) );
+            foreach ( array( 'wpFastestCacheMinifyCss', 'wpFastestCacheCombineCss','wpFastestCacheCombineJs' ) as $_wpfc_conflicting ) {
+                if ( isset( $_wpfc_options->$_wpfc_conflicting ) && $_wpfc_options->$_wpfc_conflicting === 'on' ) {
+                    return 'WP Fastest Cache';
+                }
+            }
+        } elseif ( defined( 'W3TC_VERSION' ) ) {
+            $w3tcConfig     = file_get_contents( WP_CONTENT_DIR . '/w3tc-config/master.php' );
+            $w3tc_minify_on = strpos( $w3tcConfig, '"minify.enabled": true' );
+            if ( $w3tc_minify_on ) {
+                return 'W3 Total Cache';
+            }
+        } elseif ( defined('SiteGround_Optimizer\VERSION') ) {
+            if ( get_option('siteground_optimizer_optimize_css') == 1 || get_option('siteground_optimizer_optimize_javascript') == 1 || get_option('siteground_optimizer_combine_javascript') == 1 || get_option('siteground_optimizer_combine_css') == 1 ) {
+                return 'Siteground Optimizer';
+            }
+        } elseif ( defined( 'WPO_VERSION' ) ) {
+            $_wpo_options = get_site_option( 'wpo_minify_config' );
+            if ( is_array( $_wpo_options ) && $_wpo_options['enabled'] == 1 && ( $_wpo_options['enable_css'] == 1 || $_wpo_options['enable_js'] == 1 ) ) {
+                return 'WP Optimize';
+            }
+        } elseif ( defined( 'WPACU_PLUGIN_VERSION' ) || defined( 'WPACU_PRO_PLUGIN_VERSION' ) ) {
+            $wpacuSettingsClass = new \WpAssetCleanUp\Settings();
+            $wpacuSettings      = $wpacuSettingsClass->getAll();
+
+            if ( $wpacuSettings['minify_loaded_css'] || $wpacuSettings['minify_loaded_js'] || $wpacuSettings['combine_loaded_js'] || $wpacuSettings['combine_loaded_css'] ) {
+                return 'Asset Cleanup';
+            }
+        } elseif ( defined( 'WP_ROCKET_VERSION' ) && function_exists( 'get_rocket_option' ) ) {
+            if ( get_rocket_option( 'minify_js' ) || get_rocket_option( 'minify_concatenate_js' ) || get_rocket_option( 'minify_css' ) || get_rocket_option( 'minify_concatenate_css' ) || get_rocket_option('async_css' ) ) {
+                return 'WP Rocket';
+            }
+        } elseif ( function_exists( 'fvm_get_settings' ) ) {
+            return 'Fast Velocity Minify';
+        }
+
+        return false;
     }
 }

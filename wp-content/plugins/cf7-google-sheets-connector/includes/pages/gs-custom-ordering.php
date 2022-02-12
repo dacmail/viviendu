@@ -1,9 +1,9 @@
 <div class="cd-faq-items">
    <ul id="basics" class="cd-faq-group">
       <li class="content-visible">
-         <a class="cd-faq-trigger" href="#0"><?php echo esc_html( __( 'Custom Ordering - ', 'gsconnector' ) ); ?><span class="pro">Available In Pro</span></a>
+         <a class="cd-faq-trigger" data-id="4" href="#0"><?php echo esc_html( __( 'Custom Ordering - ', 'gsconnector' ) ); ?><span class="pro">Available In Pro</span></a>
 
-         <div class="cd-faq-content" style="display: block;">
+         <div class="cd-faq-content cd-faq-content4" style="display: none;">
             <div class="gs-demo-fields gs-second-block">
                 <h2><span class="gs-info"><?php echo esc_html( __( 'Not showing correct header name ? Un-select and select the fields checkbox again. It happens due to various reasons like change in field/mail tag name.', 'gsconnector')); ?> </span></h2>
 

@@ -49,7 +49,8 @@ class CF7GSC_googlesheet {
    }
 
    public static function updateToken( $tokenData ) {
-      $tokenData['expire'] = time() + intval( $tokenData['expires_in'] );
+      $expires_in = isset( $tokenData['expires_in'] ) ? intval( $tokenData['expires_in'] ) : 0;
+      $tokenData['expire'] = time() + $expires_in;
       try {
          $tokenJson = json_encode( $tokenData );
          update_option( 'gs_token', $tokenJson );
@@ -172,6 +173,7 @@ class CF7GSC_googlesheet {
                   
                   // Add two values
                   // Then you need to add configuration
+                  //$conf = ["valueInputOption" => "USER_ENTERED"];
                   $conf = ["valueInputOption" => "USER_ENTERED"];
 
                   // append the spreadsheet(add new row in the sheet)
@@ -218,7 +220,21 @@ class CF7GSC_googlesheet {
                      }
                   }
 
-                  $range_new = $worksheet_id;
+                  //$range_new = $worksheet_id;
+                  
+                  /*RASHID*/
+					$tab_name = $worksheet_id;
+					$full_range = $tab_name."!A1:Z";
+					$response   = $service->spreadsheets_values->get( $spreadsheetId, $full_range );
+					$get_values = $response->getValues();
+					
+					if( $get_values) {
+						$row  = count( $get_values ) + 1;
+					}
+					else {
+						$row = 1;
+					}
+					$range = $tab_name."!A".$row.":Z";
 
                   $sheet_values = $final_data;
 
@@ -230,7 +246,7 @@ class CF7GSC_googlesheet {
                      $params = [
                         'valueInputOption' => 'USER_ENTERED'
                      ];
-                     $response = $service->spreadsheets_values->append( $spreadsheetId, $range_new, $requestBody, $params );
+                     $response = $service->spreadsheets_values->append( $spreadsheetId, $range, $requestBody, $params );
                   }
                }
             }
@@ -240,7 +256,7 @@ class CF7GSC_googlesheet {
          exit();
       }
    }
-
+   
    //get all the spreadsheets
    public function get_spreadsheets() {
       $all_sheets = array();
@@ -332,9 +348,8 @@ class CF7GSC_googlesheet {
 
                $values = array( array_values( array_filter( $field_tag_array ) ) );
 
-
-               $count_old_header = count( $old_header );
-               $count_new_header = count( $final_header_array );
+               $count_old_header = (!empty($old_header)) ? (count($old_header)) : 0;
+               $count_new_header = (!empty($final_header_array)) ? (count($final_header_array)) : 0;
                $data_values = array();
 
 // If old header count is greater than new header count than empty the header
@@ -362,7 +377,7 @@ class CF7GSC_googlesheet {
                ] );
 
                $params = [
-                  'valueInputOption' => 'RAW'
+                  'valueInputOption' => 'USER_ENTERED'
                ];
                $response = $service->spreadsheets_values->update( $spreadsheetId, $range, $requestBody, $params );
             }
@@ -373,19 +388,22 @@ class CF7GSC_googlesheet {
 	
 	
 	public function gsheet_print_google_account_email() {		
-		$google_account = get_option("cf7gf_email_account");
-		
-		if( $google_account ) {
-			return $google_account;
-		}
-		else {
-			
-			$google_sheet = new CF7GSC_googlesheet();
-			$google_sheet->auth();				 
-			$email = $google_sheet->gsheet_get_google_account_email();
-			
-			return $email;
-		}		
+		try{
+         $google_account = get_option("cf7gf_email_account");
+         if( $google_account ) {
+            return $google_account;
+         }
+         else {
+            
+            $google_sheet = new CF7GSC_googlesheet();
+            $google_sheet->auth();				 
+            $email = $google_sheet->gsheet_get_google_account_email();
+            
+            return $email;
+         }
+      }catch(Exception $e){
+         return false;
+      }   		
 	}
 	
 	public function gsheet_get_google_account_email() {		

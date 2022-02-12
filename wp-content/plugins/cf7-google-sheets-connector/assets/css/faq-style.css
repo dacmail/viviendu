@@ -32,8 +32,9 @@ a.cd-faq-trigger {
 
 .gs-demo-fields label {
     margin: 0 15px 0 15px;
-    float: left;
-    width: 18%;
+    /*float: left;*/
+    /*width: 18%;*/
+    width: 100%;
     font-size: 14px;
     font-weight: 600;
 }
@@ -224,7 +225,8 @@ Main components
   .cd-faq-items {
     position: static;
     height: auto;
-    width: 78%;
+    /*width: 78%;*/
+    width: 100%;
     float: right;
     overflow: visible;
     -webkit-transform: translateZ(0) translateX(0);
@@ -431,3 +433,166 @@ Main components
     display: block;
   }
 }
+
+/* Aveshahmed - 12-10-2021 */
+.cf_pro_link{
+  padding: 5px;
+  width: 100%;
+  text-align: center;
+  color: #171a17;
+  border: #0a0a3c 1px solid;
+  text-decoration: none;
+  display: inline-block;
+  background:#0a0a3c; 
+  color: #fff;
+  border-radius:0px 25px 0px 25px;
+}
+
+.cf_pro_link:hover {
+  color: #0a0a3c;
+  background: #fff;
+}
+.cf_pro_link_buy{
+  padding: 5px;
+  width: 100%;
+  text-align: center;
+  color: #171a17;
+  border: #006A4E 1px solid;
+  text-decoration: none;
+  display: inline-block;
+  background:#006A4E; 
+  color: #fff;
+  border-radius:0px 25px 0px 25px;
+}
+
+.cf_pro_link_buy:hover {
+  color: #006A4E;
+  background: #fff;
+}
+.gsh_cf7_pro_img{
+  width: 40%;
+  float: left;
+  height: 370px;
+ 
+}
+.gsh_cf7_pro_feat{
+  width: 100%;
+}
+.gsh_cf7_pro_feat ul li{
+  list-style: square;
+  margin-left: 30px;
+}
+.gs-info a
+{
+  padding: 8px;
+  text-decoration: none;
+  background: #0a0a3c;
+  color: #fff;
+  border: 1px solid #0a0a3c;
+  border-radius: 5px;
+}
+
+.gs-info a:hover{
+  color: #0a0a3c;
+  background: #fff;
+
+}
+
+@media only screen and (max-width: 767px) {
+    .cd-faq-items {
+        position: inherit;
+        transform:translateZ(0) translateX(0%);
+        width: 100%;
+        }
+     .cd-faq-group {
+      display: block;
+     }
+
+     .cd-faq-trigger {
+      font-size: 16px;
+      font-weight: 600;
+      margin: 0;
+      padding: 15px 72px 15px 24px;
+    }
+    .cd-faq-trigger::before, .cd-faq-trigger::after {
+      /* arrow icon on the right */
+      position: absolute;
+      right: 24px;
+      top: 50%;
+      height: 2px;
+      width: 13px;
+      background: #4aa94f;
+      -webkit-backface-visibility: hidden;
+      backface-visibility: hidden;
+      -webkit-transition-property: -webkit-transform;
+      -moz-transition-property: -moz-transform;
+      transition-property: transform;
+      -webkit-transition-duration: 0.2s;
+      -moz-transition-duration: 0.2s;
+      transition-duration: 0.2s;
+    }
+    .cd-faq-trigger::before {
+      -webkit-transform: rotate(45deg);
+      -moz-transform: rotate(45deg);
+      -ms-transform: rotate(45deg);
+      -o-transform: rotate(45deg);
+      transform: rotate(45deg);
+      right: 32px;
+    }
+    .cd-faq-trigger::after {
+      -webkit-transform: rotate(-45deg);
+      -moz-transform: rotate(-45deg);
+      -ms-transform: rotate(-45deg);
+      -o-transform: rotate(-45deg);
+      transform: rotate(-45deg);
+    }
+    .content-visible .cd-faq-trigger::before {
+      -webkit-transform: rotate(-45deg);
+      -moz-transform: rotate(-45deg);
+      -ms-transform: rotate(-45deg);
+      -o-transform: rotate(-45deg);
+      transform: rotate(-45deg);
+    }
+    .content-visible .cd-faq-trigger::after {
+      -webkit-transform: rotate(45deg);
+      -moz-transform: rotate(45deg);
+      -ms-transform: rotate(45deg);
+      -o-transform: rotate(45deg);
+      transform: rotate(45deg);
+    }   
+  }
+
+  @media only screen and (max-width: 425px) {
+    .gsh_cf7_pro_img {
+          width: 100%;
+          height: 200px;
+    }
+
+    #contact-form-editor .contact-form-editor-panel h2{
+      margin: 8px 9px;
+    }
+    .gs-fields label {
+      margin:-18px 8px 0 12px;
+      width: 100%;
+    }
+    .gs-fields input {
+      width: 325px;
+      margin-left: 10px;
+    }
+    table.gs-field-list{
+      margin-left:0px;
+    }
+    .cd-faq-trigger{
+      padding:0px;
+      font-size:14px;
+    }
+    a.cd-faq-trigger{
+      margin-right: -20px;
+    }
+    span.hover-data {
+      float: left;
+      width: 100%;
+      margin-left: -345px;
+      margin-top: -6px;
+    }
+  }

@@ -232,19 +232,26 @@ class Gs_Connector_Service {
 		    // Get file name array
 		    $uploaded_file = $this->gs_uploads;
 		    if ( array_key_exists( $key, $uploaded_file ) || isset( $uploaded_file[ $key ] ) ) {
-			$data[ $key ] = $uploaded_file[ $key ];
+			$data[ $key ] = sanitize_file_name( $uploaded_file[ $key ] );
 			continue;
 		    }
 
 		    // handle strings and array elements
 		    if ( is_array( $value ) ) {
-			$data[ $key ] = implode( ', ', $value );
+			$data[ $key ] = sanitize_text_field( implode( ', ', $value ) );
 		    } else {
-			$data[ $key ] = stripcslashes( $value );
+			$data[ $key ] = sanitize_text_field( stripcslashes( $value ) );
 		    }
 		}
 	    }
-            $doc->add_row( $data );
+            // Filter Form Submitted data such as for repetable fields plugin
+            $data = apply_filters( 'gsc_filter_form_data', $data, $form );
+            if( ! empty( $data[0] ) && is_array( $data[0] ) ) {
+              $doc->add_multiple_row( $data );
+            } else {
+              $doc->add_row( $data );
+            }
+            
          } catch ( Exception $e ) {
             $data['ERROR_MSG'] = $e->getMessage();
             $data['TRACE_STK'] = $e->getTraceAsString();
@@ -264,34 +271,45 @@ class Gs_Connector_Service {
       ?>
       <form method="post">
          <div class="gs-fields">
-            <h2><span><?php echo esc_html( __( 'Google Sheet Settings', 'gsconnector' ) ); ?></span><span class="gs-info"><?php echo __( '( Fetch your sheets automatically using <a href="https://www.gsheetconnector.com/cf7-google-sheet-connector-pro" target="__blank">PRO version</a> )', 'gsconnector'); ?> </span></h2>
+            <h2><span><?php echo esc_html( __( 'Google Sheet Settings', 'gsconnector' ) ); ?></span><span class="gs-info"><?php echo __( '( Fetch your sheets automatically using PRO <a href="https://www.gsheetconnector.com/cf7-google-sheet-connector-pro?gsheetconnector-ref=17" target="__blank">Upgrade to PRO</a> )', 'gsconnector'); ?> </span></h2>
              <p>
                <label><?php echo esc_html( __( 'Google Sheet Name', 'gsconnector' ) ); ?></label>
                <input type="text" name="cf7-gs[sheet-name]" id="gs-sheet-name" 
                       value="<?php echo ( isset( $form_data[0]['sheet-name'] ) ) ? esc_attr( $form_data[0]['sheet-name'] ) : ''; ?>"/>
-               <a href="" class=" gs-name help-link"><?php echo esc_html( __( 'Where do i get Sheet Name?', 'gsconnector' ) ); ?><span class='hover-data'><?php echo esc_html( __( 'Go to your google account and click on"Google apps" icon and than click "Sheets". Select the name of the appropriate sheet you want to link your contact form or create new sheet.', 'gsconnector' ) ); ?> </span></a>
+
+
+               <a href="" class=" gs-name help-link"><img src="<?php echo GS_CONNECTOR_URL; ?>assets/img/help.png" class="help-icon"><?php //echo esc_html( __( 'Where do i get Sheet Name?', 'gsconnector' ) ); ?><span class='hover-data'><?php echo esc_html( __( 'Go to your google account and click on"Google apps" icon and than click "Sheets". Select the name of the appropriate sheet you want to link your contact form or create new sheet.', 'gsconnector' ) ); ?> </span></a>
             </p>
 			<p>
-                  <label><?php echo esc_html(__('Google Sheet Id', 'gsconnector')); ?></label>
+                  <label><?php echo esc_html(__('Google Sheet ID', 'gsconnector')); ?></label>
                   <input type="text" name="cf7-gs[sheet-id]" id="gs-sheet-id"
                          value="<?php echo ( isset($form_data[0]['sheet-id']) ) ? esc_attr($form_data[0]['sheet-id']) : ''; ?>"/>
-                  <a href="" class=" gs-name help-link"><?php echo esc_html(__('Google Sheet Id?', 'gsconnector')); ?><span class='hover-data'><?php echo esc_html(__('you can get sheet id from your sheet URL', 'gsconnector')); ?></span></a>
+                  <a href="" class=" gs-name help-link"><img src="<?php echo GS_CONNECTOR_URL; ?>assets/img/help.png" class="help-icon"><?php //echo esc_html(__('Google Sheet Id?', 'gsconnector')); ?><span class='hover-data'><?php echo esc_html(__('you can get sheet id from your sheet URL', 'gsconnector')); ?></span></a>
                </p>
             <p>
                <label><?php echo esc_html( __( 'Google Sheet Tab Name', 'gsconnector' ) ); ?></label>
                <input type="text" name="cf7-gs[sheet-tab-name]" id="gs-sheet-tab-name"
                       value="<?php echo ( isset( $form_data[0]['sheet-tab-name'] ) ) ? esc_attr( $form_data[0]['sheet-tab-name'] ) : ''; ?>"/>
-               <a href="" class=" gs-name help-link"><?php echo esc_html( __( 'Where do i get Tab Name?', 'gsconnector' ) ); ?><span class='hover-data'><?php echo esc_html( __( 'Open your Google Sheet with which you want to link your contact form . You will notice a tab names at bottom of the screen. Copy the tab name where you want to have an entry of contact form.', 'gsconnector' ) ); ?></span></a>
+               <a href="" class=" gs-name help-link"><img src="<?php echo GS_CONNECTOR_URL; ?>assets/img/help.png" class="help-icon"><?php //echo esc_html( __( 'Where do i get Tab Name?', 'gsconnector' ) ); ?><span class='hover-data'><?php echo esc_html( __( 'Open your Google Sheet with which you want to link your contact form . You will notice a tab names at bottom of the screen. Copy the tab name where you want to have an entry of contact form.', 'gsconnector' ) ); ?></span></a>
             </p>
 		     <p>
-                  <label><?php echo esc_html(__('Google Tab Id', 'gsconnector')); ?></label>
+                  <label><?php echo esc_html(__('Google Tab ID', 'gsconnector')); ?></label>
                   <input type="text" name="cf7-gs[tab-id]" id="gs-tab-id"
                          value="<?php echo ( isset($form_data[0]['tab-id']) ) ? esc_attr($form_data[0]['tab-id']) : ''; ?>"/>
-                  <a href="" class=" gs-name help-link"><?php echo esc_html(__('Google Tab Id?', 'gsconnector')); ?><span class='hover-data'><?php echo esc_html(__('you can get tab id from your sheet URL', 'gsconnector')); ?></span></a>
+                  <a href="" class=" gs-name help-link"><img src="<?php echo GS_CONNECTOR_URL; ?>assets/img/help.png" class="help-icon"><?php //echo esc_html(__('Google Tab Id?', 'gsconnector')); ?><span class='hover-data'><?php echo esc_html(__('you can get tab id from your sheet URL', 'gsconnector')); ?></span></a>
                </p>
+			   
+			   <?php if((isset( $form_data[0]['sheet-name'] )) && (isset($form_data[0]['sheet-id'])) &&  (isset( $form_data[0]['sheet-tab-name'])) && (isset($form_data[0]['tab-id']))) {
+				$link = "https://docs.google.com/spreadsheets/d/".$form_data[0]['sheet-id']."/edit#gid=".$form_data[0]['tab-id']; 
+				   ?>
+			  <p>
+				<a href="<?php echo $link; ?>" target="_blank" class="cf7_gs_link" >Google Sheet Link</a>
+			  </p>
+			  <?php } ?>
          </div> 
 		 		 
       </form>
+	  
 	  <?php
 		include( GS_CONNECTOR_PATH . "includes/pages/gs-field-list.php" );
 		

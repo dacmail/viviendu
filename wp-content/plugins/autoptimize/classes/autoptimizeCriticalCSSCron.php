@@ -408,6 +408,12 @@ class autoptimizeCriticalCSSCron {
         // Prepare rule variables.
         $trule = explode( '|', $rule );
         $srule = $ao_ccss_rules[ $trule[0] ][ $trule[1] ];
+        
+        // If hash is empty, set it to now for a "forced job".
+        if ( empty( $hash  )  ) {     
+            $hash = 'new';
+            autoptimizeCriticalCSSCore::ao_ccss_log( 'Job id <' . $ljid . '> had no hash, assuming forced job so setting hash to new', 3   );  
+        }
 
         // Check if a MANUAL rule exist and return false.
         if ( ! empty( $srule ) && ( 0 == $srule['hash'] && 0 != $srule['file'] ) ) {
@@ -425,7 +431,7 @@ class autoptimizeCriticalCSSCron {
                 return $hash;
             }
         } else {
-            // Or just return the hash if no rule exist yet.
+            // Return the hash for a job that has no rule yet.
             autoptimizeCriticalCSSCore::ao_ccss_log( 'Job id <' . $ljid . '> with hash <' . $hash . '> has no rule yet', 3 );
             return $hash;
         }
@@ -467,7 +473,7 @@ class autoptimizeCriticalCSSCron {
         // Avoid AO optimizations if required by config or avoid lazyload if lazyload is active in AO.
         if ( ! empty( $ao_ccss_noptimize ) ) {
             $src_url .= '?ao_noptirocket=1';
-        } elseif ( class_exists( 'autoptimizeImages', false ) && autoptimizeImages::should_lazyload_wrapper() ) {
+        } elseif ( ( class_exists( 'autoptimizeImages', false ) && autoptimizeImages::should_lazyload_wrapper() ) || apply_filters( 'autoptimize_filter_ccss_enforce_nolazy', false ) ) {
             $src_url .= '?ao_nolazy=1';
         }
 

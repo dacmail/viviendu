@@ -4,8 +4,8 @@ Donate link: https://www.paypal.me/WesternDeal
 Author URL: https://www.gsheetconnector.com/
 Tags: cf7, contact form 7, Contact Form 7 Integrations, contact forms, Google Sheets, Google Sheets Integrations, Google, Sheets
 Requires at least: 3.6
-Tested up to: 5.7.2
-Stable tag: 4.7
+Tested up to: 5.8.2
+Stable tag: 4.9.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -96,6 +96,21 @@ Please double-check those items and hopefully getting them right will fix the is
 * Now you can paste this code back on the `Admin Panel > Contact form 7 > Google Sheets` screen. 
 
 == Changelog ==
+
+= 4.9.1 =
+* Fixed: Undefined index issue.
+
+= 4.9 =
+* Fixed issue with incorrect or expired auth code
+* Fixed deactivation issue while adding incorrect and expired auth code.
+* Fixed displaying of error while setting Contact Form initially.
+
+= 4.8 =
+* Fixed vulnerability issues.
+* Added 'Upgrade to PRO' links.
+* Added Google sheet link in settings.
+* Updated Google API version to 2.10.1 and Guzzle Library to 7.3.0
+* Did few UI changes.
 
 = 4.7 =
 * New: Displayed authenticated email id at the integration page.

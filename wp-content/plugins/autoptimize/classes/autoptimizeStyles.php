@@ -215,6 +215,9 @@ class autoptimizeStyles extends autoptimizeBase
         // forcefully exclude CSS with data-noptimize attrib.
         $this->dontmove[] = 'data-noptimize';
 
+        // forcefully exclude inline CSS with ".wp-container-" which due to the random-ish nature busts AO's cache continuously.
+        $this->dontmove[] = '.wp-container-';
+
         // Should we defer css?
         // value: true / false.
         $this->defer = $options['defer'];
@@ -1040,7 +1043,7 @@ class autoptimizeStyles extends autoptimizeBase
                 if ( $this->defer && 'print' !== $media ) {
                     $preload_onload = autoptimizeConfig::get_ao_css_preload_onload( $media );
 
-                    $preload_css_block .= '<link rel="stylesheet" media="print" href="' . $url . '" onload="' . $preload_onload . '" />';
+                    $preload_css_block .= apply_filters( 'autoptimize_filter_css_single_deferred_link', '<link rel="stylesheet" media="print" href="' . $url . '" onload="' . $preload_onload . '" />' );
                     if ( apply_filters( 'autoptimize_fitler_css_preload_and_print', false ) ) {
                         $preload_css_block = '<link rel="preload" as="stylesheet" href="' . $url . '"/>' . $preload_css_block;
                     }
@@ -1221,6 +1224,13 @@ class autoptimizeStyles extends autoptimizeBase
         $contents = $this->prepare_minify_single( $filepath );
 
         if ( empty( $contents ) ) {
+            // if aggregate is off and CCSS is used but all files are minified already, then we
+            // must make sure the autoptimize_action_css_hash action still fires for CCSS's sake.
+            $ao_ccss_key = get_option( 'autoptimize_ccss_key', '' );
+            if ( false === $this->aggregate && isset( $ao_ccss_key ) && ! empty( $ao_ccss_key ) ) {
+               $hash = 'single_' . md5( file_get_contents( $filepath ) );
+               do_action( 'autoptimize_action_css_hash', $hash );
+            }
             return false;
         }
 

@@ -195,7 +195,7 @@ input[type=url]:invalid {color: red; border-color:red;} .form-table th{font-weig
 <?php } ?>
 
 <div id="autoptimize_main">
-    <h1 id="ao_title"><?php _e( 'Autoptimize Settings', 'autoptimize' ); ?></h1>
+    <h1 id="ao_title"><?php apply_filters( 'autoptimize_filter_settings_is_pro', false ) ? _e( 'Autoptimize Pro Settings', 'autoptimize' ) : _e( 'Autoptimize Settings', 'autoptimize' ); ?></h1>
     <?php echo $this->ao_admin_tabs(); ?>
 
 <form method="post" action="<?php echo admin_url( 'options.php' ); ?>">
@@ -254,7 +254,7 @@ if ( is_network_admin() && autoptimizeOptionWrapper::is_ao_active_for_network() 
 <?php _e( 'Individual JS-files will be minified and deferred, making them non-render-blocking.', 'autoptimize' ); ?></label></td>
 </tr>
 <tr valign="top" id="js_defer_inline" class="js_sub js_not_aggregate hidden">
-<th scope="row">&emsp;<?php _e( 'Also defer inline JS?', 'autoptimize' ); ?> (beta)</th>
+<th scope="row">&emsp;<?php _e( 'Also defer inline JS?', 'autoptimize' ); ?></th>
 <td><label class="cb_label"><input type="checkbox" name="autoptimize_js_defer_inline" <?php echo autoptimizeOptionWrapper::get_option( 'autoptimize_js_defer_inline' ) ? 'checked="checked" ' : ''; ?>/>
 <?php _e( 'Also defer inline JS. Generally this will allow all JS to be deferred, so you should remove default exclusions, test and only exclude specific items if still needed.', 'autoptimize' ); ?></label></td>
 </tr>
@@ -380,8 +380,21 @@ $_rapidload_link = 'https://misc.optimizingmatters.com/partners/?from=csssetting
 <table class="form-table">
 <tr valign="top">
 <th scope="row"><?php _e( 'CDN Base URL', 'autoptimize' ); ?></th>
-<td><label><input id="cdn_url" type="text" name="autoptimize_cdn_url" pattern="^(https?:)?\/\/([\da-z\.-]+)\.([\da-z\.]{2,6})([\/\w \.-]*)*(:\d{2,5})?\/?$" style="width:100%" value="<?php echo esc_url( autoptimizeOptionWrapper::get_option( 'autoptimize_cdn_url', '' ), array( 'http', 'https' ) ); ?>" /><br />
-<?php _e( 'Enter your CDN root URL to enable CDN for Autoptimized files. The URL can be http, https or protocol-relative (e.g. <code>//cdn.example.com/</code>). This is not needed for Cloudflare.', 'autoptimize' ); ?></label></td>
+<?php
+if ( true === autoptimizeImages::imgopt_active() && true === apply_filters( 'autoptimize_filter_cdn_set_by_imgopt', false ) ) {
+    // cdn set by imgopt, not to be changealbe in the settings.
+    $cdn_editable    = 'disabled';
+    $cdn_placeholder = 'placeholder="' . __( 'The CDN has automatically been set to make use of the image optimization CDN.', 'autoptimize' ) . ' "';
+    $cdn_description = '';
+} else {
+    $cdn_editable    = '';
+    $cdn_placeholder = 'placeholder="' . __( 'example: //cdn.yoursite.com/', 'autoptimize' ) . ' "';
+    $cdn_description = __( 'Enter your CDN root URL to enable CDN for Autoptimized files. The URL can be http, https or protocol-relative. This is not needed for Cloudflare.', 'autoptimize' );    
+}
+?>
+<td><label><input id="cdn_url" type="text" name="autoptimize_cdn_url" pattern="^(https?:)?\/\/([\da-z\.-]+)\.([\da-z\.]{2,6})([\/\w \.-]*)*(:\d{2,5})?\/?$" style="width:100%" <?php echo $cdn_placeholder . $cdn_editable; ?> value="<?php echo esc_url( autoptimizeOptionWrapper::get_option( 'autoptimize_cdn_url', '' ), array( 'http', 'https' ) ); ?>" /><br />
+<?php echo $cdn_description; ?>
+</label></td>
 </tr>
 </table>
 </li>
@@ -461,7 +474,7 @@ $_rapidload_link = 'https://misc.optimizingmatters.com/partners/?from=csssetting
     ?>
     <tr valign="top">
     <th scope="row"><?php _e( 'Enable configuration per post/ page?', 'autoptimize' ); ?></th>
-    <td><label class="cb_label"><input type="checkbox" name="autoptimize_enable_meta_ao_settings" <?php echo autoptimizeOptionWrapper::get_option( 'autoptimize_enable_meta_ao_settings', '0' ) ? 'checked="checked" ' : ''; ?>/>
+    <td><label class="cb_label"><input type="checkbox" name="autoptimize_enable_meta_ao_settings" <?php echo autoptimizeOptionWrapper::get_option( 'autoptimize_enable_meta_ao_settings', '1' ) ? 'checked="checked" ' : ''; ?>/>
     <?php _e( 'Add a "metabox" to the post/ page edit screen allowing different optimizations to be turned off on a per post/ page level?', 'autoptimize' ); ?></label></td>
     </tr>
     <?php } ?>
@@ -477,7 +490,8 @@ $_rapidload_link = 'https://misc.optimizingmatters.com/partners/?from=csssetting
 
 </form>
 </div>
-<div id="autoptimize_admin_feed" class="hidden">
+<div id="autoptimize_admin_feed">
+    <?php if ( apply_filters( 'autoptimize_filter_show_partner_tabs', true ) ) { ?>
     <div class="autoptimize_banner hidden">
     <ul>
     <?php
@@ -499,47 +513,26 @@ $_rapidload_link = 'https://misc.optimizingmatters.com/partners/?from=csssetting
         <li><?php _e( 'Happy with Autoptimize?', 'autoptimize' ); ?><br /><a href="<?php echo network_admin_url(); ?>plugin-install.php?tab=search&type=author&s=optimizingmatters"><?php _e( 'Try my other plugins!', 'autoptimize' ); ?></a></li>
     </ul>
     </div>
+    <?php } ?>
     <div style="margin-left:10px;margin-top:-5px;">
         <h2>
-            <?php _e( 'futtta about', 'autoptimize' ); ?>
-            <select id="feed_dropdown" >
-                <option value="1"><?php _e( 'Autoptimize', 'autoptimize' ); ?></option>
-                <option value="2"><?php _e( 'WordPress', 'autoptimize' ); ?></option>
-                <option value="3"><?php _e( 'Web Technology', 'autoptimize' ); ?></option>
-            </select>
+            <?php _e( 'Autoptimize news', 'autoptimize' ); ?>
         </h2>
         <div id="futtta_feed">
             <div id="autoptimizefeed">
                 <?php $this->get_futtta_feeds( 'http://feeds.feedburner.com/futtta_autoptimize' ); ?>
             </div>
-            <div id="wordpressfeed">
-                <?php $this->get_futtta_feeds( 'http://feeds.feedburner.com/futtta_wordpress' ); ?>
-            </div>
-            <div id="webtechfeed">
-                <?php $this->get_futtta_feeds( 'http://feeds.feedburner.com/futtta_webtech' ); ?>
-            </div>
         </div>
     </div>
+    <?php if ( apply_filters( 'autoptimize_filter_show_partner_tabs', true ) ) { ?>
     <div style="float:right;margin:50px 15px;"><a href="https://blog.futtta.be/2013/10/21/do-not-donate-to-me/" target="_blank"><img width="100px" height="85px" src="<?php echo plugins_url() . '/' . plugin_basename( dirname( __FILE__ ) ) . '/external/do_not_donate_smallest.png'; ?>" title="<?php _e( 'Do not donate for this plugin!', 'autoptimize' ); ?>"></a></div>
+    <?php } ?>
 </div>
-
 <script type="text/javascript">
-    var feed = new Array;
-    feed[1]="autoptimizefeed";
-    feed[2]="wordpressfeed";
-    feed[3]="webtechfeed";
-    cookiename="autoptimize_feed";
-
     jQuery(document).ready(function() {
         check_ini_state();
 
-        jQuery('#autoptimize_admin_feed').fadeTo("slow",1).show();
         jQuery('.autoptimize_banner').unslider({autoplay:true, delay:3500, infinite: false, arrows:{prev:'<a class="unslider-arrow prev"></a>', next:'<a class="unslider-arrow next"></a>'}}).fadeTo("slow",1).show();
-
-        jQuery( "#feed_dropdown" ).change(function() {
-            jQuery("#futtta_feed").fadeTo(0,0);
-            jQuery("#futtta_feed").fadeTo("slow",1);
-        });
 
         jQuery( "#autoptimize_html" ).change(function() {
             if (this.checked) {
@@ -630,11 +623,6 @@ $_rapidload_link = 'https://misc.optimizingmatters.com/partners/?from=csssetting
                 jQuery("li.itemDetail:not(.multiSite)").fadeTo("fast",1);
             }
         });
-
-        jQuery("#feed_dropdown").change(function() { show_feed(jQuery("#feed_dropdown").val()) });
-        feedid=jQuery.cookie(cookiename);
-        if(typeof(feedid) !== "string") feedid=1;
-        show_feed(feedid);
     })
 
     // validate cdn_url.
@@ -677,13 +665,6 @@ $_rapidload_link = 'https://misc.optimizingmatters.com/partners/?from=csssetting
             jQuery("li.itemDetail:not(.multiSite)").fadeTo('fast',.33);
         }
     }
-
-    function show_feed(id) {
-        jQuery('#futtta_feed').children().hide();
-        jQuery('#'+feed[id]).show();
-        jQuery("#feed_dropdown").val(id);
-        jQuery.cookie(cookiename,id,{ expires: 365 });
-    }
 </script>
 </div>
 
@@ -692,15 +673,16 @@ $_rapidload_link = 'https://misc.optimizingmatters.com/partners/?from=csssetting
 
     public function addmenu()
     {
+        $_my_name = apply_filters( 'autoptimize_filter_settings_is_pro', false ) ? __( 'Autoptimize Pro', 'autoptimize' ) : __( 'Autoptimize', 'autoptimize' );
         if ( is_multisite() && is_network_admin() && autoptimizeOptionWrapper::is_ao_active_for_network() ) {
             // multisite, network admin, ao network activated: add normal settings page at network level.
-            $hook = add_submenu_page( 'settings.php', __( 'Autoptimize Options', 'autoptimize' ), 'Autoptimize', 'manage_network_options', 'autoptimize', array( $this, 'show_config' ) );
+            $hook = add_submenu_page( 'settings.php', __( 'Autoptimize Options', 'autoptimize' ), $_my_name, 'manage_network_options', 'autoptimize', array( $this, 'show_config' ) );
         } elseif ( is_multisite() && ! is_network_admin() && autoptimizeOptionWrapper::is_ao_active_for_network() && 'on' !== autoptimizeOptionWrapper::get_option( 'autoptimize_enable_site_config' ) ) {
             // multisite, ao network activated, not network admin so site specific settings, but "autoptimize_enable_site_config" is off: show "sorry, ask network admin" message iso options.
-            $hook = add_options_page( __( 'Autoptimize Options', 'autoptimize' ), 'Autoptimize', 'manage_options', 'autoptimize', array( $this, 'show_network_message' ) );
+            $hook = add_options_page( __( 'Autoptimize Options', 'autoptimize' ), $_my_name, 'manage_options', 'autoptimize', array( $this, 'show_network_message' ) );
         } else {
             // default: show normal options page if not multisite, if multisite but not network activated, if multisite and network activated and "autoptimize_enable_site_config" is on.
-            $hook = add_options_page( __( 'Autoptimize Options', 'autoptimize' ), 'Autoptimize', 'manage_options', 'autoptimize', array( $this, 'show_config' ) );
+            $hook = add_options_page( __( 'Autoptimize Options', 'autoptimize' ), $_my_name, 'manage_options', 'autoptimize', array( $this, 'show_config' ) );
         }
 
         add_action( 'admin_print_scripts-' . $hook, array( $this, 'autoptimize_admin_scripts' ) );
@@ -709,7 +691,6 @@ $_rapidload_link = 'https://misc.optimizingmatters.com/partners/?from=csssetting
 
     public function autoptimize_admin_scripts()
     {
-        wp_enqueue_script( 'jqcookie', plugins_url( '/external/js/jquery.cookie.min.js', __FILE__ ), array( 'jquery' ), null, true );
         wp_enqueue_script( 'unslider', plugins_url( '/external/js/unslider-min.js', __FILE__ ), array( 'jquery' ), null, true );
     }
 
@@ -811,7 +792,7 @@ $_rapidload_link = 'https://misc.optimizingmatters.com/partners/?from=csssetting
             'autoptimize_optimize_checkout'         => 0,
             'autoptimize_minify_excluded'           => 1,
             'autoptimize_cache_fallback'            => 1,
-            'autoptimize_enable_meta_ao_settings'   => 0,
+            'autoptimize_enable_meta_ao_settings'   => 1,
         );
 
         return $config;
@@ -850,7 +831,7 @@ $_rapidload_link = 'https://misc.optimizingmatters.com/partners/?from=csssetting
             'autoptimize_imgopt_checkbox_field_4' => '0', // webp off (might be removed).
             'autoptimize_imgopt_text_field_5'     => '',  // lazy load exclusions empty.
             'autoptimize_imgopt_text_field_6'     => '',  // optimization exclusions empty.
-            'autoptimize_imgopt_number_field_7'   => '0', // lazy load from nth image (0 = lazyload all).
+            'autoptimize_imgopt_number_field_7'   => '2', // lazy load from nth image (0 = lazyload all).
         );
         return $defaults;
     }
@@ -1001,14 +982,16 @@ $_rapidload_link = 'https://misc.optimizingmatters.com/partners/?from=csssetting
 
         static $_meta_value = null;
         if ( null === $_meta_value ) {
-            if ( is_page() || is_single() ) {
+            global $wp_query;
+            if ( isset( $wp_query ) && ( is_page() || is_single() ) ) {
                 $_meta_value = get_post_meta( get_the_ID(), 'ao_post_optimize', true );
             } else {
                 $_meta_value = false;
             }
         }
-        
-        if ( ! empty( $_meta_value ) && is_array( $_meta_value ) && array_key_exists( $optim, $_meta_value ) && $_meta_value[$optim] !== 'on' ) {
+
+        // If autoptimize_post_optimize !== 'on' then always return false as all is off.
+        if ( ! empty( $_meta_value ) && is_array( $_meta_value ) && ( ( array_key_exists( 'autoptimize_post_optimize', $_meta_value ) && 'on' !== $_meta_value['autoptimize_post_optimize'] ) || ( array_key_exists( $optim, $_meta_value ) && 'on' !== $_meta_value[$optim] ) ) ) {
             return false;
         } else {
             return true;
@@ -1024,7 +1007,7 @@ $_rapidload_link = 'https://misc.optimizingmatters.com/partners/?from=csssetting
         static $_meta_settings_active = null;
 
         if ( null === $_meta_settings_active ) {
-            $_meta_settings_active = apply_filters( 'autoptimize_filter_enable_meta_ao_settings', autoptimizeOptionWrapper::get_option( 'autoptimize_enable_meta_ao_settings', '0' ) );
+            $_meta_settings_active = apply_filters( 'autoptimize_filter_enable_meta_ao_settings', autoptimizeOptionWrapper::get_option( 'autoptimize_enable_meta_ao_settings', '1' ) );
         }
 
         return $_meta_settings_active;

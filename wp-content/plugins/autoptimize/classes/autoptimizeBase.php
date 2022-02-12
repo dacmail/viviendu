@@ -167,6 +167,10 @@ abstract class autoptimizeBase
 
         // Prepend with WP_ROOT_DIR to have full path to file.
         $path = str_replace( '//', '/', trailingslashit( WP_ROOT_DIR ) . $path );
+        
+        // Allow path to be altered, e.g. in the case of bedrock-like setups where 
+        // core, theme & plugins might be in different locations on the filesystem.
+        $path = apply_filters( 'autoptimize_filter_base_getpath_path', $path, $url );
 
         // Final check: does file exist and is it readable?
         if ( file_exists( $path ) && is_file( $path ) && is_readable( $path ) ) {
@@ -311,7 +315,7 @@ abstract class autoptimizeBase
 
         // Allows API/filter to further tweak the cdn url...
         $cdn_url = apply_filters( 'autoptimize_filter_base_cdnurl', $cdn_url );
-        if ( ! empty( $cdn_url ) ) {
+        if ( ! empty( $cdn_url ) && false === strpos( $url, $cdn_url ) ) {
 
             // Simple str_replace-based approach fails when $url is protocol-or-host-relative.
             $is_protocol_relative = autoptimizeUtils::is_protocol_relative( $url );
