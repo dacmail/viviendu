@@ -13,6 +13,9 @@ class Meow_MFRH_Core {
 	private $allow_usage = null;
 	private $allow_setup = null;
 	private $images_only = false;
+	private $featured_only = false;
+	private $images_mime_types = array( 'image/jpeg', 'image/gif', 'image/png', 'image/bmp',
+		'image/tiff', 'image/x-icon' );
 
 	public function __construct() {
 		$this->site_url = get_site_url();
@@ -27,6 +30,7 @@ class Meow_MFRH_Core {
 		$this->is_rest = MeowCommon_Helpers::is_rest();
 		$this->is_cli = defined( 'WP_CLI' ) && WP_CLI;
 		$this->images_only = get_option( 'mfrh_images_only', false ) === "1";
+		$this->featured_only = get_option( 'mfrh_featured_only', false ) === "1";
 
 		// Check the roles
 		$this->allow_usage = apply_filters( 'mfrh_allow_usage', current_user_can( 'administrator' ) );
@@ -261,26 +265,30 @@ SQL;
 
 	// Return false if everything is fine, otherwise return true with an output
 	// which details the conditions and results about the renaming.
-	function check_attachment( $post, &$output = array(), $manual_filename = null ) {
+	function check_attachment( $post, &$output = array(), $manual_filename = null, $force_rename = false ) {
 		$id = $post['ID'];
 		$old_filepath = get_attached_file( $id );
-		$old_filepath = Meow_MFRH_Core::sensitive_file_exists( $old_filepath );
+		$old_filepath = !$force_rename ? Meow_MFRH_Core::sensitive_file_exists( $old_filepath ): $old_filepath;
 		$path_parts = mfrh_pathinfo( $old_filepath );
 
-		if ( $this->images_only && $post['post_mime_type'] !== 'image/jpeg' ) {
-			return false;
+		if ( $this->images_only ) {
+			$is_image = in_array( $post['post_mime_type'], $this->images_mime_types );
+			if ( !$is_image ) {
+				return false;
+			}
 		}
 
 		// If the file doesn't exist, let's not go further.
-		if ( !isset( $path_parts['dirname'] ) || !isset( $path_parts['basename'] ) )
+		if ( !$force_rename && ( !isset( $path_parts['dirname'] ) || !isset( $path_parts['basename'] ) ) ) {
 			return false;
+		}
 
 		//print_r( $path_parts );
-		$directory = $path_parts['dirname'];
-		$old_filename = $path_parts['basename'];
+		$directory = isset( $path_parts['dirname'] ) ? $path_parts['dirname'] : null;
+		$old_filename = isset( $path_parts['basename'] ) ? $path_parts['basename'] : null;
 
 		// Check if media/file is dead
-		if ( !$old_filepath || !file_exists( $old_filepath ) ) {
+		if ( !$force_rename && ( !$old_filepath || !file_exists( $old_filepath ) ) ) {
 			delete_post_meta( $id, '_require_file_renaming' );
 			return false;
 		}
@@ -292,8 +300,16 @@ SQL;
 				$manual_filename =  $post['mfrh_new_filename'];
 		}
 
-		if ( !empty( $manual_filename ) ) {
+		if ( $force_rename ) {
 			$new_filename = $manual_filename;
+			$output['manual'] = true;
+		}
+		else if ( !empty( $manual_filename ) ) {
+			// Through the new_filename function to rename when the sanitize option is enabled.
+			// To validate the filename (i.g. space will be “-“), use the $manual_filename as the first argument $text.
+			$new_filename = get_option( 'mfrh_manual_sanitize', false )
+				? $this->new_filename( $manual_filename, $old_filename, null, $post )
+				: $manual_filename;
 			$output['manual'] = true;
 		}
 		else {
@@ -334,22 +350,24 @@ SQL;
 		}
 
 		// Check for case issue, numbering
-		$ideal_filename = $new_filename;
-		$new_filepath = trailingslashit( $directory ) . $new_filename;
-		$existing_file = Meow_MFRH_Core::sensitive_file_exists( $new_filepath );
-		$case_issue = strtolower( $old_filename ) == strtolower( $new_filename );
-		if ( $existing_file && !$case_issue ) {
-			$is_numbered = apply_filters( 'mfrh_numbered', false );
-			if ( $is_numbered ) {
-				$new_filename = $this->generate_unique_filename( $ideal, $directory, $new_filename );
-				if ( !$new_filename ) {
-					delete_post_meta( $id, '_require_file_renaming' );
-					return false;
+		//if ( !$force_rename ) {
+			$ideal_filename = $new_filename;
+			$new_filepath = trailingslashit( $directory ) . $new_filename;
+			$existing_file = Meow_MFRH_Core::sensitive_file_exists( $new_filepath );
+			$case_issue = strtolower( $old_filename ) == strtolower( $new_filename );
+			if ( !$force_rename && $existing_file && !$case_issue ) {
+				$is_numbered = apply_filters( 'mfrh_numbered', false );
+				if ( $is_numbered ) {
+					$new_filename = $this->generate_unique_filename( $ideal, $directory, $new_filename );
+					if ( !$new_filename ) {
+						delete_post_meta( $id, '_require_file_renaming' );
+						return false;
+					}
+					$new_filepath = trailingslashit( $directory ) . $new_filename;
+					$existing_file = Meow_MFRH_Core::sensitive_file_exists( $new_filepath );
 				}
-				$new_filepath = trailingslashit( $directory ) . $new_filename;
-				$existing_file = Meow_MFRH_Core::sensitive_file_exists( $new_filepath );
 			}
-		}
+		//}
 
 		// Send info to the requester function
 		$output['post_id'] = $id;
@@ -541,6 +559,7 @@ SQL;
 
 			// Those are basically errors, when titles are generated from filename
 			$text = str_replace( ".jpg", "", $text );
+			$text = str_replace( ".jpeg", "", $text );
 			$text = str_replace( ".png", "", $text );
 			
 			// Related to English
@@ -552,6 +571,7 @@ SQL;
 			$text = str_replace( "'", "-", $text );
 			$text = preg_replace( "/\//s", "-", $text );
 			$text = str_replace( ['.','…'], "", $text );
+			$text = preg_replace( "/&amp;/s", "-", $text );
 
 			$text = $this->replace_chars( $text );
 			// Changed strolower to mb_strtolower... 
@@ -611,11 +631,18 @@ SQL;
 			return $finalUrl;
 		}
 
-	 function call_hooks_rename_url( $post, $orig_image_url, $new_image_url  ) {
+	 function call_hooks_rename_url( $post, $orig_image_url, $new_image_url, $size = 'N/A'  ) {
 		 // With the full URLs
-		 do_action( 'mfrh_url_renamed', $post, $orig_image_url, $new_image_url );
+		 // 2021/11/03: I am not sure we need this, since the clean URLs would also match
+		 // do_action( 'mfrh_url_renamed', $post, $orig_image_url, $new_image_url );
+
 		 // With clean URLs relative to /uploads
-		 do_action( 'mfrh_url_renamed', $post, $this->clean_url( $orig_image_url ), $this->clean_url( $new_image_url ) );
+		 $cleaned_orig_image_url = $this->clean_url( $orig_image_url );
+		 $cleaned_new_image_url = $this->clean_url( $new_image_url );
+		 if ( !empty( $cleaned_orig_image_url ) && !empty( $cleaned_new_image_url ) ) {
+		 	do_action( 'mfrh_url_renamed', $post, $cleaned_orig_image_url, $cleaned_new_image_url, $size );
+		 }
+
 		 // With DB URLs (honestly, not sure about this...)
 		//  $upload_dir = wp_upload_dir();
 		//  do_action( 'mfrh_url_renamed', $post, str_replace( $upload_dir, "", $orig_image_url ),
@@ -794,19 +821,21 @@ SQL;
 			$orig_image_url = $orig_image_urls['full'];
 			$new_image_data = wp_get_attachment_image_src( $id, 'full' );
 			$new_image_url = $new_image_data[0];
-			$this->call_hooks_rename_url( $post, $orig_image_url, $new_image_url );
+			$this->call_hooks_rename_url( $post, $orig_image_url, $new_image_url, 'full' );
 			if ( !empty( $meta['sizes'] ) ) {
 				foreach ( $meta['sizes'] as $size => $meta_size ) {
-					$orig_image_url = $orig_image_urls[$size];
-					$new_image_data = wp_get_attachment_image_src( $id, $size );
-					$new_image_url = $new_image_data[0];
-					$this->call_hooks_rename_url( $post, $orig_image_url, $new_image_url );
+					if ( isset( $orig_image_urls[$size] ) ) {
+						$orig_image_url = $orig_image_urls[$size];
+						$new_image_data = wp_get_attachment_image_src( $id, $size );
+						$new_image_url = $new_image_data[0];
+						$this->call_hooks_rename_url( $post, $orig_image_url, $new_image_url, $size );
+					}
 				}
 			}
 		}
 		else {
 			$new_attachment_url = wp_get_attachment_url( $id );
-			$this->call_hooks_rename_url( $post, $orig_attachment_url, $new_attachment_url );
+			$this->call_hooks_rename_url( $post, $orig_attachment_url, $new_attachment_url, 'full' );
 		}
 		// HTTP REFERER set to the new media link
 		if ( isset( $_REQUEST['_wp_original_http_referer'] ) &&
@@ -830,6 +859,9 @@ SQL;
 	function rename( $media, $manual_filename = null, $undo = false ) {
 		$id = null;
 		$post = null;
+		$output = array();
+
+		//MeowCommon_Helpers::timer_start("Rename");
 
 		// This filter permits developers to allow or not the renaming of certain files.
 		$allowed = apply_filters( 'mfrh_allow_rename', true, $media, $manual_filename );
@@ -850,10 +882,15 @@ SQL;
 			die( 'Media File Renamer: rename() requires the ID or the array for the media.' );
 		}
 
+		// If the user wants the media to be locked after an automatic rename
+		if ( !$manual_filename && get_option( 'mfrh_autolock_auto', false ) ) {
+			add_post_meta( $id, '_manual_file_renaming', true, true );
+		}
+
 		$force_rename = apply_filters( 'mfrh_force_rename', false );
 
 		// Check attachment
-		$need_rename = $this->check_attachment( $post, $output, $manual_filename );
+		$need_rename = $this->check_attachment( $post, $output, $manual_filename, $force_rename );
 		if ( !$need_rename ) {
 			delete_post_meta( $id, '_require_file_renaming' );
 			return $post;
@@ -867,10 +904,10 @@ SQL;
 		$new_filename = $output['proposed_filename'];
 		$manual = $output['manual'] || !empty( $manual_filename );
 		$path_parts = mfrh_pathinfo( $old_filepath );
-		$directory = $path_parts['dirname']; // Directory where the files are, under 'uploads', such as '2011/01'
+		$directory = isset( $path_parts['dirname'] ) ? $path_parts['dirname'] : null; // Directory where the files are, under 'uploads', such as '2011/01'
 		$old_filename = $path_parts['basename']; // 'whatever.jpeg'
 		// Get old extension and new extension
-		$old_ext = $path_parts['extension'];
+		$old_ext = isset( $path_parts['extension'] ) ? $path_parts['extension'] : null;
 		$new_ext = $old_ext;
 		if ( $manual_filename ) {
 			$pp = mfrh_pathinfo( $manual_filename );
@@ -884,7 +921,7 @@ SQL;
 		$this->log( "New file will be: " . $new_filename );
 
 		// Check for issues with the files
-		if ( !file_exists( $old_filepath ) ) {
+		if ( !$force_rename && !file_exists( $old_filepath ) ) {
 			$this->log( "The original file ($old_filepath) cannot be found." );
 			return $post;
 		}
@@ -940,7 +977,7 @@ SQL;
 		do_action( 'mfrh_path_renamed', $post, $old_filepath, $new_filepath );
 
 		// Rename the main media file in WebP if it exists.
-		$this->rename_webp_file_if_exist( $old_filepath, $old_ext, $new_filepath,
+		$this->rename_alternative_image_formats( $old_filepath, $old_ext, $new_filepath,
 			$new_ext, $case_issue, $force_rename, $post );
 
 		if ( $meta ) {
@@ -968,12 +1005,14 @@ SQL;
 				$noext_old_filename = preg_replace( '/\-scaled$/', '', $noext_old_filename );
 			}
 
+			$handled_sizes = array(); // This is used to recognized which sizes has been already handled (in the case of the same file used in many different size names, to avoid double processing) 
 			$orig_image_urls = array();
 			$orig_image_data = wp_get_attachment_image_src( $id, 'full' );
 			$orig_image_urls['full'] = $orig_image_data[0];
 			foreach ( $meta['sizes'] as $size => $meta_size ) {
-				if ( !isset($meta['sizes'][$size]['file'] ) )
+				if ( !isset($meta['sizes'][$size]['file'] ) || in_array( $size, $handled_sizes ) ) {
 					continue;
+				}
 				$meta_old_filename = $meta['sizes'][$size]['file'];
 				$meta_old_filepath = trailingslashit( $directory ) . $meta_old_filename;
 				$meta_new_filename = $this->str_replace( $noext_old_filename, $noext_new_filename, $meta_old_filename );
@@ -1007,7 +1046,7 @@ SQL;
 						}
 					}
 					// If webp file existed, that one as well.
-					$this->rename_webp_file_if_exist( $meta_old_filepath, $old_ext, $meta_new_filepath,
+					$this->rename_alternative_image_formats( $meta_old_filepath, $old_ext, $meta_new_filepath,
 						$new_ext, $case_issue, $force_rename, $post );
 
 					// Rename meta file
@@ -1015,19 +1054,21 @@ SQL;
 						$this->log( "🚫 File $meta_old_filepath ➡️ $meta_new_filepath" );
 						return $post;
 					}
-
 					$meta['sizes'][$size]['file'] = $meta_new_filename;
+
+					// Detect if another size has exactly the same filename
 					foreach ( $meta['sizes'] as $s => $m ) {
-						// Detect if another size has exactly the same filename
 						if ( !isset( $meta['sizes'][$s]['file'] ) )
 							continue;
 						if ( $meta['sizes'][$s]['file'] ==  $meta_old_filename ) {
 							$this->log( "✅ Updated $s based on $size, as they use the same file (probably same size)." );
 							$meta['sizes'][$s]['file'] = $meta_new_filename;
+							array_push( $handled_sizes, $s );
 						}
 					}
 
 					// Success, call other plugins
+					array_push( $handled_sizes, $size );
 					$this->log( "✅ File $meta_old_filepath ➡️ $meta_new_filepath" );
 					do_action( 'mfrh_path_renamed', $post, $meta_old_filepath, $meta_new_filepath );
 
@@ -1040,8 +1081,11 @@ SQL;
 
 		// Update Renamer Meta
 		delete_post_meta( $id, '_require_file_renaming' ); // This media doesn't require renaming anymore
-		if ( $manual ) // If it was renamed manually (including undo), lock the file
-			add_post_meta( $id, '_manual_file_renaming', true, true ); 
+
+		// If it was renamed manually (including undo), lock the file
+		if ( $manual && get_option( 'mfrh_autolock_manual', true ) ) {
+			add_post_meta( $id, '_manual_file_renaming', true, true );
+		}
 
 		// Update DB: Media and Metadata
 		if ( $meta )
@@ -1060,32 +1104,51 @@ SQL;
 		}
 
 		// Post actions
+		//MeowCommon_Helpers::timer_start("Post Actions");
 		$this->call_post_actions( $id, $post, $meta, $has_thumbnails, $orig_image_urls, $orig_attachment_url );
 		do_action( 'mfrh_media_renamed', $post, $old_filepath, $new_filepath, $undo );
+		
+		//MeowCommon_Helpers::timer_log_elapsed("Post Actions");
+		//MeowCommon_Helpers::timer_log_elapsed("Rename");
+		//error_log("===");
+		
 		return $post;
+	}
+
+	function rename_alternative_image_formats( $old_filepath, $old_ext, $new_finepath, $new_ext, $case_issue, $force_rename, $post ) {
+		$isWebP = ( $old_ext === 'webp' || $new_ext === 'webp' );
+		$isAvif = ( $old_ext === 'avif' || $new_ext === 'avif' );
+
+		if ( !$isWebP ) {
+			$this->rename_alternative_image_format( '.webp', $old_filepath, $old_ext, $new_finepath,
+				$new_ext, $case_issue, $force_rename, $post );
+		}
+		if ( !$isAvif ) {
+			$this->rename_alternative_image_format( '.avif', $old_filepath, $old_ext, $new_finepath,
+				$new_ext, $case_issue, $force_rename, $post );
+		}
 	}
 
 	/**
 	 * Rename webp file only if existed.
 	 */
-	function rename_webp_file_if_exist( $old_filepath, $old_ext, $new_finepath, 
+	function rename_alternative_image_format( $format_ext, $old_filepath, $old_ext, $new_finepath, 
 		$new_ext, $case_issue, $force_rename, $post ) {
 
-		// Two WebP patterns exist: filename.webp and filename.ext.webp
-
+		// Two WebP patterns exist: filename.format and filename.ext.format
 		if ( $old_ext === 'pdf' & $new_ext === 'pdf' ) {
 			$old_ext = 'jpg';
 			$new_ext = 'jpg';
 		} 
 
-		$webps = [
+		$alternatives = [
 			[
-				'old' => $this->str_replace( '.' . $old_ext, '.webp', $old_filepath ),
-				'new' => $this->str_replace( '.' . $new_ext, '.webp', $new_finepath ),
+				'old' => $this->str_replace( '.' . $old_ext, $format_ext, $old_filepath ),
+				'new' => $this->str_replace( '.' . $new_ext, $format_ext, $new_finepath ),
 			],
 			[
-				'old' => $this->str_replace( '.' . $old_ext, '.' . $old_ext . '.webp', $old_filepath ),
-				'new' => $this->str_replace( '.' . $new_ext, '.' . $new_ext . '.webp', $new_finepath ),
+				'old' => $this->str_replace( '.' . $old_ext, '.' . $old_ext . $format_ext, $old_filepath ),
+				'new' => $this->str_replace( '.' . $new_ext, '.' . $new_ext . $format_ext, $new_finepath ),
 			],
 		];
 
@@ -1094,19 +1157,19 @@ SQL;
 		// 	return;
 		// }
 
-		foreach ( $webps as $webp ) {
-			$is_webp = preg_match( '/\.webp$/', $webp['old'] );
-			$old_file_ok = $is_webp && file_exists( $webp['old'] );
-			$new_file_ok = ( ( !file_exists( $webp['new'] ) ) || is_writable( $webp['new'] ) );
+		foreach ( $alternatives as $alternative ) {
+			$regex = '/' . str_replace( ".", "\.", $format_ext ) . '$/';
+			$is_alternative = preg_match( $regex, $alternative['old'] );
+			$old_file_ok = $is_alternative && file_exists( $alternative['old'] );
+			$new_file_ok = ( !file_exists( $alternative['new'] ) ) || is_writable( $alternative['new'] );
 
 			if ( $old_file_ok && $new_file_ok ) {
-				// Rename webp file
-				if ( !$this->rename_file( $webp['old'], $webp['new'], $case_issue ) && !$force_rename ) {
-					$this->log( "🚫 WebP $webp[old] ➡️ $webp[new]" );
+				if ( !$this->rename_file( $alternative['old'], $alternative['new'], $case_issue ) && !$force_rename ) {
+					$this->log( "🚫 Optimized Image $alternative[old] ➡️ $alternative[new]" );
 					return $post;
 				}
-				$this->log( "✅ WebP $webp[old] ➡️ $webp[new]" );
-				do_action( 'mfrh_path_renamed', $post, $webp['old'], $webp['new'] );
+				$this->log( "✅ Optimized Image $alternative[old] ➡️ $alternative[new]" );
+				do_action( 'mfrh_path_renamed', $post, $alternative['old'], $alternative['new'] );
 			}
 		}
 	}
@@ -1141,5 +1204,19 @@ SQL;
 	 */
 	function is_locked( $post ) {
 		return get_post_meta( $post instanceof WP_Post ? $post->ID : $post, '_manual_file_renaming', true ) === true;
+	}
+
+	/**
+	 *
+	 * Roles & Access Rights
+	 *
+	 */
+
+	public function can_access_settings() {
+		return apply_filters( 'mfrh_allow_setup', current_user_can( 'manage_options' ) );
+	}
+
+	public function can_access_features() {
+		return apply_filters( 'mfrh_allow_usage', current_user_can( 'administrator' ) );
 	}
 }

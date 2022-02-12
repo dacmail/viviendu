@@ -67,30 +67,62 @@ class Meow_MFRH_Admin extends MeowCommon_Admin {
 		echo '<div id="mfrh-admin-settings"></div>';
 	}
 
-	function get_all_options() {
+	function list_options() {
 		return array(
-			'mfrh_auto_rename' => get_option( 'mfrh_auto_rename', false ),
-			'mfrh_on_upload' => get_option( 'mfrh_on_upload', false ),
-			'mfrh_rename_slug' => get_option( 'mfrh_rename_slug', false ),
-			'mfrh_convert_to_ascii' => $this->is_registered() && get_option( 'mfrh_convert_to_ascii', false ),
-			'mfrh_update_posts' => get_option( 'mfrh_update_posts', true ),
-			'mfrh_update_postmeta' => get_option( 'mfrh_update_postmeta', true ),
-			'mfrh_undo' => get_option( 'mfrh_undo', false ),
-			'mfrh_move' => get_option( 'mfrh_move', false ),
-			'mfrh_manual_rename' => get_option( 'mfrh_manual_rename', false ),
-			'mfrh_numbered_files' => $this->is_registered() && get_option( 'mfrh_numbered_files', false ),
-			'mfrh_sync_alt' => $this->is_registered() && get_option( 'mfrh_sync_alt', false ),
-			'mfrh_sync_media_title' => $this->is_registered() && get_option( 'mfrh_sync_media_title', false ),
-			'mfrh_force_rename' => $this->is_registered() && get_option( 'mfrh_force_rename', false ),
-			'mfrh_log' => get_option( 'mfrh_log', false ),
-			'mfrh_logsql' => $this->is_registered() && get_option( 'mfrh_logsql', false ),
-			'mfrh_rename_guid' => get_option( 'mfrh_rename_guid', false ),
-			'mfrh_case_insensitive_check' => get_option( 'mfrh_case_insensitive_check', false ),
-			'mfrh_rename_on_save' => get_option( 'mfrh_rename_on_save', false ),
-			'mfrh_acf_field_name' => get_option( 'mfrh_acf_field_name' ),
-			'mfrh_images_only' => get_option( 'mfrh_images_only', false ),
-			'mfrh_posts_per_page' => get_option( 'mfrh_posts_per_page', 10 )
+			'mfrh_auto_rename' => false,
+			'mfrh_on_upload' => false,
+			'mfrh_rename_slug' => false,
+			'mfrh_convert_to_ascii' => false,
+			'mfrh_update_posts' => true,
+			'mfrh_update_excerpts' => false,
+			'mfrh_update_postmeta' => false,
+			'mfrh_undo' => false,
+			'mfrh_move' => false,
+			'mfrh_manual_rename' => false,
+			'mfrh_manual_sanitize' => false,
+			'mfrh_numbered_files' => false,
+			'mfrh_sync_alt' => false,
+			'mfrh_sync_media_title' => false,
+			'mfrh_force_rename' => false,
+			'mfrh_log' => false,
+			'mfrh_logsql' => false,
+			'mfrh_rename_guid' => false,
+			'mfrh_case_insensitive_check' => false,
+			'mfrh_rename_on_save' => false,
+			'mfrh_acf_field_name' => false,
+			'mfrh_images_only' => false,
+			'mfrh_featured_only' => false,
+			'mfrh_posts_per_page' => 10,
+			'mfrh_autolock_auto' => false,
+			'mfrh_autolock_manual' => true,
+			'mfrh_delay' => 100,
+			'mfrh_clean_uninstall' => false,
 		);
+	}
+
+	function needs_registered_options() {
+		return array(
+			'mfrh_convert_to_ascii',
+			'mfrh_numbered_files',
+			'mfrh_sync_alt',
+			'mfrh_sync_media_title',
+			'mfrh_force_rename',
+			'mfrh_logsql',
+		);
+	}
+
+	function get_all_options() {
+		$options = $this->list_options();
+		$needs_registered_options = $this->needs_registered_options();
+		$current_options = array();
+		foreach ( $options as $option => $default ) {
+			if (in_array($option, $needs_registered_options)) {
+				$current_options[$option] = $this->is_registered() && get_option( $option, $default );
+				continue;
+			}
+			$current_options[$option] = get_option( $option, $default );
+		}
+		return $current_options;
 	}
 }
 

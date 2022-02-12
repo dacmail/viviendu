@@ -3,17 +3,14 @@
 class Meow_MFRH_Updates {
 
   private $core = null;
-	private $useless_types_conditions = array( 
-		"post_status != 'trash'",
-		"post_type != 'attachment'",
-		"post_type NOT LIKE '%acf-%'",
-		"post_type NOT LIKE '%edd_%'",
-		"post_type != 'shop_order'",
-		"post_type != 'shop_order_refund'",
-		"post_type != 'nav_menu_item'",
-		"post_type != 'revision'",
-		"post_type != 'auto-draft'"
-	);
+	private $useless_types_conditions = "
+		post_status NOT IN ('inherit', 'trash', 'auto-draft')
+		AND post_type NOT IN ('attachment', 'shop_order', 'shop_order_refund', 'nav_menu_item', 'revision', 'auto-draft', 'wphb_minify_group', 'customize_changeset', 'oembed_cache', 'nf_sub', 'jp_img_sitemap')
+		AND post_type NOT LIKE 'dlssus_%'
+		AND post_type NOT LIKE 'ml-slide%'
+		AND post_type NOT LIKE '%acf-%'
+		AND post_type NOT LIKE '%edd_%'
+	";
 
 	public function __construct( $core ) {
     $this->core = $core;
@@ -32,15 +29,17 @@ class Meow_MFRH_Updates {
 		add_action( 'mfrh_media_renamed', array( $this, 'action_update_media_file_references' ), 10, 3 );
 
 		if ( get_option( "mfrh_update_posts", true ) )
-			add_action( 'mfrh_url_renamed', array( $this, 'action_update_posts' ), 10, 3 );
-		if ( get_option( "mfrh_update_postmeta", true ) )
-			add_action( 'mfrh_url_renamed', array( $this, 'action_update_postmeta' ), 10, 3 );
+			add_action( 'mfrh_url_renamed', array( $this, 'action_update_posts' ), 10, 4 );
+		if ( get_option( "mfrh_update_excerpts", false ) )
+			add_action( 'mfrh_url_renamed', array( $this, 'action_update_excerpts' ), 10, 4 );
+		if ( get_option( "mfrh_update_postmeta", false ) )
+			add_action( 'mfrh_url_renamed', array( $this, 'action_update_postmeta' ), 10, 4 );
 		if ( get_option( "mfrh_rename_guid" ) )
 			add_action( 'mfrh_media_renamed', array( $this, 'action_rename_guid' ), 10, 4 );
 	}
 
 	// Mass update of all the meta with the new filenames
-	function action_update_postmeta( $post, $orig_image_url, $new_image_url ) {
+	function action_update_postmeta( $post, $orig_image_url, $new_image_url, $size ) {
 		global $wpdb;
 
 		$query = $wpdb->prepare( "SELECT post_id FROM $wpdb->postmeta 
@@ -70,35 +69,41 @@ class Meow_MFRH_Updates {
 			WHERE ID IN (" . $ids_to_update . ")", $new_image_url );
 		$this->core->log_sql( $query, $query_revert );
 
+		$this->core->log( "🚀 Rewrite meta $orig_image_url ➡️ $new_image_url" );
+
 		// Reset meta cache
 		update_meta_cache( 'post', $ids );
-
-		$this->core->log( "🚀 Rewrite meta $orig_image_url ➡️ $new_image_url" );
 	}
 
 	// Mass update of all the articles with the new filenames
-	function action_update_posts( $post, $orig_image_url, $new_image_url ) {
+	function action_update_posts( $post, $orig_image_url, $new_image_url, $size ) {
 		$ids = $this->bulk_rename_content( $orig_image_url, $new_image_url );
 		$this->core->log( "🚀 Rewrite content $orig_image_url ➡️ $new_image_url" );
-		$more_ids = $this->bulk_rename_excerpts( $orig_image_url, $new_image_url );
+
+		// Reset post cache
+		if ( !empty( $ids ) ) {
+			array_walk( $ids, 'clean_post_cache' );
+		}
+  }
+
+	// Mass update of all the articles with the new filenames
+	function action_update_excerpts( $post, $orig_image_url, $new_image_url, $size ) {
+		$ids = $this->bulk_rename_excerpts( $orig_image_url, $new_image_url );
 		$this->core->log( "🚀 Rewrite excerpts $orig_image_url ➡️ $new_image_url" );
 
 		// Reset post cache
-		if ( !empty( $ids ) && !empty( $more_ids ) ) {
-			array_walk( array_merge( $ids, $more_ids ), 'clean_post_cache' );
+		if ( !empty( $ids ) ) {
+			array_walk( $ids, 'clean_post_cache' );
 		}
   }
 
 	function bulk_rename_content( $orig_image_url, $new_image_url ) {
 		global $wpdb;
-
-		// Conditions to avoid useless posts (which aren't related to content)
-		$sql_conditions = implode( ' AND ', $this->useless_types_conditions );
 		
 		// Get the IDs that require an update
 		$query = $wpdb->prepare( "SELECT ID FROM $wpdb->posts 
 			WHERE post_content LIKE '%s'
-			AND $sql_conditions", '%' . $orig_image_url . '%' );
+			AND {$this->useless_types_conditions}", '%' . $orig_image_url . '%' );
 		$ids = $wpdb->get_col( $query );
 		if ( empty( $ids ) ) {
 			return array();
@@ -125,14 +130,11 @@ class Meow_MFRH_Updates {
 
 	function bulk_rename_excerpts( $orig_image_url, $new_image_url ) {
 		global $wpdb;
-
-		// Conditions to avoid useless posts (which aren't related to content)
-		$sql_conditions = implode( ' AND ', $this->useless_types_conditions );
 		
 		// Get the IDs that require an update
 		$query = $wpdb->prepare( "SELECT ID FROM $wpdb->posts 
 			WHERE post_excerpt LIKE '%s'
-			AND $sql_conditions", '%' . $orig_image_url . '%' );
+			AND {$this->useless_types_conditions}", '%' . $orig_image_url . '%' );
 		$ids = $wpdb->get_col( $query );
 		if ( empty( $ids ) ) {
 			return array();

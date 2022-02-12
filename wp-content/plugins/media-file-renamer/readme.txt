@@ -1,11 +1,11 @@
 === Media File Renamer - Auto & Manual Rename ===
 Contributors: TigrouMeow
-Tags: rename, file, media, move, seo, files, renamer, optimize, library
-Donate link: https://commerce.coinbase.com/checkout/d047546a-77a8-41c8-9ea9-4a950f61832f
+Tags: rename, file, media, move, seo, files, renamer, optimize, library, slug, change, modify
+Donate link: https://meowapps.com/donation/
 Requires at least: 5.0
-Tested up to: 5.7
-Requires PHP: 5.6
-Stable tag: 5.2.4
+Tested up to: 5.9
+Requires PHP: 7.0
+Stable tag: 5.3.6
 
 Renames your media files for better SEO and a nicer filesystem (automatically or manually).
 
@@ -22,7 +22,7 @@ However, it is highly recommended to use the pretty and very dynamic Renamer Das
 Please have a look at the [tutorial](https://meowapps.com/media-file-renamer-tutorial/).
 
 === COMPATIBILITY ===
-It works with a lot of features of WordPress and other plugins, such as Retina files, WebP, rescaled image (since WP 5.3), PDF Thumbnails, UTF8 files, optimized images, various encodings, etc. There are too many handled and specific cases to be listed here, but we are doing our best to keep up with everything :)
+It works with a lot of features of WordPress and other plugins, such as Retina files, WebP, rescaled image (since WP 5.3), PDF Thumbnails, UTF8 files, optimized images, various encodings, etc. There are too many handled and specific cases to be listed here, but we are doing our best to keep up with everything :) There are a few pagebuilders which encrypt the data they use, and therefore, the references to some renamed images might be lost: Avia Layout Builder, for example.
 
 === PRO VERSION ===
 More features are added in the [Pro Version](https://meowapps.com/plugin/media-file-renamer/), such as:
@@ -67,6 +67,48 @@ The plugin can be tweaked in many ways, there are many actions and filters avail
 
 == Changelog ==
 
+= 5.3.6 (2022/02/01) =
+* Update: Fresh build and support for WordPress 5.9.
+* Note: This plugin is a lot of work. If you like it, please write a little review [by clicking here](https://wordpress.org/support/plugin/media-file-renamer/reviews/?rate=5#new-post). Thank you :)
+
+= 5.3.5 (2021/11/10) =
+* Fix: Renaming of WebP uploaded directly to WordPress.
+* Add: The possibility of locking files automatically after a manual rename (which was always the case previously), and/or after a automatic rename (that was not possible previously). With this last option, users having trouble to "Rename All" will be given the choice to do it on any kind of server. You will find those options in the Advanced tab.
+* Add: "Delay" option, to give a break and a reset to the server between asynchronous requests! Default to 100ms. That will avoid the server to time out, or to slow down on purpose.
+
+= 5.3.3 (2021/11/09) =
+* Fix: Avoid renaming when the URLs (before/after) are empty.
+* Add: New option to update URLs in the excerpts (no need to use it for most users).
+* Update: Avoid double call to the mfrh_url_renamed (seemed to be completely useless).
+* Update: Added a new 'size' argument to the mfrh_url_renamed action.
+* Update: Optimized queries.
+* Add: We can change the page (in the dashboard) by typing it.
+
+= 5.3.2 (2021/10/16) =
+* Add: AVIF support.
+* Fix: Avoid the double renaming when different registered sizes actually use the same file.
+
+= 5.3.0 (2021/10/09) =
+* Add: Better Force Rename.
+* Add: Featured Images Only option.
+* Fix: Auto-attach feature wasn't working properly with Featured Image when attached to Product.
+
+= 5.2.9 (2021/09/23) =
+* Add: Manual Sanitize Option. If the option is checked, the rename feature uses the new_filename function. If not, use the filename user input as it is.
+
+= 5.2.8 (2021/09/07) =
+* Add: Option to clean the plugin data on uninstall.
+* Add: Manual Rename now goes through the cleaning flow to make sure everything is clean and nice.
+
+= 5.2.7 (2021/09/03) =
+* Fix: Security update: access controls to the REST API and the options enforced.
+* Updated: Dependencies update.
+* Note: The plugin has no known bugs for a while, and I am now happy to work on littke extra features :) By the way, if you like it, please review the plugin [by clicking here](https://wordpress.org/support/plugin/media-file-renamer/reviews/?rate=5#new-post). Thank you!
+
+= 5.2.5 (2021/08/25) =
+* Fix: Search feature was not always working well.
+* Update: Better technical architecture.
+
 = 5.2.4 (2021/06/13) =
 * Add: Remember the number of entries per page (dashboard).
 * Fix: Limit the length of the manual filename.
@@ -84,7 +126,6 @@ The plugin can be tweaked in many ways, there are many actions and filters avail
 
 = 5.1.9 (2021/04/09) =
 * Fix: The Synchronize Alt option wasn't working logically.
-* Note: The plugin has no known bugs for a while, and I am now happy to work on littke extra features :) By the way, if you like it, please review the plugin [by clicking here](https://wordpress.org/support/plugin/media-file-renamer/reviews/?rate=5#new-post). Thank you!
 
 = 5.1.8 (2021/03/04) =
 * Add: Search.

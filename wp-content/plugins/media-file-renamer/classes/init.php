@@ -14,11 +14,12 @@ spl_autoload_register(function ( $class ) {
   if ( strpos( $class, 'Meow_MFRH' ) !== false ) {
     $file = MFRH_PATH . '/classes/' . str_replace( 'meow_mfrh_', '', strtolower( $class ) ) . '.php';
   }
-  else if ( strpos( $class, 'MeowCommon_Classes_' ) !== false ) {
-    $file = MFRH_PATH . '/common/classes/' . str_replace( 'meowcommon_classes_', '', strtolower( $class ) ) . '.php';
-  }
   else if ( strpos( $class, 'MeowCommon_' ) !== false ) {
     $file = MFRH_PATH . '/common/' . str_replace( 'meowcommon_', '', strtolower( $class ) ) . '.php';
+  }
+  else if ( strpos( $class, 'MeowCommonPro_' ) !== false ) {
+    $necessary = false;
+    $file = MFRH_PATH . '/common/premium/' . str_replace( 'meowcommonpro_', '', strtolower( $class ) ) . '.php';
   }
   else if ( strpos( $class, 'MeowPro_MFRH' ) !== false ) {
     $necessary = false;
@@ -32,8 +33,8 @@ spl_autoload_register(function ( $class ) {
   }
 });
 
+// We should NOT remove this, as API is not a class (and so it will not be autoloaded).
 require_once( MFRH_PATH . '/classes/api.php');
-require_once( MFRH_PATH . '/common/helpers.php');
 
 // In admin or Rest API request (REQUEST URI begins with '/wp-json/')
 if ( is_admin() || MeowCommon_Helpers::is_rest() || ( defined( 'WP_CLI' ) && WP_CLI ) ) {

@@ -31,12 +31,12 @@ class Meow_MFRH_Rest
 		if ( $this->allow_setup ) {
 			register_rest_route( $this->namespace, '/update_option', array(
 				'methods' => 'POST',
-				'permission_callback' => '__return_true',
+				'permission_callback' => array( $this->core, 'can_access_settings' ),
 				'callback' => array( $this, 'rest_update_option' )
 			) );
 			register_rest_route( $this->namespace, '/all_settings', array(
 				'methods' => 'GET',
-				'permission_callback' => '__return_true',
+				'permission_callback' => array( $this->core, 'can_access_settings' ),
 				'callback' => array( $this, 'rest_all_settings' )
 			) );
 		}
@@ -45,12 +45,15 @@ class Meow_MFRH_Rest
 		if ( $this->allow_usage ) {
 			register_rest_route( $this->namespace, '/stats', array(
 				'methods' => 'GET',
-				'permission_callback' => '__return_true',
-				'callback' => array( $this, 'rest_get_stats' )
+				'permission_callback' => array( $this->core, 'can_access_features' ),
+				'callback' => array( $this, 'rest_get_stats' ),
+				'args' => array(
+					'search' => array( 'required' => false ),
+				)
 			) );
 			register_rest_route( $this->namespace, '/media', array(
 				'methods' => 'GET',
-				'permission_callback' => '__return_true',
+				'permission_callback' => array( $this->core, 'can_access_features' ),
 				'callback' => array( $this, 'rest_media' ),
 				'args' => array(
 					'limit' => array( 'required' => false, 'default' => 10 ),
@@ -65,54 +68,54 @@ class Meow_MFRH_Rest
 			) );
 			register_rest_route( $this->namespace, '/analyze', array(
 				'methods' => 'POST',
-				'permission_callback' => '__return_true',
+				'permission_callback' => array( $this->core, 'can_access_features' ),
 				'callback' => array( $this, 'rest_analyze' )
 			) );
 			register_rest_route( $this->namespace, '/auto_attach', array(
 				'methods' => 'POST',
-				'permission_callback' => '__return_true',
+				'permission_callback' => array( $this->core, 'can_access_features' ),
 				'callback' => array( $this, 'rest_auto_attach' )
 			) );
 			register_rest_route( $this->namespace, '/get_all_ids', array(
 				'methods' => 'POST',
-				'permission_callback' => '__return_true',
+				'permission_callback' => array( $this->core, 'can_access_features' ),
 				'callback' => array( $this, 'rest_get_all_ids' )
 			) );
 			register_rest_route( $this->namespace, '/get_all_post_ids', array(
 				'methods' => 'POST',
-				'permission_callback' => '__return_true',
+				'permission_callback' => array( $this->core, 'can_access_features' ),
 				'callback' => array( $this, 'rest_get_all_post_ids' )
 			) );
 
 			// ACTIONS
 			register_rest_route( $this->namespace, '/set_lock', array(
 				'methods' => 'POST',
-				'permission_callback' => '__return_true',
+				'permission_callback' => array( $this->core, 'can_access_features' ),
 				'callback' => array( $this, 'rest_set_lock' )
 			) );
 			register_rest_route( $this->namespace, '/rename', array(
 				'methods' => 'POST',
-				'permission_callback' => '__return_true',
+				'permission_callback' => array( $this->core, 'can_access_features' ),
 				'callback' => array( $this, 'rest_rename' )
 			) );
 			register_rest_route( $this->namespace, '/move', array(
 				'methods' => 'POST',
-				'permission_callback' => '__return_true',
+				'permission_callback' => array( $this->core, 'can_access_features' ),
 				'callback' => array( $this, 'rest_move' )
 			) );
 			register_rest_route( $this->namespace, '/undo', array(
 				'methods' => 'POST',
-				'permission_callback' => '__return_true',
+				'permission_callback' => array( $this->core, 'can_access_features' ),
 				'callback' => array( $this, 'rest_undo' )
 			) );
 			register_rest_route( $this->namespace, '/status', array(
 				'methods' => 'POST',
-				'permission_callback' => '__return_true',
+				'permission_callback' => array( $this->core, 'can_access_features' ),
 				'callback' => array( $this, 'rest_status' )
 			) );
 			register_rest_route( $this->namespace, '/update_media', array(
 				'methods' => 'POST',
-				'permission_callback' => '__return_true',
+				'permission_callback' => array( $this->core, 'can_access_features' ),
 				'callback' => array( $this, 'rest_update_media' )
 			) );
 		}
@@ -120,12 +123,12 @@ class Meow_MFRH_Rest
 		// LOGS
 		register_rest_route( $this->namespace, '/refresh_logs', array(
 			'methods' => 'POST',
-			'permission_callback' => '__return_true',
+			'permission_callback' => array( $this->core, 'can_access_features' ),
 			'callback' => array( $this, 'refresh_logs' )
 		) );
 		register_rest_route( $this->namespace, '/clear_logs', array(
 			'methods' => 'POST',
-			'permission_callback' => '__return_true',
+			'permission_callback' => array( $this->core, 'can_access_features' ),
 			'callback' => array( $this, 'clear_logs' )
 		) );
 	}
@@ -179,8 +182,16 @@ class Meow_MFRH_Rest
 		global $wpdb;
 		$params = $request->get_json_params();
 		$unlockedOnly = isset( $params['unlockedOnly'] ) ? (bool)$params['unlockedOnly'] : false;
+
+		$featured_only = get_option( 'mfrh_featured_only' );
+		$innerJoinCondition = '';
+		if ( $featured_only ) {
+			$innerJoinCondition = "INNER JOIN $wpdb->postmeta pmm ON pmm.meta_value = p.ID AND pmm.meta_key = '_thumbnail_id'";
+		}
+
 		if ( $unlockedOnly ) {
 			$ids = $wpdb->get_col( "SELECT ID FROM $wpdb->posts p 
+				$innerJoinCondition
 				LEFT JOIN $wpdb->postmeta pm ON p.ID = pm.post_id 
 				AND pm.meta_key='_manual_file_renaming'
 				WHERE post_type='attachment'
@@ -323,50 +334,107 @@ class Meow_MFRH_Rest
 		return $entry;
 	}
 
-	function count_locked() {
+	function count_locked( $search ) {
 		global $wpdb;
-		return (int)$wpdb->get_var( "SELECT COUNT(*) FROM $wpdb->posts p 
-			INNER JOIN $wpdb->postmeta pm ON pm.post_id = p.ID 
-			WHERE pm.meta_key = '_manual_file_renaming'"
+		$innerJoinSql = '';
+		$whereSql = '';
+		if ( $search ) {
+			$innerJoinSql = "INNER JOIN $wpdb->postmeta pm2 ON pm2.post_id = p.ID AND pm2.meta_key = '_wp_attached_file'";
+			$searchValue = '%' . $wpdb->esc_like( $search ) . '%';
+			$whereSql = $wpdb->prepare( "AND (p.post_title LIKE %s OR pm2.meta_value LIKE %s)", $searchValue, $searchValue );
+		}
+		$featured_only = get_option( 'mfrh_featured_only' );
+		if ( $featured_only ) {
+			$innerJoinSql .= " INNER JOIN $wpdb->postmeta pmm ON pmm.meta_value = p.ID AND pmm.meta_key = '_thumbnail_id'";
+		}
+		return (int)$wpdb->get_var( "SELECT COUNT(p.ID) FROM $wpdb->posts p 
+			INNER JOIN $wpdb->postmeta pm ON pm.post_id = p.ID AND pm.meta_key = '_manual_file_renaming'
+			$innerJoinSql 
+			WHERE p.post_type = 'attachment' AND p.post_status = 'inherit' $whereSql"
 		);
 	}
 
-	function count_pending() {
-		global $wpdb;
-		$images_only = get_option( 'mfrh_images_only' );
-		$whereSql = $images_only ? " AND p.post_mime_type IN ( 'image/jpeg' )" : "";
-		return (int)$wpdb->get_var( "SELECT COUNT(*) FROM $wpdb->posts p 
-			INNER JOIN $wpdb->postmeta pm ON pm.post_id = p.ID 
-			WHERE pm.meta_key = '_require_file_renaming'" . $whereSql
-		);
-	}
-
-	function count_renamed() {
-		global $wpdb;
-		$images_only = get_option( 'mfrh_images_only' );
-		$whereSql = $images_only ? " AND p.post_mime_type IN ( 'image/jpeg' )" : "";
-		return (int)$wpdb->get_var( "SELECT COUNT(*) FROM $wpdb->posts p 
-			INNER JOIN $wpdb->postmeta pm ON pm.post_id = p.ID 
-			WHERE pm.meta_key = '_original_filename'" . $whereSql
-		);
-	}
-
-	function count_all() {
+	function count_pending( $search ) {
 		global $wpdb;
 		$images_only = get_option( 'mfrh_images_only' );
-		$whereSql = $images_only ? " AND p.post_mime_type IN ( 'image/jpeg' )" : "";
-		return (int)$wpdb->get_var( "SELECT COUNT(*) FROM $wpdb->posts p 
-			WHERE post_type='attachment'
-			AND post_status='inherit'" . $whereSql
+		$whereCaluses = [];
+		if ( $images_only ) {
+			$whereCaluses[] = "p.post_mime_type IN ( 'image/jpeg', 'image/gif', 'image/png', 'image/bmp', 'image/tiff', 'image/x-icon' )";
+		}
+		$innerJoinSql = '';
+		if ( $search ) {
+			$innerJoinSql = "INNER JOIN $wpdb->postmeta pm2 ON pm2.post_id = p.ID AND pm2.meta_key = '_wp_attached_file'";
+			$searchValue = '%' . $wpdb->esc_like($search) . '%';
+			$whereCaluses[] = $wpdb->prepare("(p.post_title LIKE %s OR pm2.meta_value LIKE %s)", $searchValue, $searchValue);
+		}
+		$featured_only = get_option( 'mfrh_featured_only' );
+		if ( $featured_only ) {
+			$innerJoinSql .= " INNER JOIN $wpdb->postmeta pmm ON pmm.meta_value = p.ID AND pmm.meta_key = '_thumbnail_id'";
+		}
+		$whereSql = count( $whereCaluses ) > 0 ? "AND " . implode( "AND ", $whereCaluses ) : "";
+		return (int)$wpdb->get_var( "SELECT COUNT(p.ID) FROM $wpdb->posts p 
+			INNER JOIN $wpdb->postmeta pm ON pm.post_id = p.ID AND pm.meta_key = '_require_file_renaming'
+			$innerJoinSql 
+			WHERE p.post_type = 'attachment' AND p.post_status = 'inherit' $whereSql"
 		);
 	}
 
-	function rest_get_stats() {
+	function count_renamed($search) {
+		global $wpdb;
+		$images_only = get_option( 'mfrh_images_only' );
+		$whereCaluses = [];
+		if ($images_only) {
+			$whereCaluses[] = "p.post_mime_type IN ( 'image/jpeg', 'image/gif', 'image/png', 'image/bmp', 'image/tiff', 'image/x-icon' )";
+		}
+		$innerJoinSql = '';
+		if ($search) {
+			$innerJoinSql = "INNER JOIN $wpdb->postmeta pm2 ON pm2.post_id = p.ID AND pm2.meta_key = '_wp_attached_file'";
+			$searchValue = '%' . $wpdb->esc_like($search) . '%';
+			$whereCaluses[] = $wpdb->prepare("(p.post_title LIKE %s OR pm2.meta_value LIKE %s)", $searchValue, $searchValue);
+		}
+		$featured_only = get_option( 'mfrh_featured_only' );
+		if ( $featured_only ) {
+			$innerJoinSql .= " INNER JOIN $wpdb->postmeta pmm ON pmm.meta_value = p.ID AND pmm.meta_key = '_thumbnail_id'";
+		}
+		$whereSql = count($whereCaluses) > 0 ? "AND " . implode("AND ", $whereCaluses) : "";
+		return (int)$wpdb->get_var( "SELECT COUNT(p.ID) FROM $wpdb->posts p 
+			INNER JOIN $wpdb->postmeta pm ON pm.post_id = p.ID AND pm.meta_key = '_original_filename'
+			$innerJoinSql 
+			WHERE p.post_type = 'attachment' AND p.post_status = 'inherit' $whereSql"
+		);
+	}
+
+	function count_all( $search ) {
+		global $wpdb;
+		$images_only = get_option( 'mfrh_images_only' );
+		$whereCaluses = [];
+		if ($images_only) {
+			$whereCaluses[] = "p.post_mime_type IN ( 'image/jpeg', 'image/gif', 'image/png', 'image/bmp', 'image/tiff', 'image/x-icon' )";
+		}
+		$innerJoinSql = '';
+		if ( $search ) {
+			$innerJoinSql = "INNER JOIN $wpdb->postmeta pm ON pm.post_id = p.ID";
+			$searchValue = '%' . $wpdb->esc_like($search) . '%';
+			$whereCaluses[] = $wpdb->prepare("( p.post_title LIKE %s OR pm.meta_value LIKE %s )", $searchValue, $searchValue);
+		}
+		$featured_only = get_option( 'mfrh_featured_only' );
+		if ( $featured_only ) {
+			$innerJoinSql .= " INNER JOIN $wpdb->postmeta pmm ON pmm.meta_value = p.ID AND pmm.meta_key = '_thumbnail_id'";
+		}
+		$whereSql = count($whereCaluses) > 0 ? "AND " . implode("AND ", $whereCaluses) : "";
+		return (int)$wpdb->get_var( "SELECT COUNT(DISTINCT p.ID) FROM $wpdb->posts p 
+			$innerJoinSql 
+			WHERE post_type='attachment' AND post_status='inherit' $whereSql"
+		);
+	}
+
+	function rest_get_stats($request) {
+		$search = trim( $request->get_param('search') );
 		return new WP_REST_Response( [ 'success' => true, 'data' => array(
-			'pending' => $this->count_pending(),
-			'renamed' => $this->count_renamed(),
-			'locked' => $this->count_locked(),
-			'all' => $this->count_all()
+			'pending' => $this->count_pending($search),
+			'renamed' => $this->count_renamed($search),
+			'locked' => $this->count_locked($search),
+			'all' => $this->count_all($search)
 		) ], 200 );
 	}
 
@@ -405,16 +473,27 @@ class Meow_MFRH_Rest
 		}
 		$whereSql = '';
 		if ($search) {
-			$searchValue = '%' . $wpdb->esc_like($search) . '%';
+			$searchValue = '%' . $wpdb->esc_like( $search ) . '%';
 			if ($havingSql) {
-				$havingSql = $wpdb->prepare("$havingSql AND ( post_title LIKE %s OR current_filename LIKE %s )", $searchValue, $searchValue);
-			} else {
-				$whereSql = $wpdb->prepare("AND ( p.post_title LIKE %s OR pm.meta_value LIKE %s )", $searchValue, $searchValue);
+				$havingSql = $wpdb->prepare( "$havingSql AND ( post_title LIKE %s OR current_filename LIKE %s )",
+					$searchValue, $searchValue );
+			}
+			else {
+				$whereSql = $wpdb->prepare( "AND ( p.post_title LIKE %s OR pm.meta_value LIKE %s )",
+					$searchValue, $searchValue );
 			}
 		}
-		$images_only = get_option( 'mfrh_images_only' );
-		if ( $images_only ) {
-			$whereSql = " AND p.post_mime_type IN ( 'image/jpeg' )";
+		
+		$featured_only = get_option( 'mfrh_featured_only' );
+		$innerJoinCondition = '';
+		if ( $featured_only ) {
+			$innerJoinCondition = "INNER JOIN $wpdb->postmeta pmm ON pmm.meta_value = p.ID AND pmm.meta_key = '_thumbnail_id'";
+		}
+		else {
+			$images_only = get_option( 'mfrh_images_only' );
+			if ( $images_only ) {
+				$whereSql .= "$whereSql AND p.post_mime_type IN ( 'image/jpeg', 'image/gif', 'image/png', 'image/bmp', 'image/tiff', 'image/x-icon' )";
+			}
 		}
 		$entries = $wpdb->get_results( 
 			$wpdb->prepare( "SELECT p.ID, p.post_title, p.post_parent, 
@@ -425,6 +504,7 @@ class Meow_MFRH_Rest
 				MAX(CASE WHEN pm.meta_key = '_require_file_renaming' THEN pm.meta_value END) AS pending,
 				MAX(CASE WHEN pm.meta_key = '_manual_file_renaming' THEN pm.meta_value END) AS locked
 				FROM $wpdb->posts p
+				$innerJoinCondition
 				INNER JOIN $wpdb->postmeta pm ON pm.post_id = p.ID
 				WHERE post_type='attachment'
 					AND post_status='inherit'
@@ -491,13 +571,13 @@ class Meow_MFRH_Rest
 		$entries = $this->get_media_status( $skip, $limit, $filterBy, $orderBy, $order, $search );
 		$total = 0;
 		if ( $filterBy == 'pending' ) {
-			$total = $this->count_pending();
+			$total = $this->count_pending($search);
 		}
 		else if ( $filterBy == 'renamed' ) {
-			$total = $this->count_renamed();
+			$total = $this->count_renamed($search);
 		}
 		else if ( $filterBy == 'all' ) {
-			$total = $this->count_all();
+			$total = $this->count_all($search);
 		}
 		return new WP_REST_Response( [ 'success' => true, 'data' => $entries, 'total' => $total ], 200 );
 	}
@@ -510,6 +590,10 @@ class Meow_MFRH_Rest
 		$params = $request->get_json_params();
 		try {
 			$name = $params['name'];
+			$options = $this->admin->list_options();
+			if ( !array_key_exists( $name, $options ) ) {
+				return new WP_REST_Response([ 'success' => false, 'message' => 'This option does not exist.' ], 200 );
+			}
 			$value = is_bool( $params['value'] ) ? ( $params['value'] ? '1' : '' ) : $params['value'];
 			$success = update_option( $name, $value );
 			if ( !$success ) {
@@ -574,9 +658,11 @@ class Meow_MFRH_Rest
 	}
 
 	function do_auto_attach( $postId ) {
-		$this->is_post_type_woocommerce( $postId )
-			? $this->attach_woocommerce( $postId )
-			: $this->attach_thumbnail( $postId );
+		$this->attach_thumbnail( $postId ); 
+		$is_wc = $this->is_post_type_woocommerce( $postId );
+		if ( $is_wc ) {
+			$this->attach_woocommerce( $postId );
+		}
 	}
 
 	/**
@@ -602,11 +688,17 @@ class Meow_MFRH_Rest
 	 * @return void
 	 */
 	function attach_woocommerce( $postId ) {
-		$product = new WC_product($postId);
-		$mediaIds = $product->get_gallery_image_ids();
-		foreach ( $mediaIds as $mediaId ) {
-			$attachment = array( 'ID' => $mediaId, 'post_parent' => $postId );
-			wp_update_post($attachment);
+		if ( class_exists( 'WC_product' ) ) {
+			$product = new WC_product( $postId );
+			$mediaIds = $product->get_gallery_image_ids();
+			if ( !empty( $mediaIds ) ) {
+				foreach ( $mediaIds as $mediaId ) {
+					$attachment = array( 'ID' => $mediaId, 'post_parent' => $postId );
+					wp_update_post( $attachment );
+				}
+				return true;
+			}
+			return false;
 		}
 	}
 
@@ -618,8 +710,12 @@ class Meow_MFRH_Rest
 	 */
 	function attach_thumbnail( $postId ) {
 		$mediaId = get_post_thumbnail_id( $postId );
-		$attachment = array( 'ID' => $mediaId, 'post_parent' => $postId );
-		wp_update_post($attachment);
+		if ( !empty( $mediaId ) ) {
+			$attachment = array( 'ID' => $mediaId, 'post_parent' => $postId );
+			wp_update_post( $attachment );
+			return true;
+		}
+		return false;
 	}
 }
 
