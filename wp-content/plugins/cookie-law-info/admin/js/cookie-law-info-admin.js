@@ -60,12 +60,19 @@
 		 		cli_nav_tab.eq(0).click();
 		 	}		 	
 		}
+		$('#cky-table-comparison-link').click(function( event ){
+			event.preventDefault();
+			$('a[href="#cookie-law-info-upgrade-pro"]').trigger("click");
+			$('html,body').animate({
+				scrollTop: $('#cky-container').offset().top - 50  },
+				'slow');
+		});
 		$('.cli_sub_tab li').click(function(){
 			var trgt=$(this).attr('data-target');
 			var prnt=$(this).parent('.cli_sub_tab');
 			var ctnr=prnt.siblings('.cli_sub_tab_container');
 			prnt.find('li a').css({'color':'#0073aa','cursor':'pointer'});
-			$(this).find('a').css({'color':'#ccc','cursor':'default'});
+			$(this).find('a').css({'color':'#000','cursor':'default','font-weight':'600'});
 			ctnr.find('.cli_sub_tab_content').hide();
 			ctnr.find('.cli_sub_tab_content[data-id="'+trgt+'"]').fadeIn();
 		});
@@ -274,14 +281,14 @@ var wtCliAdminFunctions = {
 		}
 	},
 	revisitConsentPositionEvent: function(){
-		jQuery(document).on('change', 'select[name="notify_position_horizontal_field"],select[name="popup_showagain_position_field"],input[name="cookie_bar_as_field"],select[name="widget_position_field"]', function(){
+		jQuery(document).on('change', 'input[type="radio"][name="notify_position_horizontal_field"],select[name="popup_showagain_position_field"],input[name="cookie_bar_as_field"],select[name="widget_position_field"]', function(){
 			wtCliAdminFunctions.revisitConsentPosition();
 		});
 	},
 	
 	revisitConsentPosition: function(){
 		var barType = jQuery('input[type="radio"][name="cookie_bar_as_field"]:checked').val();
-		var position = jQuery('select[name="notify_position_horizontal_field"] option:selected').val();
+		var position = jQuery('input[type="radio"][name="notify_position_horizontal_field"]:checked').val();
 		var revisitConsentMarginLabel = jQuery('#wt-cli-revisit-consent-margin-label');
 		var currentText = jQuery('#wt-cli-revisit-consent-margin-label').val();
 		if( barType === "popup" ) {

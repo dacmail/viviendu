@@ -95,6 +95,7 @@ var CLI=
     	{
     		CLI_COOKIEBAR_AS_POPUP=true;
 		}
+		this.mayBeSetPreferenceCookie();
         this.addStyleAttribute();
 		this.configBar();
         this.toggleBar();
@@ -146,7 +147,8 @@ var CLI=
 				new_window=CLI.settings.button_7_new_win ? true : false;
 			}
 			else if(button_action=='reject')
-			{
+			{	
+				CLI.disableAllCookies();
 				CLI.reject_close();
 				new_window= Boolean( CLI.settings.button_3_new_win ) ? true : false;
 			}
@@ -602,7 +604,7 @@ var CLI=
         }else 
         {	
 			if( CLI.js_blocking_enabled === true ) {
-            	this.bar_elm.hide( cliBlocker.runScripts );
+            	this.bar_elm.hide( 0, cliBlocker.runScripts );
 
 			} else {
 				this.bar_elm.hide();
@@ -666,47 +668,7 @@ var CLI=
     reload_current_page:function()
     {	
 		
-    	if(typeof cli_flush_cache!=='undefined' && cli_flush_cache === true)
-    	{
-            window.location.href=this.add_clear_cache_url_query();
-    	}else
-    	{
-    		window.location.reload(true);
-    	}
-    },
-    add_clear_cache_url_query:function()
-    {
-    	var cli_rand=new Date().getTime()/1000;
-    	var cli_url=window.location.href;
-    	var cli_hash_arr=cli_url.split('#');
-    	var cli_urlparts= cli_hash_arr[0].split('?');
-    	if(cli_urlparts.length>=2) 
-    	{
-    		var cli_url_arr=cli_urlparts[1].split('&');
-    		cli_url_temp_arr=new Array();
-    		for(var cli_i=0; cli_i<cli_url_arr.length; cli_i++)
-    		{   			
-    			var cli_temp_url_arr=cli_url_arr[cli_i].split('=');
-    			if(cli_temp_url_arr[0]=='cli_action')
-    			{
-
-    			}else
-    			{
-    				cli_url_temp_arr.push(cli_url_arr[cli_i]);
-    			}
-    		}
-    		cli_urlparts[1]=cli_url_temp_arr.join('&');
-    		cli_url=cli_urlparts.join('?')+(cli_url_temp_arr.length>0 ? '&': '')+'cli_action=';
-    	}else
-    	{
-    		cli_url=cli_hash_arr[0]+'?cli_action=';
-    	}
-    	cli_url+=cli_rand;
-    	if(cli_hash_arr.length>1)
-    	{
-    		cli_url+='#'+cli_hash_arr[1];
-    	}
-    	return cli_url;
+    	window.location.reload(true);
     },
 	closeOnScroll:function() 
 	{
@@ -862,6 +824,20 @@ var CLI=
 			}
 		});
 	},
+	disableAllCookies:function()
+    {	
+    	jQuery('.cli-user-preference-checkbox').each(function(){
+
+			var cli_chkbox_elm=jQuery(this);
+			var cli_chkbox_data_id=cli_chkbox_elm.attr('data-id');
+			cliCategorySlug = cli_chkbox_data_id.replace('checkbox-','');			
+			if(Cli_Data.strictlyEnabled.indexOf(cliCategorySlug) === -1)
+			{
+				cli_chkbox_elm.prop('checked',false);
+				CLI_Cookie.set('cookielawinfo-'+cli_chkbox_data_id,'no',CLI_ACCEPT_COOKIE_EXPIRE);
+			}
+		});
+	},
 	hideCookieBarOnClose: function() {
 		jQuery(document).on('click','.cli_cookie_close_button',function(e){
 			e.preventDefault();
@@ -975,6 +951,11 @@ var CLI=
 		jQuery(document).on('click','.cli_manage_current_consent,.wt-cli-manage-consent-link',function(){
 			CLI.displayHeader();
 		});
+	},
+	mayBeSetPreferenceCookie: function() {
+		if( CLI.getParameterByName('cli_bypass') === "1" ) {
+			CLI.generateConsent();
+		}
 	}
 }
 var cliBlocker = 
@@ -1039,8 +1020,6 @@ var cliBlocker =
 			{
 				CLI.hideHeader();
 			}
-			CLI.settingsModal.show();
-			jQuery('.cli-modal-backdrop').show();
 		}
 	},
 	removeCookieByCategory : function() 

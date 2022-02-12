@@ -4,7 +4,7 @@ if (!defined('WPINC')) {
     die;
 }
 ?>
-<div class="cookie-law-info-tab-content" data-id="<?php echo $target_id; ?>">
+<div class="cookie-law-info-tab-content" data-id="<?php echo esc_attr( $target_id ); ?>">
     <ul class="cli_sub_tab">
         <li style="border-left:none; padding-left: 0px;" data-target="cookie-message"><a><?php _e('Cookie bar', 'cookie-law-info'); ?></a></li>
         <li data-target="show-again-tab"><a><?php _e('Revisit consent', 'cookie-law-info'); ?></a></li>
@@ -12,13 +12,12 @@ if (!defined('WPINC')) {
     <div class="cli_sub_tab_container">
         <div class="cli_sub_tab_content" data-id="cookie-message" style="display:block;">
             <div class="wt-cli-section wt-cli-section-general-settings">
-                <h3><?php _e('Cookie Bar', 'cookie-law-info'); ?></h3>
                 <table class="form-table">
                     <tr valign="top">
                         <th scope="row"><label for="bar_heading_text_field"><?php _e('Message Heading', 'cookie-law-info'); ?></label></th>
                         <td>
-                            <input type="text" name="bar_heading_text_field" value="<?php echo stripslashes($the_options['bar_heading_text'])  ?>" />
-                            <span class="cli_form_help"><?php _e('Leave it blank, If you do not need a heading', 'cookie-law-info'); ?>
+                            <input type="text" name="bar_heading_text_field" value="<?php echo esc_attr( stripslashes( $the_options['bar_heading_text'] ) );  ?>" />
+                            <span class="cli_form_help"><?php _e('Input text to have a heading for the cookie consent bar. Leave it blank if you do not need one.', 'cookie-law-info'); ?>
                             </span>
                         </td>
                     </tr>
@@ -29,7 +28,7 @@ if (!defined('WPINC')) {
                             echo '<textarea name="notify_message_field" class="vvv_textbox">';
                             echo apply_filters('format_to_edit', stripslashes($the_options['notify_message'])) . '</textarea>';
                             ?>
-                            <span class="cli_form_help"><?php _e('Shortcodes allowed: see the Help Guide tab', 'cookie-law-info'); ?> <br /><em><?php _e('Examples: "We use cookies on this website [cookie_accept] to find out how to delete cookies [cookie_link]."', 'cookie-law-info'); ?></em></span>
+                            <span class="cli_form_help"><?php _e('Modify/edit the content of the cookie consent bar.', 'cookie-law-info'); ?> <br /><em><?php _e('Supports shortcodes.(link shortcodes to help link) e.g. [cookie_accept_all] for accept all button, [cookie_button] for accept button, [cookie_reject] for reject button, [cookie_link] for Read more, [cookie_settings] for cookie settings.', 'cookie-law-info'); ?></em></span>
                         </td>
                     </tr>
                     <tr valign="top">
@@ -38,7 +37,7 @@ if (!defined('WPINC')) {
                             <?php
                             /** RICHARDASHBY EDIT */
                             //echo '<input type="text" name="background_field" id="cli-colour-background" value="' .$the_options['background']. '" />';
-                            echo '<input type="text" name="background_field" id="cli-colour-background" value="' . $the_options['background'] . '" class="my-color-field" data-default-color="#fff" />';
+                            echo '<input type="text" name="background_field" id="cli-colour-background" value="' . esc_attr( $the_options['background'] ) . '" class="my-color-field" data-default-color="#fff" />';
                             ?>
                         </td>
                     </tr>
@@ -47,7 +46,7 @@ if (!defined('WPINC')) {
                         <td>
                             <?php
                             /** RICHARDASHBY EDIT */
-                            echo '<input type="text" name="text_field" id="cli-colour-text" value="' . $the_options['text'] . '" class="my-color-field" data-default-color="#000" />';
+                            echo '<input type="text" name="text_field" id="cli-colour-text" value="' . esc_attr( $the_options['text'] ) . '" class="my-color-field" data-default-color="#000" />';
                             ?>
                         </td>
                     </tr>
@@ -55,7 +54,7 @@ if (!defined('WPINC')) {
                         <th scope="row"><label for="font_family_field"><?php _e('Font', 'cookie-law-info'); ?></label></th>
                         <td>
                             <select name="font_family_field" class="vvv_combobox">
-                                <?php $this->print_combobox_options($this->get_fonts(), $the_options['font_family']) ?>
+                                <?php $this->print_combobox_options( $this->get_fonts(), $the_options['font_family'] ) ?>
                             </select>
                         </td>
                     </tr>
@@ -75,8 +74,8 @@ if (!defined('WPINC')) {
                         <td>
                             <?php $widget_position = $the_options['widget_position']; ?>
                             <select name="widget_position_field" id="widget_position_field" class="vvv_combobox">
-                                <option value="left" <?php echo $widget_position == 'left' ? 'selected' : ''; ?>>Left</option>
-                                <option value="right" <?php echo $widget_position == 'right' ? 'selected' : ''; ?>>Right</option>
+                                <option value="left" <?php echo $widget_position == 'left' ? 'selected' : ''; ?>><?php echo __( 'Left', 'cookie-law-info' ); ?></option>
+                                <option value="right" <?php echo $widget_position == 'right' ? 'selected' : ''; ?>><?php echo __( 'Right', 'cookie-law-info' ); ?></option>
                             </select>
                         </td>
                     </tr>
@@ -104,12 +103,15 @@ if (!defined('WPINC')) {
                         <td colspan="2" style="padding: 0px;">
                             <table>
                                 <tr valign="top" cli_frm_tgl-id="cli_bar_pos" cli_frm_tgl-val="top" cli_frm_tgl-lvl="2">
-                                    <th scope="row" style="width:400px;">
-                                        <label for="header_fix_field"><?php _e('Fix Cookie Bar to Header?', 'cookie-law-info'); ?></label></th>
+                                <th></th>
                                     <td>
-                                        <input type="radio" id="header_fix_field_yes" name="header_fix_field" class="styled" value="true" <?php echo ($the_options['header_fix'] == true) ? ' checked="checked"' : ''; ?> /> <?php _e('Yes', 'cookie-law-info'); ?>
-                                        <input type="radio" id="iheader_fix_field_no" name="header_fix_field" class="styled" value="false" <?php echo ($the_options['header_fix'] == false) ? ' checked="checked"' : ''; ?> /> <?php _e('No', 'cookie-law-info'); ?>
-                                        <span class="cli_form_help"><?php _e('If you select "Header" then you can optionally stick the cookie bar to the header. Will not have any effect if you select "Footer".', 'cookie-law-info'); ?></span>
+                                        <div style="margin-top:-15px; margin-bottom:15px;">
+                                            <input type="radio" id="header_fix_field_yes" name="header_fix_field" class="styled" value="true" <?php echo ($the_options['header_fix'] == true) ? ' checked="checked"' : ''; ?> /> <?php _e('Fix bar on header', 'cookie-law-info'); ?>
+                                        </div>
+                                        <div>
+                                            <input type="radio" id="iheader_fix_field_no" name="header_fix_field" class="styled" value="false" <?php echo ($the_options['header_fix'] == false) ? ' checked="checked"' : ''; ?> /> <?php _e('Move with the scroll', 'cookie-law-info'); ?>
+                                        </div>
+                                        
                                     </td>
                                 </tr>
                             </table>
@@ -142,14 +144,13 @@ if (!defined('WPINC')) {
         <div class="cli_sub_tab_content" data-id="show-again-tab">
             <div class="wt-cli-section wt-cli-section-floating-widget-settings">
                 <div class="cli_sub_tab_content" data-id="show-again-tab">
-                    <h3><?php _e('Revisit consent', 'cookie-law-info'); ?><span style="margin-left:5px;font-size: 12px;color: #000000ba;font-style: italic;">( <?php _e('previously', 'cookie-law-info'); ?><span style="font-size: 14px;"> <?php _e('Show again tab', 'cookie-law-info'); ?></span> )</span></h3>
                     <div class="wt-cli-notice wt-cli-info">
-                        <?php echo  __('Revisit consent will allow the visitors to view/edit/revoke their prior preferences. This can be done via a widget and/or a shortcode. A small privacy widget is automatically displayed at the footer of your website if the widget option is enabled. You can also manually insert a link to manage consent by adding the shortcode <b>[wt_cli_manage_consent]</b> to your website.', 'cookie-law-info'); ?>
+                        <?php echo  __('Revisit consent will allow the visitors to view/edit/revoke their prior preferences. Enable to display a sticky/fixed widget widget at the footer of your website. You can also manually insert a widget by adding the shortcode <b>[wt_cli_manage_consent]</b> to your website.', 'cookie-law-info'); ?>
                     </div>
                     <div class="wt-cli-revisit-consent-widget">
                         <table class="form-table">
                             <tr valign="top">
-                                <th scope="row"><label for="showagain_tab_field"><?php _e('Enable revisit consent widget', 'cookie-law-info'); ?><span class="wt-cli-tootip" data-wt-cli-tooltip="<?php _e('By enabling this option a small privacy widget is automatically displayed at the footer of your website.', 'cookie-law-info'); ?>"><span class="wt-cli-tootip-icon"></span></span></label></th>
+                                <th scope="row"><label for="showagain_tab_field"><?php _e('Enable revisit consent widget', 'cookie-law-info'); ?><span class="wt-cli-tootip" data-wt-cli-tooltip="<?php _e('Enable to display a sticky/fixed widget at the footer of your website (remains fixed on page scroll).', 'cookie-law-info'); ?>"><span class="wt-cli-tootip-icon"></span></span></label></th>
                                 <td>
                                     <input type="hidden" name="showagain_tab_field" value="false" id="showagain_tab_field_no">
                                     <input name="showagain_tab_field" type="checkbox" value="true" id="showagain_tab_field_yes" class="wt-cli-input-toggle-checkbox" data-cli-toggle-target="wt-cli-revisit-consent-widget" <?php checked($the_options['showagain_tab'], true); ?>>
@@ -160,19 +161,10 @@ if (!defined('WPINC')) {
                     <div class="wt-cli-input-toggle-section" data-cli-toggle-id="wt-cli-revisit-consent-widget">
                         <table class="form-table">
                             <tr valign="top" cli_frm_tgl-id="cli_bar_type" cli_frm_tgl-val="banner" cli_frm_tgl-lvl="0">
-                                <th scope="row"><label for="notify_position_horizontal_field"><?php _e('Tab Position', 'cookie-law-info'); ?></label></th>
+                                <th scope="row"><label for="notify_position_horizontal_field"><?php _e('Widget position', 'cookie-law-info'); ?></label></th>
                                 <td>
-                                    <select name="notify_position_horizontal_field" class="vvv_combobox" style="max-width:100%;">
-                                        <?php
-                                        if ($the_options['notify_position_horizontal'] == "right") {
-                                            echo '<option value="right" selected="selected">' . __('Right', 'cookie-law-info') . '</option>';
-                                            echo '<option value="left">' . __('Left', 'cookie-law-info') . '</option>';
-                                        } else {
-                                            echo '<option value="right">' . __('Right', 'cookie-law-info') . '</option>';
-                                            echo '<option value="left" selected="selected">' . __('Left', 'cookie-law-info') . '</option>';
-                                        }
-                                        ?>
-                                    </select>
+                                    <input type="radio" id="notify_position_horizontal_field_right" name="notify_position_horizontal_field" class="styled" value="right" <?php checked( $the_options['notify_position_horizontal'], 'right'); ?> /> <?php _e('Right', 'cookie-law-info'); ?>
+                                    <input type="radio" id="notify_position_horizontal_field_left" name="notify_position_horizontal_field" class="styled"  value="left" <?php checked( $the_options['notify_position_horizontal'], 'left'); ?> /> <?php _e('Left', 'cookie-law-info'); ?>
                                 </td>
                             </tr>
 
@@ -202,8 +194,8 @@ if (!defined('WPINC')) {
                             <tr valign="top">
                                 <th scope="row"><label id="wt-cli-revisit-consent-margin-label" for="showagain_x_position_field" data-cli-right-text="<?php _e('From Right Margin', 'cookie-law-info'); ?>" data-cli-left-text="<?php _e('From Left Margin', 'cookie-law-info'); ?>"><?php _e('From Left Margin', 'cookie-law-info'); ?></label></th>
                                 <td>
-                                    <input type="text" name="showagain_x_position_field" value="<?php echo $the_options['showagain_x_position'] ?>" />
-                                    <span class="cli_form_help"><?php _e('Specify', 'cookie-law-info'); ?> px&nbsp;or&nbsp;&#37;, e.g. <em>"100px" or "30%"</em></span>
+                                    <input type="text" name="showagain_x_position_field" value="<?php echo esc_attr( $the_options['showagain_x_position'] ) ?>" />
+                                    <span class="cli_form_help"><?php _e('Specify the widget distance from margin in ‘px’ or  ‘%’ . e.g. 100px or 30%', 'cookie-law-info'); ?></span>
                                 </td>
                             </tr>
 
@@ -212,9 +204,10 @@ if (!defined('WPINC')) {
                     </div>
                     <table class="form-table" style="margin-top: 0;">
                         <tr valign="top">
-                            <th scope="row"><label for="showagain_text"><?php _e('Title', 'cookie-law-info'); ?></label></th>
+                            <th scope="row"><label for="showagain_text"><?php _e('Text on the widget', 'cookie-law-info'); ?></label></th>
                             <td>
-                                <input type="text" name="showagain_text_field" value="<?php echo $the_options['showagain_text'] ?>" />
+                                <input type="text" name="showagain_text_field" value="<?php echo esc_attr( $the_options['showagain_text'] ) ?>" />
+                                <span class="cli_form_help"><?php _e('Input a text to appear on the revisit consent widget.', 'cookie-law-info'); ?></span>
                             </td>
                         </tr>
                     </table>

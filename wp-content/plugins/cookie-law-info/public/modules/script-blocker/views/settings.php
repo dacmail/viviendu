@@ -123,7 +123,7 @@ $plugin_help_url = 'https://www.webtoffee.com/gdpr-cookie-consent-plugin-basic-v
     <?php endif; ?>
     <div class="notice-info notice">
         <p><label><?php echo $cli_icon; ?></label>
-            <?php echo $script_blocker_text; ?> <?php echo $cli_notice_text; ?></p>
+            <?php echo esc_html( $script_blocker_text ); ?> <?php echo $cli_notice_text; ?></p>
     </div>
     <form method="post" name="script_blocker_form">
         <?php
@@ -131,13 +131,13 @@ $plugin_help_url = 'https://www.webtoffee.com/gdpr-cookie-consent-plugin-basic-v
             wp_nonce_field($this->module_id);
         }
         ?>
-        <input type="hidden" id="cli_script_blocker_state" name="cli_script_blocker_state" class="styled" value="<?php echo $action_value; ?>" />
+        <input type="hidden" id="cli_script_blocker_state" name="cli_script_blocker_state" class="styled" value="<?php echo esc_attr( $action_value ); ?>" />
         <input type="hidden" id="cli_update_script_blocker" name="cli_update_script_blocker" />
     </form>
     <div class="wt-cli-notice wt-cli-info">
         <?php echo sprintf(wp_kses(__('Below is the list of plugins currently supported for auto blocking. Plugins marked inactive are either not installed or activated on your website. Enabled plugins will be blocked by default on the front-end of your website prior to obtaining user consent and rendered respectively based on consent. <a href="%s" target="_blank">Read more.</a>', 'cookie-law-info'), array('a' => array('href' => array(), 'target' => array()))), esc_url($plugin_help_url)); ?>
     </div>
-    <table class="cli_script_items widefat <?php echo $script_blocker_class; ?>" cellspacing="0">
+    <table class="cli_script_items widefat <?php echo esc_attr( $script_blocker_class ); ?>" cellspacing="0">
         <thead>
             <tr>
                 <th><?php echo __('No', 'cookie-law-info'); ?></th>
@@ -181,11 +181,11 @@ $plugin_help_url = 'https://www.webtoffee.com/gdpr-cookie-consent-plugin-basic-v
                     $plugins_status_text    =   ($plugin_status === false ? __('Inactive', 'cookie-law-info') : '');
                     $plugins_status_class   =   ($plugin_status === false ? 'wt-cli-plugin-inactive' : 'wt-cli-plugin-active');
             ?>
-                    <tr class="<?php echo $plugins_status_class; ?>" data-script-id="<?php echo esc_attr($script_id) ?>">
-                        <td><?php echo $count; ?></td>
-                        <td><?php echo $title; ?>
+                    <tr class="<?php echo esc_attr( $plugins_status_class ); ?>" data-script-id="<?php echo esc_attr($script_id) ?>">
+                        <td><?php echo esc_html( $count ); ?></td>
+                        <td><?php echo esc_html( $title ); ?>
                             <?php if (!empty($plugins_status_text)) : ?>
-                                <span style="color:#dc3232; margin-left:3px;">( <?php echo $plugins_status_text; ?> )</span>
+                                <span style="color:#dc3232; margin-left:3px;">( <?php echo esc_html( $plugins_status_text ); ?> )</span>
                             <?php endif; ?>
                         </td>
                         <td>
@@ -200,12 +200,12 @@ $plugin_help_url = 'https://www.webtoffee.com/gdpr-cookie-consent-plugin-basic-v
                             <select name="cliscript_category" id="cliscript_category">
                                 <option value="0">--Select Category--</option>
                                 <?php foreach ($terms as $key => $term) : ?>
-                                    <option value="<?php echo $key; ?>" <?php echo selected($plugin_data['category'], $key, false) ?>><?php echo $term['title']; ?></option>
+                                    <option value="<?php echo esc_attr( $key ); ?>" <?php echo selected($plugin_data['category'], $key, false) ?>><?php echo esc_html( $term['title'] ); ?></option>
                                 <?php endforeach; ?>
                             </select>
                         </td>
                         <?php endif; ?>
-                        <td><?php echo $description; ?></td>
+                        <td><?php echo esc_html( $description ); ?></td>
                     </tr>
             <?php endforeach;
             endif; ?>

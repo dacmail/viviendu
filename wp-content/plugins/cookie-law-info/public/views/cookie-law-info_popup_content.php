@@ -37,9 +37,9 @@ $js_blocking_enabled = Cookie_Law_Info::wt_cli_is_js_blocking_active();
 
 				if ( isset( $overview_title ) === true && $overview_title !== '' ) {
 					if ( has_filter( 'wt_cli_change_privacy_overview_title_tag' ) ) {
-						echo apply_filters( 'wt_cli_change_privacy_overview_title_tag', $overview_title, '<h4>', '</h4>' );
+						echo apply_filters( 'wt_cli_change_privacy_overview_title_tag', esc_html( $overview_title ), '<h4>', '</h4>' );
 					} else {
-						echo '<h4>' . $overview_title . '</h4>';
+						echo '<h4>' . esc_html( $overview_title ) . '</h4>';
 					}
 				}
 				?>
@@ -94,14 +94,16 @@ $js_blocking_enabled = Cookie_Law_Info::wt_cli_is_js_blocking_active();
 				<?php if ( $category_enabled === true ) : ?>
 					<div class="cli-tab-section">
 						<div class="cli-tab-header">
-							<a role="button" tabindex="0" class="cli-nav-link cli-settings-mobile" data-target="<?php echo $key; ?>" data-toggle="cli-toggle-tab">
+							<a role="button" tabindex="0" class="cli-nav-link cli-settings-mobile" data-target="<?php echo esc_attr( $key ); ?>" data-toggle="cli-toggle-tab">
 								<?php echo $cookie_title; ?>
 							</a>
 							<?php echo $cli_switch; ?>
 						</div>
 						<div class="cli-tab-content">
-							<div class="cli-tab-pane cli-fade" data-id="<?php echo $key; ?>">
-								<p><?php echo do_shortcode( $category_description, 'cookielawinfo-category' ); ?></p>
+							<div class="cli-tab-pane cli-fade" data-id="<?php echo esc_attr( $key ); ?>">
+								<div class="wt-cli-cookie-description">
+									<?php echo do_shortcode( $category_description, 'cookielawinfo-category' ); ?>
+								</div>
 							</div>
 						</div>
 					</div>

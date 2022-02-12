@@ -463,7 +463,7 @@
 	top: 10px;
 	z-index: 1;
 	padding: 0;
-	background-color: transparent;
+	background-color: transparent !important;
 	border: 0;
 	-webkit-appearance: none;
 	font-size: 1.5rem;
@@ -710,6 +710,7 @@ background: #ffffff;
     transform: scale(0);
 	overflow: hidden;
     outline: 0;
+    display: none;
 }
 .cli-modal a {
 	text-decoration: none;
@@ -1366,4 +1367,18 @@ a.wt-cli-ccpa-opt-out {
 }
 .wt-cli-privacy-overview-actions {
     padding-bottom:0;
+}
+@media only screen and (max-width: 479px) and (min-width: 320px){
+    
+    .cli-style-v2 .cli-bar-btn_container {
+        flex-wrap: wrap;
+    }
+}
+/* Fix: HTML validation error due to the enclosing of <p> tags on category description */
+.wt-cli-cookie-description {
+    font-size: 14px;
+    line-height: 1.4;
+    margin-top: 0;
+    padding: 0;
+    color: #000;
 }

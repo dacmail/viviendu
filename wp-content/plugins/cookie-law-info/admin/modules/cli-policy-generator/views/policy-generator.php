@@ -82,12 +82,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 					<?php _e('Update existing Cookie Policy page','cookie-law-info');?>
 				</a>
 
-				<input type="hidden" name="cli_pg_policy_pageid" value="<?php echo $policy_pageid ? $policy_pageid : 0 ?>">
+				<input type="hidden" name="cli_pg_policy_pageid" value="<?php echo $policy_pageid ? esc_attr( $policy_pageid ) : 0 ?>">
 				<a name="cli_pg_save_newpage" class="button-primary cli_pg_main_buttons">
 					<span class="dashicons dashicons-welcome-add-page" style="line-height: 28px;"></span>
 					<?php _e('Create Cookie Policy page','cookie-law-info');?>
 				</a>
-				<a name="cli_pg_live_preview" class="button-secondary cli_pg_main_buttons" href="<?php echo $preview_url;?>" target="_blank">
+				<a name="cli_pg_live_preview" class="button-secondary cli_pg_main_buttons" href="<?php echo esc_url( $preview_url ); ?>" target="_blank">
 					<span class="dashicons dashicons-external" style="line-height: 28px;"></span>
 					<?php _e('Live preview','cookie-law-info');?>
 				</a>

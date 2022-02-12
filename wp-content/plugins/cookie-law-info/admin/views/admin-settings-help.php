@@ -4,7 +4,7 @@ if ( ! defined( 'WPINC' ) ) {
     die;
 }
 ?>
-<div class="cookie-law-info-tab-content" data-id="<?php echo $target_id;?>">	        
+<div class="cookie-law-info-tab-content" data-id="<?php echo esc_attr( $target_id );?>">	        
 	<ul class="cli_sub_tab">
         <li style="border-left:none; padding-left: 0px;" data-target="shortcodes"><a><?php _e('Shortcodes', 'cookie-law-info'); ?></a></li>
         <li data-target="help-links"><a><?php _e('Help Links', 'cookie-law-info'); ?></a></li>
@@ -14,7 +14,7 @@ if ( ! defined( 'WPINC' ) ) {
         <div class="cli_sub_tab_content" data-id="shortcodes" style="display:block;">
             <div style="font-size: 14px;">
         	<h3><?php _e('Cookie bar shortcodes', 'cookie-law-info'); ?></h3>
-            <?php _e('You can enter the shortcodes in the "message" field of the Cookie Law Info bar. They add nicely formatted buttons and/or links into the cookie bar, without you having to add any HTML.', 'cookie-law-info'); ?>
+            <?php _e('You can insert the shortcodes in the Settings > Customise Cookie Bar > Cookie bar > Message to get it rendered on the cookie consent bar of your site.', 'cookie-law-info'); ?>
         	</div>
             <ul class="cli-shortcodes">
             	<li>
@@ -103,7 +103,7 @@ if ( ! defined( 'WPINC' ) ) {
             <h3><?php _e('Help Links', 'cookie-law-info'); ?></h3>
             <ul class="cli-help-links">
                 <li>
-                    <img src="<?php echo $admin_img_path;?>documentation.png">
+                    <img src="<?php echo esc_url( $admin_img_path );?>documentation.png">
                     <h3><?php _e('Documentation', 'cookie-law-info'); ?></h3>
                     <p><?php _e('Refer to our documentation to set and get started', 'cookie-law-info'); ?></p>
                     <a target="_blank" href="https://www.webtoffee.com/gdpr-cookie-consent-plugin-basic-version-user-guide/" class="button button-primary">
@@ -111,7 +111,7 @@ if ( ! defined( 'WPINC' ) ) {
                     </a>
                 </li>
                 <li>
-                    <img src="<?php echo $admin_img_path;?>support.png">
+                    <img src="<?php echo esc_url( $admin_img_path );?>support.png">
                     <h3><?php _e('Help and Support', 'cookie-law-info'); ?></h3>
                     <p><?php _e('We would love to help you on any queries or issues.', 'cookie-law-info'); ?></p>
                     <a target="_blank" href="https://wordpress.org/support/plugin/cookie-law-info/" class="button button-primary">

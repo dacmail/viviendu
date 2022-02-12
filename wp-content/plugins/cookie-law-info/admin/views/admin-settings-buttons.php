@@ -4,34 +4,34 @@ if ( ! defined( 'WPINC' ) ) {
 	die;
 }
 ?>
-<div class="cookie-law-info-tab-content" data-id="<?php echo $target_id; ?>">
+<div class="cookie-law-info-tab-content" data-id="<?php echo esc_attr( $target_id ); ?>">
 	
 	<ul class="cli_sub_tab">
-		<li style="border-left:none; padding-left: 0px;" data-target="accept-button"><a><?php _e( 'Accept Button', 'cookie-law-info' ); ?></a></li>
-        <li data-target="accept-all-button"><a><?php _e('Accept All Button', 'cookie-law-info'); ?></a></li>
+		<li style="border-left:none; padding-left: 0px;" data-target="accept-all-button"><a><?php _e('Accept All Button', 'cookie-law-info'); ?></a></li>
+		<li data-target="accept-button"><a><?php _e( 'Accept Button', 'cookie-law-info' ); ?></a></li>
 		<li data-target="reject-button"><a><?php _e( 'Reject Button', 'cookie-law-info' ); ?></a></li>
 		<li data-target="settings-button"><a><?php _e( 'Settings Button', 'cookie-law-info' ); ?></a></li>
-		<li data-target="read-more-button"><a><?php _e( 'Read More Link', 'cookie-law-info' ); ?></a></li>
-		<li data-target="do-not-sell-button" class="wt-cli-ccpa-element"><a><?php _e( 'Do not sell link', 'cookie-law-info' ); ?></a></li>
+		<li data-target="read-more-button"><a><?php _e( 'Read more', 'cookie-law-info' ); ?></a></li>
+		<li data-target="do-not-sell-button" class="wt-cli-ccpa-element"><a><?php _e( 'Do not sell', 'cookie-law-info' ); ?></a></li>
 	</ul>
 
 	<div class="cli_sub_tab_container">
 
 		<div class="cli_sub_tab_content" data-id="accept-button" style="display:block;">
 			<h3><?php _e( 'Accept Button', 'cookie-law-info' ); ?> <code>[cookie_button]</code></h3>
-			<p><?php _e( 'This button/link can be customised to either simply close the cookie bar, or follow a link. You can also customise the colours and styles, and show it as a link or a button.', 'cookie-law-info' ); ?></p>
+			<p><?php _e( 'Customize the Accept button to match the theme of your site. Insert the shortcode [cookie_button] in Customise Cookie Bar > Cookie bar > Message to include accept button in cookie consent bar.', 'cookie-law-info' ); ?></p>
 			<table class="form-table">
 				<tr valign="top">
 					<th scope="row"><label for="button_1_text_field"><?php _e( 'Text', 'cookie-law-info' ); ?></label></th>
 					<td>
-						<input type="text" name="button_1_text_field" value="<?php echo stripslashes( $the_options['button_1_text'] ); ?>" />
+						<input type="text" name="button_1_text_field" value="<?php echo esc_attr( stripslashes( $the_options['button_1_text'] ) ); ?>" />
 					</td>
 				</tr>
 				<tr valign="top">
 					<th scope="row"><label for="button_1_link_colour_field"><?php _e( 'Text colour', 'cookie-law-info' ); ?></label></th>
 					<td>
 						<?php
-							echo '<input type="text" name="button_1_link_colour_field" id="cli-colour-link-button-1" value="' . $the_options['button_1_link_colour'] . '" class="my-color-field" />';
+							echo '<input type="text" name="button_1_link_colour_field" id="cli-colour-link-button-1" value="' . esc_attr( $the_options['button_1_link_colour'] ) . '" class="my-color-field" />';
 						?>
 					</td>
 				</tr>
@@ -47,7 +47,7 @@ if ( ! defined( 'WPINC' ) ) {
 					<th scope="row"><label for="button_1_button_colour_field"><?php _e( 'Background colour', 'cookie-law-info' ); ?></label></th>
 					<td>
 						<?php
-						echo '<input type="text" name="button_1_button_colour_field" id="cli-colour-btn-button-1" value="' . $the_options['button_1_button_colour'] . '" class="my-color-field" />';
+						echo '<input type="text" name="button_1_button_colour_field" id="cli-colour-btn-button-1" value="' . esc_attr( $the_options['button_1_button_colour'] ) . '" class="my-color-field" />';
 						?>
 					</td>
 				</tr>
@@ -63,13 +63,13 @@ if ( ! defined( 'WPINC' ) ) {
 				<tr valign="top" class="cli-plugin-row cli-indent-15" cli_frm_tgl-id="cli_accept_action" cli_frm_tgl-val="CONSTANT_OPEN_URL">
 					<th scope="row"><label for="button_1_url_field"><?php _e( 'URL', 'cookie-law-info' ); ?></label></th>
 					<td>
-						<input type="text" name="button_1_url_field" id="button_1_url_field" value="<?php echo $the_options['button_1_url']; ?>" />
-						<span class="cli_form_help"><?php _e( 'Button will only link to URL if Action = Open URL', 'cookie-law-info' ); ?></span>
+						<input type="text" name="button_1_url_field" id="button_1_url_field" value="<?php echo esc_attr( $the_options['button_1_url'] ); ?>" />
+						<span class="cli_form_help"><?php _e( 'Specify the URL to redirect users on accept button click. e.g. Entering the cookie policy page URL will redirect users to the cookie policy page after giving consent.', 'cookie-law-info' ); ?></span>
 					</td>
 				</tr>
 
 				<tr valign="top" class="cli-plugin-row cli-indent-15" cli_frm_tgl-id="cli_accept_action" cli_frm_tgl-val="CONSTANT_OPEN_URL">
-					<th scope="row"><label for="button_1_new_win_field"><?php _e( 'Open URL in new window?', 'cookie-law-info' ); ?></label></th>
+					<th scope="row"><label for="button_1_new_win_field"><?php _e( 'Open URL in new window', 'cookie-law-info' ); ?></label></th>
 					<td>
 						<input type="radio" id="button_1_new_win_field_yes" name="button_1_new_win_field" class="styled" value="true" <?php echo ( $the_options['button_1_new_win'] == true ) ? ' checked="checked"' : ''; ?> /><?php _e( 'Yes', 'cookie-law-info' ); ?>
 						
@@ -80,7 +80,7 @@ if ( ! defined( 'WPINC' ) ) {
 				
 				
 				<tr valign="top">
-					<th scope="row"><label for="button_1_button_size_field"><?php _e( 'Size', 'cookie-law-info' ); ?></label></th>
+					<th scope="row"><label for="button_1_button_size_field"><?php _e( 'Button Size', 'cookie-law-info' ); ?></label></th>
 					<td>
 						<select name="button_1_button_size_field" class="vvv_combobox">
 							<?php $this->print_combobox_options( $this->get_button_sizes(), $the_options['button_1_button_size'] ); ?>
@@ -92,18 +92,19 @@ if ( ! defined( 'WPINC' ) ) {
 
 		<div class="cli_sub_tab_content" data-id="reject-button">
 			<h3><?php _e( 'Reject Button', 'cookie-law-info' ); ?> <code>[cookie_reject]</code></h3>
+			<p><?php _e( 'Customize the Reject button to match the theme of your site. Insert the shortcode <b>[cookie_reject]</b> in <b>Customise Cookie Bar > Cookie bar > Message</b> to include reject button in cookie consent bar.', 'cookie-law-info' ); ?></p>
 			<table class="form-table" >
 				<tr valign="top">
 					<th scope="row"><label for="button_3_text_field"><?php _e( 'Text', 'cookie-law-info' ); ?></label></th>
 					<td>
-						<input type="text" name="button_3_text_field" value="<?php echo stripslashes( $the_options['button_3_text'] ); ?>" />
+						<input type="text" name="button_3_text_field" value="<?php echo esc_attr( stripslashes( $the_options['button_3_text'] ) ); ?>" />
 					</td>
 				</tr>
 				<tr valign="top">
 					<th scope="row"><label for="button_3_link_colour_field"><?php _e( 'Text colour', 'cookie-law-info' ); ?></label></th>
 					<td>
 						<?php
-							echo '<input type="text" name="button_3_link_colour_field" id="cli-colour-link-button-3" value="' . $the_options['button_3_link_colour'] . '" class="my-color-field" />';
+							echo '<input type="text" name="button_3_link_colour_field" id="cli-colour-link-button-3" value="' . esc_attr( $the_options['button_3_link_colour'] ) . '" class="my-color-field" />';
 						?>
 					</td>
 				</tr>               
@@ -119,7 +120,7 @@ if ( ! defined( 'WPINC' ) ) {
 					<th scope="row"><label for="button_3_button_colour_field"><?php _e( 'Background colour', 'cookie-law-info' ); ?></label></th>
 					<td>
 						<?php
-							echo '<input type="text" name="button_3_button_colour_field" id="cli-colour-btn-button-3" value="' . $the_options['button_3_button_colour'] . '" class="my-color-field" />';
+							echo '<input type="text" name="button_3_button_colour_field" id="cli-colour-btn-button-3" value="' . esc_attr( $the_options['button_3_button_colour'] ) . '" class="my-color-field" />';
 						?>
 					</td>
 				</tr>
@@ -138,20 +139,20 @@ if ( ! defined( 'WPINC' ) ) {
 				<tr valign="top" class="cli-plugin-row" cli_frm_tgl-id="cli_reject_action" cli_frm_tgl-val="CONSTANT_OPEN_URL">
 					<th scope="row"><label for="button_3_url_field"><?php _e( 'URL', 'cookie-law-info' ); ?></label></th>
 					<td>
-						<input type="text" name="button_3_url_field" id="button_3_url_field" value="<?php echo $the_options['button_3_url']; ?>" />
-						<span class="cli_form_help"><?php _e( 'Button will only link to URL if Action = Open URL', 'cookie-law-info' ); ?></span>
+						<input type="text" name="button_3_url_field" id="button_3_url_field" value="<?php echo esc_url( $the_options['button_3_url'] ); ?>" />
+						<span class="cli_form_help"><?php _e( 'Specify the URL to redirect users on reject button click. e.g. Entering the cookie policy page URL will redirect users to the cookie policy page after rejecting cookies.', 'cookie-law-info' ); ?></span>
 					</td>
 				</tr>
 
 				<tr valign="top" class="cli-plugin-row" cli_frm_tgl-id="cli_reject_action" cli_frm_tgl-val="CONSTANT_OPEN_URL">
-					<th scope="row"><label for="button_3_new_win_field"><?php _e( 'Open URL in new window?', 'cookie-law-info' ); ?></label></th>
+					<th scope="row"><label for="button_3_new_win_field"><?php _e( 'Open URL in new window', 'cookie-law-info' ); ?></label></th>
 					<td>
 						<input type="radio" id="button_3_new_win_field_yes" name="button_3_new_win_field" class="styled" value="true" <?php echo ( $the_options['button_3_new_win'] == true ) ? ' checked="checked"' : ''; ?>  /><?php _e( 'Yes', 'cookie-law-info' ); ?>
 						<input type="radio" id="button_3_new_win_field_no" name="button_3_new_win_field" class="styled" value="false" <?php echo ( $the_options['button_3_new_win'] == false ) ? ' checked="checked"' : ''; ?> /><?php _e( 'No', 'cookie-law-info' ); ?>
 					</td>
 				</tr>
 				<tr valign="top">
-					<th scope="row"><label for="button_3_button_size_field"><?php _e( 'Size', 'cookie-law-info' ); ?></label></th>
+					<th scope="row"><label for="button_3_button_size_field"><?php _e( 'Button Size', 'cookie-law-info' ); ?></label></th>
 					<td>
 						<select name="button_3_button_size_field" class="vvv_combobox">
 							<?php $this->print_combobox_options( $this->get_button_sizes(), $the_options['button_3_button_size'] ); ?>
@@ -162,18 +163,19 @@ if ( ! defined( 'WPINC' ) ) {
 		</div>
 		<div class="cli_sub_tab_content" data-id="settings-button">
 			<h3><?php _e( 'Settings Button', 'cookie-law-info' ); ?> <code>[cookie_settings]</code></h3>
+			<p><?php _e( 'Customize the cookie settings to match the theme of your site. Insert the shortcode <b>[cookie_settings]</b> in <b>Customise Cookie Bar > Cookie bar > Message</b> to include cookie settings within the cookie consent bar. Clicking ‘Cookie settings’ opens up a pop up window with provisions to enable/disable cookie categories.', 'cookie-law-info' ); ?></p>
 			<table class="form-table" >
 				<tr valign="top">
-					<th scope="row"><label for="button_4_text_field"><?php _e( 'Text', 'cookie-law-info' ); ?></label></th>
+					<th scope="row"><label for="button_4_text_field"><?php _e('Text', 'cookie-law-info' ); ?></label></th>
 					<td>
-						<input type="text" name="button_4_text_field" value="<?php echo stripslashes( $the_options['button_4_text'] ); ?>" />
+						<input type="text" name="button_4_text_field" value="<?php echo esc_attr( stripslashes( $the_options['button_4_text'] ) ); ?>" />
 					</td>
 				</tr>
 				<tr valign="top">
 					<th scope="row"><label for="button_4_link_colour_field"><?php _e( 'Text colour', 'cookie-law-info' ); ?></label></th>
 					<td>
 						<?php
-							echo '<input type="text" name="button_4_link_colour_field" id="cli-colour-link-button-4" value="' . $the_options['button_4_link_colour'] . '" class="my-color-field" />';
+							echo '<input type="text" name="button_4_link_colour_field" id="cli-colour-link-button-4" value="' . esc_attr( $the_options['button_4_link_colour'] ) . '" class="my-color-field" />';
 						?>
 					</td>
 				</tr>
@@ -189,27 +191,22 @@ if ( ! defined( 'WPINC' ) ) {
 					<th scope="row"><label for="button_4_button_colour_field"><?php _e( 'Background colour', 'cookie-law-info' ); ?></label></th>
 					<td>
 						<?php
-							echo '<input type="text" name="button_4_button_colour_field" id="cli-colour-btn-button-4" value="' . $the_options['button_4_button_colour'] . '" class="my-color-field" />';
+							echo '<input type="text" name="button_4_button_colour_field" id="cli-colour-btn-button-4" value="' . esc_attr( $the_options['button_4_button_colour'] ) . '" class="my-color-field" />';
 						?>
-					</td>
-				</tr>
-				<tr valign="top">
-					<th scope="row"><label for="button_4_button_size_field"><?php _e( 'Size', 'cookie-law-info' ); ?></label></th>
-					<td>
-						<select name="button_4_button_size_field" class="vvv_combobox">
-							<?php $this->print_combobox_options( $this->get_button_sizes(), $the_options['button_4_button_size'] ); ?>
-						</select>
 					</td>
 				</tr>
 			</table><!-- end custom button -->
 		</div>
 		<div class="cli_sub_tab_content" data-id="read-more-button">
-			<h3><?php _e( 'Read More Link', 'cookie-law-info' ); ?> <code>[cookie_link]</code></h3>
-			<p><?php _e( 'This button/link can be used to provide a link out to your Privacy & Cookie Policy. You can customise it any way you like.', 'cookie-law-info' ); ?></p>
+			<h3><?php _e( 'Read more', 'cookie-law-info' ); ?> <code>[cookie_link]</code></h3>
+			<p>
+				<?php _e( '‘Read more’ redirects users to the ‘Privacy & Cookie Policy’ page. Create a ‘Privacy & Cookie Policy’ page for your site from here.', 'cookie-law-info' ); ?>
+				<?php _e( 'Insert the shortcode <b>[cookie_link]</b> in <b>Customise Cookie Bar > Cookie bar > Message</b> to include ‘Read more’ within the cookie consent bar.', 'cookie-law-info' ); ?>
+			</p>
 			<?php
 			if ( Cookie_Law_Info_Admin::module_exists( 'cli-policy-generator' ) ) {
 				?>
-			<p><?php _e( 'Click', 'cookie-law-info' ); ?> <a href="<?php echo admin_url( 'edit.php?post_type=' . CLI_POST_TYPE . '&page=cookie-law-info-policy-generator' ); ?>"><?php _e( 'here', 'cookie-law-info' ); ?></a> <?php _e( ' to generate content for Cookie Policy page.', 'cookie-law-info' ); ?>
+			<p><?php _e( 'Click', 'cookie-law-info' ); ?> <a href="<?php echo esc_url( admin_url( 'edit.php?post_type=' . CLI_POST_TYPE . '&page=cookie-law-info-policy-generator' ) ); ?>"><?php _e( 'here', 'cookie-law-info' ); ?></a> <?php _e( ' to generate content for Cookie Policy page.', 'cookie-law-info' ); ?>
 			</p>
 				<?php
 			}
@@ -219,14 +216,14 @@ if ( ! defined( 'WPINC' ) ) {
 				<tr valign="top">
 					<th scope="row"><label for="button_2_text_field"><?php _e( 'Text', 'cookie-law-info' ); ?></label></th>
 					<td>
-						<input type="text" name="button_2_text_field" value="<?php echo stripslashes( $the_options['button_2_text'] ); ?>" />
+						<input type="text" name="button_2_text_field" value="<?php echo esc_attr( stripslashes( $the_options['button_2_text'] ) ); ?>" />
 					</td>
 				</tr>
 				<tr valign="top">
 					<th scope="row"><label for="button_2_link_colour_field"><?php _e( 'Text colour', 'cookie-law-info' ); ?></label></th>
 					<td>
 						<?php
-							echo '<input type="text" name="button_2_link_colour_field" id="cli-colour-link-button-1" value="' . $the_options['button_2_link_colour'] . '" class="my-color-field" />';
+							echo '<input type="text" name="button_2_link_colour_field" id="cli-colour-link-button-1" value="' . esc_attr( $the_options['button_2_link_colour'] ) . '" class="my-color-field" />';
 						?>
 					</td>
 				</tr>
@@ -242,7 +239,7 @@ if ( ! defined( 'WPINC' ) ) {
 					<th scope="row"><label for="button_2_button_colour_field"><?php _e( 'Background colour', 'cookie-law-info' ); ?></label></th>
 					<td>
 						<?php
-							echo '<input type="text" name="button_2_button_colour_field" id="cli-colour-btn-button-1" value="' . $the_options['button_2_button_colour'] . '" class="my-color-field" />';
+							echo '<input type="text" name="button_2_button_colour_field" id="cli-colour-btn-button-1" value="' . esc_attr( $the_options['button_2_button_colour'] ) . '" class="my-color-field" />';
 						?>
 					</td>
 				</tr>
@@ -259,7 +256,7 @@ if ( ! defined( 'WPINC' ) ) {
 				<tr valign="top" cli_frm_tgl-id="cli_readmore_url_type" cli_frm_tgl-val="url">
 					<th scope="row"><label for="button_2_url_field"><?php _e( 'URL', 'cookie-law-info' ); ?></label></th>
 					<td>
-						<input type="text" name="button_2_url_field" id="button_2_url_field" value="<?php echo $the_options['button_2_url']; ?>" />
+						<input type="text" name="button_2_url_field" id="button_2_url_field" value="<?php echo esc_url( $the_options['button_2_url'] ); ?>" />
 					</td>
 				</tr>
 				<tr valign="top" cli_frm_tgl-id="cli_readmore_url_type" cli_frm_tgl-val="page">
@@ -270,7 +267,7 @@ if ( ! defined( 'WPINC' ) ) {
 							<?php
 							foreach ( $all_pages as $page ) {
 								?>
-								<option value="<?php echo $page->ID; ?>" <?php echo ( $the_options['button_2_page'] == $page->ID ? 'selected' : '' ); ?>> <?php echo $page->post_title; ?> </option>;
+								<option value="<?php echo esc_attr( $page->ID ); ?>" <?php echo ( $the_options['button_2_page'] == $page->ID ? 'selected' : '' ); ?>> <?php echo esc_html( $page->post_title ); ?> </option>;
 								<?php
 							}
 							?>
@@ -294,36 +291,30 @@ if ( ! defined( 'WPINC' ) ) {
 					</td>
 				</tr>
 				<tr valign="top">
-					<th scope="row"><label for="button_2_new_win_field"><?php _e( 'Minimize Cookie Bar in this page/URL?', 'cookie-law-info' ); ?></label></th>
+					<th scope="row"><label for="button_2_new_win_field"><?php _e( 'Hide cookie bar in this page/URL', 'cookie-law-info' ); ?></label></th>
 					<td>
 						<input type="radio" id="button_2_hidebar_field_yes" name="button_2_hidebar_field" class="styled" value="true" <?php echo ( $the_options['button_2_hidebar'] == true ) ? ' checked="checked"' : ''; ?> /> <?php _e( 'Yes', 'cookie-law-info' ); ?>
 							   <input type="radio" id="button_2_hidebar_field_no" name="button_2_hidebar_field" class="styled" value="false" <?php echo ( $the_options['button_2_hidebar'] == false ) ? ' checked="checked"' : ''; ?> /> <?php _e( 'No', 'cookie-law-info' ); ?>
 					</td>
 				</tr>
 				<tr valign="top">
-					<th scope="row"><label for="button_2_new_win_field"><?php _e( 'Open in new window?', 'cookie-law-info' ); ?></label></th>
+					<th scope="row"><label for="button_2_new_win_field"><?php _e( 'Open in a new window', 'cookie-law-info' ); ?></label></th>
 					<td>
 						<input type="radio" id="button_2_new_win_field_yes" name="button_2_new_win_field" class="styled" value="true" <?php echo ( $the_options['button_2_new_win'] == true ) ? ' checked="checked"' : ''; ?> /> <?php _e( 'Yes', 'cookie-law-info' ); ?>
 							   <input type="radio" id="button_2_new_win_field_no" name="button_2_new_win_field" class="styled" value="false" <?php echo ( $the_options['button_2_new_win'] == false ) ? ' checked="checked"' : ''; ?> /> <?php _e( 'No', 'cookie-law-info' ); ?>
 					</td>
 				</tr>
-				<tr valign="top">
-					<th scope="row"><label for="button_2_button_size_field"><?php _e( 'Size', 'cookie-law-info' ); ?></label></th>
-					<td>
-						<select name="button_2_button_size_field" class="vvv_combobox">
-							<?php $this->print_combobox_options( $this->get_button_sizes(), $the_options['button_2_button_size'] ); ?>
-						</select>
-					</td>
-				</tr>
 			</table><!-- end custom button -->
 		</div>
-		<div class="cli_sub_tab_content wt-cli-ccpa-element" data-id="do-not-sell-button">
-			<h3><?php _e( 'Do not sell link', 'cookie-law-info' ); ?> <code>[wt_cli_ccpa_optout]</code></h3>
+		<div class="cli_sub_tab_content" data-id="do-not-sell-button">
+			<h3><?php _e( 'Do not sell', 'cookie-law-info' ); ?> <code>[wt_cli_ccpa_optout]</code></h3>
+			<p><?php _e( 'Customise the appearance of CCPA notice. Enabling ‘Show CCPA notice’ displays the notice on the consent bar and records prior consent from the user. Alternatively, insert CCPA shortcode [wt_cli_ccpa_optout] to render CCPA notice in a specific page of your site, preferably, cookie policy page.', 'cookie-law-info' ); ?></p>
+
 			<table class="form-table">
 				<tr valign="top">
 					<th scope="row"><label for="button_6_text_field"><?php _e( 'CCPA Text', 'cookie-law-info' ); ?></label></th>
 					<td>
-						<input type="text" name="button_6_text_field" value="<?php echo stripslashes( $the_options['button_6_text'] ); ?>" />
+						<input type="text" name="button_6_text_field" value="<?php echo esc_attr( stripslashes( $the_options['button_6_text'] ) ); ?>" />
 					</td>
 				</tr>
 				<tr valign="top">
@@ -340,7 +331,7 @@ if ( ! defined( 'WPINC' ) ) {
 					<th scope="row"><label for="button_6_link_colour_field"><?php _e( 'Text colour', 'cookie-law-info' ); ?></label></th>
 					<td>
 						<?php
-						echo '<input type="text" name="button_6_link_colour_field" id="cli-colour-link-button-6" value="' . $the_options['button_6_link_colour'] . '" class="my-color-field" />';
+						echo '<input type="text" name="button_6_link_colour_field" id="cli-colour-link-button-6" value="' . esc_attr( $the_options['button_6_link_colour'] ) . '" class="my-color-field" />';
 						?>
 					</td>
 				</tr>
@@ -353,14 +344,14 @@ if ( ! defined( 'WPINC' ) ) {
 				<tr valign="top">
 					<th scope="row"><label for="button_7_text_field"><?php _e( 'Text', 'cookie-law-info' ); ?></label></th>
 					<td>
-						<input type="text" name="button_7_text_field" value="<?php echo stripslashes( $the_options['button_7_text'] ); ?>" />
+						<input type="text" name="button_7_text_field" value="<?php echo esc_attr( stripslashes( $the_options['button_7_text'] ) ); ?>" />
 					</td>
 				</tr>
 				<tr valign="top">
 					<th scope="row"><label for="button_7_link_colour_field"><?php _e( 'Text colour', 'cookie-law-info' ); ?></label></th>
 					<td>
 						<?php
-						echo '<input type="text" name="button_7_link_colour_field" id="cli-colour-link-button-7" value="' . $the_options['button_7_link_colour'] . '" class="my-color-field" />';
+						echo '<input type="text" name="button_7_link_colour_field" id="cli-colour-link-button-7" value="' . esc_attr( $the_options['button_7_link_colour'] ) . '" class="my-color-field" />';
 						?>
 					</td>
 				</tr>
@@ -376,7 +367,7 @@ if ( ! defined( 'WPINC' ) ) {
 					<th scope="row"><label for="button_7_button_colour_field"><?php _e( 'Background colour', 'cookie-law-info' ); ?></label></th>
 					<td>
 						<?php
-						echo '<input type="text" name="button_7_button_colour_field" id="cli-colour-btn-button-7" value="' . $the_options['button_7_button_colour'] . '" class="my-color-field" />';
+						echo '<input type="text" name="button_7_button_colour_field" id="cli-colour-btn-button-7" value="' . esc_attr( $the_options['button_7_button_colour'] ) . '" class="my-color-field" />';
 						?>
 					</td>
 				</tr>
@@ -391,7 +382,7 @@ if ( ! defined( 'WPINC' ) ) {
 				<tr valign="top" class="cli-plugin-row cli-indent-15" cli_frm_tgl-id="cli_accept_all_action" cli_frm_tgl-val="CONSTANT_OPEN_URL">
 					<th scope="row"><label for="button_7_url_field"><?php _e( 'URL', 'cookie-law-info' ); ?></label></th>
 					<td>
-						<input type="text" name="button_7_url_field" id="button_7_url_field" value="<?php echo $the_options['button_7_url']; ?>" />
+						<input type="text" name="button_7_url_field" id="button_7_url_field" value="<?php echo esc_url( $the_options['button_7_url'] ); ?>" />
 						<span class="cli_form_help"><?php _e( 'Button will only link to URL if Action = Open URL', 'cookie-law-info' ); ?></span>
 					</td>
 				</tr>

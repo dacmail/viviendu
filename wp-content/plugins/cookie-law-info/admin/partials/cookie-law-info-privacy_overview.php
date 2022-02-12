@@ -29,13 +29,13 @@ if ( ! defined( 'WPINC' ) ) {
             <table class="form-table cli_privacy_overview_form" >
                 <tr valign="top">
                     <td>
-                        <label for="privacy_overview_title"><?php _e('Privacy Overview Title', 'cookie-law-info'); ?></label>
-                        <input type="text" name="privacy_overview_title" value="<?php echo sanitize_text_field( stripslashes( $privacy_title ) ); ?>" class="cli-textbox" />
+                        <label for="privacy_overview_title"><?php _e('Title', 'cookie-law-info'); ?></label>
+                        <input type="text" name="privacy_overview_title" value="<?php echo esc_attr( sanitize_text_field( stripslashes( $privacy_title ) ) ); ?>" class="cli-textbox" />
                     </td>
                  </tr>
                 <tr valign="top">
                     <td>
-                    <label for="privacy_overview_content"><?php _e('This will be shown in the settings visible for user on consent screen.', 'cookie-law-info'); ?></label>
+                    <label for="privacy_overview_content"><?php _e('Privacy overview is displayed when the user clicks on ‘cookie settings’ from the cookie consent bar. Edit/ modify the title and content of ‘privacy overview’ from here.', 'cookie-law-info'); ?></label>
                         <?php 
                         $cli_use_editor= apply_filters('cli_use_editor_in_po',true);
                         if($cli_use_editor)
@@ -50,7 +50,6 @@ if ( ! defined( 'WPINC' ) ) {
                         }
                         ?>     
                         <div class="clearfix"></div>
-                        <span class="cli_form_help"><?php _e('This will be shown in the settings visible for user on consent screen.', 'cookie-law-info'); ?></span>
                     </td>
                 </tr>
             </table>

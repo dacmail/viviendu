@@ -114,6 +114,9 @@ class Cookie_Law_Info_CCPA
         }
     }
     public function wt_cli_ccpa_optout_callback() {
+        
+        $cookie_options = Cookie_Law_Info::get_settings();
+        $this->ccpa_text = Cookie_Law_Info::sanitise_settings('button_6_text', ( isset( $cookie_options['button_6_text'] ) ? $cookie_options['button_6_text'] : 'Do not sell my personal information' ) );
 
         $ccpa_data           = '';
         $ccpa_enabled        = $this->ccpa_enabled;
@@ -147,15 +150,15 @@ class Cookie_Law_Info_CCPA
                     <div class="wt-cli-ccpa-message-toggler">
                         <div class="wt-cli-form-group">
                             <input type="radio" name="consent_type_field" id="consent_type_field_gdpr" value="gdpr" '.checked( $consent_type, 'gdpr',false).'><label for="consent_type_field_gdpr"><b>'.__('GDPR','cookie-law-info').'</b></label>
-                            <div class="wt-cli-info-bar"><small>'.__('Customize the buttons, notice, themes from the relevant tabs to setup your cookie notice accordingly.','cookie-law-info').'</small></div>
+                            <div class="wt-cli-info-bar"><small>'.__('GDPR compliance is essential for your website if it has a target audience from the European union.','cookie-law-info').'</small></div>
                         </div>
                         <div class="wt-cli-form-group">
                             <input type="radio" name="consent_type_field" id="consent_type_field_ccpa" value="ccpa" '.checked( $consent_type, 'ccpa',false).'><label for="consent_type_field_ccpa"><b>'.__('CCPA','cookie-law-info').'</b></label>
-                            <div class="wt-cli-info-bar"><small>'.__('Most of the customizations from the tabs for buttons, notice or themes are not relevant especially if you choose to not show the notice, except the Do not sell within the buttons.','cookie-law-info').'</small></div>
+                            <div class="wt-cli-info-bar"><small>'.__('CCPA compliance is essential for your website if it has a target audience from California.','cookie-law-info').'</small></div>
                         </div>
                         <div class="wt-cli-form-group">
                             <input type="radio" name="consent_type_field" id="consent_type_field_ccpa_gdpr" value="ccpa_gdpr" '.checked( $consent_type, 'ccpa_gdpr',false).'><label for="consent_type_field_ccpa_gdpr"><b>'.__('CCPA & GDPR','cookie-law-info').'</b></label>
-                            <div class="wt-cli-info-bar"><small>'.__('Customize the buttons, notice, themes from the relevant tabs to setup your cookie notice accordingly.','cookie-law-info').'</small></div>
+                            <div class="wt-cli-info-bar"><small>'.__('Comply with both the laws on the same website if your target audience are from European union and California.','cookie-law-info').'</small></div>
                         </div>
                         <textarea id="wt_ci_gdpr_only" name="gdpr_content_field" style="display:none">'.stripslashes( $gdpr_content ).'</textarea>
                         <textarea id="wt_ci_ccpa_only" name="ccpa_content_field" style="display:none">'.stripslashes( $ccpa_only_content ).'</textarea>

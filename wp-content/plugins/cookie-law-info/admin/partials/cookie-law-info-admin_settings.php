@@ -36,7 +36,7 @@ $all_pages=get_pages($args_for_get_pages);
                 <tr valign="middle" class="cli_bar_on" style="<?php echo $the_options['is_on'] == true ? '' : 'display:none;';?>">
                     <td style="padding-left: 10px;">
                         <div class="wt-cli-gdpr-plugin-status wt-cli-gdpr-plugin-status-active">
-                            <img id="cli-plugin-status-icon" src="<?php echo $cli_img_path;?>add.svg" />
+                            <img id="cli-plugin-status-icon" src="<?php echo esc_url( $cli_img_path );?>add.svg" />
                             <span><?php _e('Cookie bar is currently active', 'cookie-law-info'); ?></span>
                         </div>
                     </td>
@@ -44,7 +44,7 @@ $all_pages=get_pages($args_for_get_pages);
                 <tr valign="middle" class="cli_bar_off" style="<?php echo $the_options['is_on'] == true ? 'display:none;' : '';?>">
                     <td style="padding-left: 10px;">
                         <div class="wt-cli-gdpr-plugin-status wt-cli-gdpr-plugin-status-active">
-                            <img id="cli-plugin-status-icon" src="<?php echo $cli_img_path;?>cross.png" />
+                            <img id="cli-plugin-status-icon" src="<?php echo esc_url( $cli_img_path );?>cross.png" />
                             <span><?php _e('Cookie bar is currently inactive', 'cookie-law-info'); ?></span>
                         </div>
                     </td>
@@ -53,7 +53,7 @@ $all_pages=get_pages($args_for_get_pages);
         </div>
         <div class="wt-cli-gdpr-plugin-branding">
             <div class="wt-cli-gdpr-plugin-branding-logo">
-                <a href="https://www.cookieyes.com" target="_blank"><img src="<?php echo $cli_img_path;?>logo-cookieyes.svg" alt="CookieYes Logo"></a>
+                <img src="<?php echo esc_url( $cli_img_path );?>logo-cookieyes.svg" alt="CookieYes Logo">
             </div>
             <div class="wt-cli-gdpr-plugin-branding-tagline">
                 
@@ -74,7 +74,7 @@ $all_pages=get_pages($args_for_get_pages);
     </div>
 
    
-    <div class="cli_settings_left">
+    <div class="cli_settings_left" id="cky-container">
         <div class="nav-tab-wrapper wp-clearfix cookie-law-info-tab-head">
             <?php
             $tab_head_arr=array(
@@ -83,11 +83,12 @@ $all_pages=get_pages($args_for_get_pages);
                 'cookie-law-info-buttons'=>__('Customise Buttons','cookie-law-info'),
                 'cookie-law-info-advanced'=>__('Advanced','cookie-law-info'),
                 'cookie-law-info-help'=>__('Help Guide','cookie-law-info'),
+                'cookie-law-info-upgrade-pro'=>__('Free vs Pro','cookie-law-info'),
             );
             Cookie_Law_Info::generate_settings_tabhead($tab_head_arr);
             ?>
         </div>
-        <div class="cookie-law-info-tab-container">
+        <div id="cky-tab-container" class="cookie-law-info-tab-container">
             <?php
             $setting_views_a=array(
                 'cookie-law-info-general'=>'admin-settings-general.php',
@@ -97,6 +98,7 @@ $all_pages=get_pages($args_for_get_pages);
             );
             $setting_views_b=array(           
                 'cookie-law-info-help'=>'admin-settings-help.php',           
+                'cookie-law-info-upgrade-pro'=>'admin-settings-upgrade-pro.php',           
             );
             ?>
             <form method="post" action="<?php echo esc_url($_SERVER["REQUEST_URI"]);?>" id="cli_settings_form">
@@ -134,7 +136,7 @@ $all_pages=get_pages($args_for_get_pages);
         </div>
     </div>
     <div class="cli_settings_right">
-     <?php include $cli_admin_view_path."goto-pro.php"; ?>   
+     <?php include $cli_admin_view_path."goto-pro-v2.php"; ?>   
     </div>
 
 </div>

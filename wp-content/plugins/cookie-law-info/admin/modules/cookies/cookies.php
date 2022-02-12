@@ -196,7 +196,7 @@ class Cookie_Law_Info_Cookies {
 		$cookie_slugid = ( isset( $custom['_cli_cookie_slugid'][0] ) ) ? $custom['_cli_cookie_slugid'][0] : '';
 		?>
 		<label><?php echo __( 'Cookie ID', 'cookie-law-info' ); ?></label>
-		<input name="_cli_cookie_slugid" value="<?php echo sanitize_text_field( $cookie_slugid ); ?>" style="width:95%;" />
+		<input name="_cli_cookie_slugid" value="<?php echo esc_attr( sanitize_text_field( $cookie_slugid ) ); ?>" style="width:95%;" />
 		<?php
 	}
 
@@ -207,7 +207,7 @@ class Cookie_Law_Info_Cookies {
 		$cookie_type = ( isset( $custom['_cli_cookie_type'][0] ) ) ? $custom['_cli_cookie_type'][0] : '';
 		?>
 		<label><?php echo __( 'Cookie Type: (persistent, session, third party )', 'cookie-law-info' ); ?></label>
-		<input name="_cli_cookie_type" value="<?php echo sanitize_text_field( $cookie_type ); ?>" style="width:95%;" />
+		<input name="_cli_cookie_type" value="<?php echo esc_attr( sanitize_text_field( $cookie_type ) ); ?>" style="width:95%;" />
 		<?php
 	}
 
@@ -219,7 +219,7 @@ class Cookie_Law_Info_Cookies {
 		?>
 		
 		<label><?php echo __( 'Cookie Duration:', 'cookie-law-info' ); ?></label>
-		<input name="_cli_cookie_duration" value="<?php echo sanitize_text_field( $cookie_duration ); ?>" style="width:95%;" />
+		<input name="_cli_cookie_duration" value="<?php echo esc_attr( sanitize_text_field( $cookie_duration ) ); ?>" style="width:95%;" />
 		<?php
 	}
 
@@ -230,7 +230,7 @@ class Cookie_Law_Info_Cookies {
 		$cookie_sensitivity = ( isset( $custom['_cli_cookie_sensitivity'][0] ) ) ? $custom['_cli_cookie_sensitivity'][0] : '';
 		?>
 		<label><?php echo __( 'Cookie Sensitivity: ( necessary , non-necessary )', 'cookie-law-info' ); ?></label>
-		<input name="_cli_cookie_sensitivity" value="<?php echo sanitize_text_field( $cookie_sensitivity ); ?>" style="width:95%;" />
+		<input name="_cli_cookie_sensitivity" value="<?php echo esc_attr( sanitize_text_field( $cookie_sensitivity ) ); ?>" style="width:95%;" />
 		<?php
 	}
 
@@ -238,16 +238,16 @@ class Cookie_Law_Info_Cookies {
 	public function save_custom_metaboxes() {
 		global $post;
 		if ( isset( $_POST['_cli_cookie_type'] ) ) {
-			update_post_meta( $post->ID, '_cli_cookie_type', sanitize_text_field( $_POST['_cli_cookie_type'] ) );
+			update_post_meta( $post->ID, '_cli_cookie_type', sanitize_text_field( wp_unslash( $_POST['_cli_cookie_type'] ) ) );
 		}
-		if ( isset( $_POST['_cli_cookie_type'] ) ) {
-			update_post_meta( $post->ID, '_cli_cookie_duration', sanitize_text_field( $_POST['_cli_cookie_duration'] ) );
+		if ( isset( $_POST['_cli_cookie_duration'] ) ) {
+			update_post_meta( $post->ID, '_cli_cookie_duration', sanitize_text_field( wp_unslash( $_POST['_cli_cookie_duration'] ) ) );
 		}
 		if ( isset( $_POST['_cli_cookie_sensitivity'] ) ) {
-			update_post_meta( $post->ID, '_cli_cookie_sensitivity', sanitize_text_field( $_POST['_cli_cookie_sensitivity'] ) );
+			update_post_meta( $post->ID, '_cli_cookie_sensitivity', sanitize_text_field( wp_unslash( $_POST['_cli_cookie_sensitivity'] ) ) );
 		}
 		if ( isset( $_POST['_cli_cookie_slugid'] ) ) {
-			update_post_meta( $post->ID, '_cli_cookie_slugid', sanitize_text_field( $_POST['_cli_cookie_slugid'] ) );
+			update_post_meta( $post->ID, '_cli_cookie_slugid', sanitize_text_field( wp_unslash( $_POST['_cli_cookie_slugid'] ) ) );
 		}
 	}
 	public function manage_edit_columns( $columns ) {
@@ -272,7 +272,7 @@ class Cookie_Law_Info_Cookies {
 			case 'description':
 					$content_post = get_post( $post_id );
 				if ( $content_post ) {
-					echo $content_post->post_content;
+					echo wp_kses_post( wp_unslash( $content_post->post_content ) );
 				} else {
 					echo '---';
 				}
@@ -280,13 +280,13 @@ class Cookie_Law_Info_Cookies {
 			case 'type':
 				$custom = get_post_custom();
 				if ( isset( $custom['_cli_cookie_type'][0] ) ) {
-					echo $custom['_cli_cookie_type'][0];
+					echo esc_html( wp_unslash( $custom['_cli_cookie_type'][0] ) );
 				}
 				break;
 			case 'category':
 				$term_list = wp_get_post_terms( $post->ID, 'cookielawinfo-category', array( 'fields' => 'names' ) );
 				if ( ! empty( $term_list ) ) {
-					echo $term_list[0];
+					echo esc_html( wp_unslash( $term_list[0] ) );
 				} else {
 					echo '<i>---</i>';
 				}
@@ -295,19 +295,19 @@ class Cookie_Law_Info_Cookies {
 			case 'duration':
 				$custom = get_post_custom();
 				if ( isset( $custom['_cli_cookie_duration'][0] ) ) {
-					echo $custom['_cli_cookie_duration'][0];
+					echo esc_html( wp_unslash( $custom['_cli_cookie_duration'][0] ) );
 				}
 				break;
 			case 'sensitivity':
 				$custom = get_post_custom();
 				if ( isset( $custom['_cli_cookie_sensitivity'][0] ) ) {
-					echo $custom['_cli_cookie_sensitivity'][0];
+					echo esc_html( wp_unslash( $custom['_cli_cookie_sensitivity'][0] ) );
 				}
 				break;
 			case 'slugid':
 				$custom = get_post_custom();
 				if ( isset( $custom['_cli_cookie_slugid'][0] ) ) {
-					echo $custom['_cli_cookie_slugid'][0];
+					echo esc_html( wp_unslash( $custom['_cli_cookie_slugid'][0] ) );
 				}
 				break;
 		}
@@ -646,7 +646,7 @@ class Cookie_Law_Info_Cookies {
 	*/
 	public function cookie_save_defaultstate( $term_id ) {
 		if ( isset( $_POST['CLIdefaultstate'] ) ) {
-			$term_CLIdefaultstate = sanitize_text_field( $_POST['CLIdefaultstate'] );
+			$term_CLIdefaultstate = sanitize_text_field( wp_unslash( $_POST['CLIdefaultstate'] ) );
 
 			if ( $term_CLIdefaultstate ) {
 				$this->update_term_meta( $term_id, 'CLIdefaultstate', $term_CLIdefaultstate );
@@ -738,7 +738,7 @@ class Cookie_Law_Info_Cookies {
 	}
 	public function save_status_meta( $term_id ) {
 		if ( isset( $_POST['_cli_cookie_status'] ) ) {
-			$term_cli_cookie_status = sanitize_text_field( $_POST['_cli_cookie_status'] );
+			$term_cli_cookie_status = sanitize_text_field( wp_unslash(  $_POST['_cli_cookie_status'] ) );
 			if ( $term_cli_cookie_status ) {
 				$this->update_term_meta( $term_id, '_cli_cookie_status', $term_cli_cookie_status );
 			}
@@ -846,9 +846,9 @@ class Cookie_Law_Info_Cookies {
 						<p style="font-weight:500;font-size:1.05em;"><?php _e( 'Clicking “Migrate cookie categories” will auto migrate your existing cookie categories (Necessary and Non-necessary) to our new Cookie Category taxonomy. This action is required to enable the cookie scanner.', 'cookie-law-info' ); ?></p>
 						<h3 style="font-size:1.05em;"><?php echo __( 'What happens after migration?', 'cookie-law-info' ); ?></h3>
 						<ul>
-							<li><?php echo __( 'You no longer need to manage static cookie categories. After the migration, new cookie categories (Necessary, Functional, Analytics, Performance, Advertisement, and Others) will be created automatically. Also, you can easily add custom cookie categories and edit/delete the existing categories including the custom categories.', 'cookiel-law-info' ); ?></li>
-							<li><?php echo __( 'If you have made any changes to the existing "Non-necessary" category we will migrate it to the newly created “Cookie Category” section. If not, we will delete the "Non-necessary" category automatically.', 'cookiel-law-info' ); ?></li>
-							<li><?php echo __( 'During the migration phase your existing cookie category translations will be lost. Hence we request you to add it manually soon after the migration. You can access the existing translations by navigating to the string translation settings of your translator plugin.', 'cookiel-law-info' ); ?></li>
+							<li><?php echo __( 'You no longer need to manage static cookie categories. After the migration, new cookie categories (Necessary, Functional, Analytics, Performance, Advertisement, and Others) will be created automatically. Also, you can easily add custom cookie categories and edit/delete the existing categories including the custom categories.', 'cookie-law-info' ); ?></li>
+							<li><?php echo __( 'If you have made any changes to the existing "Non-necessary" category we will migrate it to the newly created “Cookie Category” section. If not, we will delete the "Non-necessary" category automatically.', 'cookie-law-info' ); ?></li>
+							<li><?php echo __( 'During the migration phase your existing cookie category translations will be lost. Hence we request you to add it manually soon after the migration. You can access the existing translations by navigating to the string translation settings of your translator plugin.', 'cookie-law-info' ); ?></li>
 						</ul>
 					</div>
 					<div class="wt-cli-notice-actions">
@@ -943,7 +943,7 @@ class Cookie_Law_Info_Cookies {
 				'sensitivity' => 'necessary',
 			),
 			'cookielawinfo-checkbox-functional'  => array(
-				'title'       => 'cookielawinfo-checbox-functional',
+				'title'       => 'cookielawinfo-checkbox-functional',
 				'description' => 'The cookie is set by GDPR cookie consent to record the user consent for the cookies in the category "Functional".',
 				'category'    => 'necessary',
 				'type'        => 0,
@@ -959,7 +959,7 @@ class Cookie_Law_Info_Cookies {
 				'sensitivity' => 'necessary',
 			),
 			'cookielawinfo-checkbox-analytics'   => array(
-				'title'       => 'cookielawinfo-checbox-analytics',
+				'title'       => 'cookielawinfo-checkbox-analytics',
 				'description' => 'This cookie is set by GDPR Cookie Consent plugin. The cookie is used to store the user consent for the cookies in the category "Analytics".',
 				'category'    => 'necessary',
 				'type'        => 0,
@@ -967,7 +967,7 @@ class Cookie_Law_Info_Cookies {
 				'sensitivity' => 'necessary',
 			),
 			'cookielawinfo-checkbox-others'      => array(
-				'title'       => 'cookielawinfo-checbox-others',
+				'title'       => 'cookielawinfo-checkbox-others',
 				'description' => 'This cookie is set by GDPR Cookie Consent plugin. The cookie is used to store the user consent for the cookies in the category "Other.',
 				'category'    => 'necessary',
 				'type'        => 0,
@@ -1151,6 +1151,29 @@ class Cookie_Law_Info_Cookies {
 			}
 		}
 		return $categories;
+	}
+	/**
+	 * Get allowed HTML for the cookie scripts
+	 *
+	 * @return array
+	 */
+	public function get_allowed_html() {
+		return apply_filters(
+			'wt_cli_allowed_html',
+			array_merge(
+				wp_kses_allowed_html( 'post' ),
+				array(
+					'script' => array(
+						'type' => array(),
+						'src' => array(),
+						'charset' => array(),
+						'async' => array(),
+						'defer' => array(),
+					),
+					'noscript' => array(),
+				)
+			)
+		);
 	}
 }
 Cookie_Law_Info_Cookies::get_instance();

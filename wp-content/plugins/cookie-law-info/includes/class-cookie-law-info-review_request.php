@@ -122,11 +122,11 @@ class Cookie_Law_Info_Review_Request
     {
         $this->update_banner_state(1); /* update banner active state */
 ?>
-        <div class="<?php echo $this->banner_css_class; ?> notice-info notice is-dismissible">
+        <div class="<?php echo esc_attr( $this->banner_css_class ); ?> notice-info notice is-dismissible">
             <?php
             if ($this->webtoffee_logo_url != "") {
             ?>
-                <h3 style="margin: 10px 0;"><?php echo $this->plugin_title; ?></h3>
+                <h3 style="margin: 10px 0;"><?php echo esc_html( $this->plugin_title ); ?></h3>
             <?php
             }
             ?>
@@ -134,11 +134,11 @@ class Cookie_Law_Info_Review_Request
                 <?php echo $this->banner_message; ?>
             </p>
             <p>
-                <a class="button button-secondary" style="color:#333; border-color:#ccc; background:#efefef;" data-type="later"><?php echo $this->later_btn_text; ?></a>
-                <a class="button button-primary" data-type="review"><?php echo $this->review_btn_text; ?></a>
+                <a class="button button-secondary" style="color:#333; border-color:#ccc; background:#efefef;" data-type="later"><?php echo esc_html( $this->later_btn_text ); ?></a>
+                <a class="button button-primary" data-type="review"><?php echo esc_html( $this->review_btn_text ); ?></a>
             </p>
             <div class="wt-cli-review-footer" style="position: relative;">
-                <span class="wt-cli-footer-icon" style="position: absolute;right: 0;bottom: 10px;"><img src="<?php echo $this->webtoffee_logo_url; ?>" style="max-width:100px;"></span>
+                <span class="wt-cli-footer-icon" style="position: absolute;right: 0;bottom: 10px;"><img src="<?php echo esc_url( $this->webtoffee_logo_url ); ?>" style="max-width:100px;"></span>
             </div>
         </div>
     <?php

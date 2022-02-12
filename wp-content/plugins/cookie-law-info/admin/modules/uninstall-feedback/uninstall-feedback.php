@@ -113,12 +113,12 @@ class Cookie_Law_Info_Uninstall_Feedback {
 		}
 		$reasons = $this->get_uninstall_reasons();
 		?>
-		<div class="<?php echo $this->plugin_id; ?>-modal" id="<?php echo $this->plugin_id; ?>-modal">
-			<div class="<?php echo $this->plugin_id; ?>-modal-wrap">
-				<div class="<?php echo $this->plugin_id; ?>-modal-header">
+		<div class="<?php echo esc_attr( $this->plugin_id ); ?>-modal" id="<?php echo esc_attr( $this->plugin_id ); ?>-modal">
+			<div class="<?php echo esc_attr( $this->plugin_id ); ?>-modal-wrap">
+				<div class="<?php echo esc_attr(  $this->plugin_id ); ?>-modal-header">
 					<h3><?php _e( 'If you have a moment, please let us know why you are deactivating:', 'cookie-law-info' ); ?></h3>
 				</div>
-				<div class="<?php echo $this->plugin_id; ?>-modal-body">
+				<div class="<?php echo esc_attr( $this->plugin_id ); ?>-modal-body">
 					<ul class="reasons">
 					<?php
 					foreach ( $reasons as $reason ) :
@@ -129,7 +129,7 @@ class Cookie_Law_Info_Uninstall_Feedback {
 							<li <?php echo $data_type; ?> <?php echo $placeholder; ?>>
 								<label><input type="radio" name="selected-reason" value="<?php echo $reason['id']; ?>"><?php echo $reason['text']; ?></label>
 								<?php if ( ! empty( $childs ) ) : ?>
-									<ul class="<?php echo $this->plugin_id . '-sub-reasons'; ?>">
+									<ul class="<?php echo esc_attr( $this->plugin_id ) . '-sub-reasons'; ?>">
 										<?php
 										foreach ( $childs as $child ) :
 													$data_type   = ( isset( $child['type'] ) ? 'data-type="' . esc_attr( $child['type'] ) . '"' : '' );
@@ -150,13 +150,13 @@ class Cookie_Law_Info_Uninstall_Feedback {
 						<a href="https://www.webtoffee.com/privacy-policy/" target="_blank"><?php _e( 'Privacy Policy', 'cookie-law-info' ); ?></a>
 					</div>
 				</div>
-				<div class="<?php echo $this->plugin_id; ?>-modal-footer">
+				<div class="<?php echo esc_attr( $this->plugin_id ); ?>-modal-footer">
 
 					<a class="button-primary" href="https://www.webtoffee.com/support/" target="_blank">
 						<span class="dashicons dashicons-external" style="margin-top:3px;"></span>
 						<?php _e( 'Go to support', 'cookie-law-info' ); ?></a>
-					<button class="button-primary <?php echo $this->plugin_id; ?>-model-submit"><?php _e( 'Submit & Deactivate', 'cookie-law-info' ); ?></button>
-					<button class="button-secondary <?php echo $this->plugin_id; ?>-model-cancel"><?php _e( 'Cancel', 'cookie-law-info' ); ?></button>
+					<button class="button-primary <?php echo esc_attr( $this->plugin_id ); ?>-model-submit"><?php _e( 'Submit & Deactivate', 'cookie-law-info' ); ?></button>
+					<button class="button-secondary <?php echo esc_attr( $this->plugin_id ); ?>-model-cancel"><?php _e( 'Cancel', 'cookie-law-info' ); ?></button>
 					<a href="#" style="color: #737373;" class="dont-bother-me"><?php _e( 'I rather wouldn\'t say', 'cookie-law-info' ); ?></a>
 				</div>
 			</div>

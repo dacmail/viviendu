@@ -4,7 +4,7 @@ if (!defined('WPINC')) {
 	die;
 }
 ?>
-<div class="cookie-law-info-tab-content" data-id="<?php echo $target_id; ?>">
+<div class="cookie-law-info-tab-content" data-id="<?php echo esc_attr( $target_id ); ?>">
 	<ul class="cli_sub_tab">
 		<li style="border-left:none; padding-left: 0px;" data-target="cookie-bar"><a><?php _e('General', 'cookie-law-info'); ?></a></li>
 		<li data-target="other"><a><?php _e('Other', 'cookie-law-info'); ?></a></li>
@@ -30,7 +30,7 @@ if (!defined('WPINC')) {
 						<?php do_action('wt_cli_ccpa_settings'); ?>
 					</div>
 				</div>
-			<table class="form-table">
+			<table class="form-table" style="border-top: 2px dotted #e2e4e7;">
 				<!-- SHOW ONCE / TIMER -->
 				<tr valign="top">
 					<th scope="row"><label for="show_once_yn_field"><?php _e('Auto-hide(Accept) cookie bar after delay?', 'cookie-law-info'); ?></label></th>
@@ -42,7 +42,7 @@ if (!defined('WPINC')) {
 				<tr valign="top" cli_frm_tgl-id="cli_bar_autohide" cli_frm_tgl-val="true">
 					<th scope="row"><label for="show_once_field"><?php _e('Milliseconds until hidden', 'cookie-law-info'); ?></label></th>
 					<td>
-						<input type="text" name="show_once_field" value="<?php echo $the_options['show_once'] ?>" />
+						<input type="text" name="show_once_field" value="<?php echo esc_attr( $the_options['show_once'] ); ?>" />
 						<span class="cli_form_help"><?php _e('Specify milliseconds (not seconds)', 'cookie-law-info'); ?> e.g. 8000 = 8 <?php _e('seconds', 'cookie-law-info'); ?></span>
 					</td>
 				</tr>

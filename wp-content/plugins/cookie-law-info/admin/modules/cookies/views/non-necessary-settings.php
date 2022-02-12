@@ -46,7 +46,7 @@ if (!defined('WPINC')) {
                 <tr>
                     <td>
                         <label for="wt_cli_non_necessary_title"><?php _e('Title', 'cookie-law-info'); ?></label>
-                        <input type="text" id="wt_cli_non_necessary_title" name="wt_cli_non_necessary_title" value="<?php echo sanitize_text_field(stripslashes( $settings['title'])); ?>" class="cli-textbox" />
+                        <input type="text" id="wt_cli_non_necessary_title" name="wt_cli_non_necessary_title" value="<?php echo esc_attr( sanitize_text_field( stripslashes( $settings['title'] ) ) ); ?>" class="cli-textbox" />
                     </td>
                 </tr>
                 <tr>

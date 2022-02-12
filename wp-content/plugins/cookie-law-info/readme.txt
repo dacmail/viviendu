@@ -1,15 +1,15 @@
 === CookieYes | GDPR Cookie Consent & Compliance Notice (CCPA Ready) ===
 Contributors: webtoffee, cookieyesdev
 Donate link: https://www.webtoffee.com/plugins/ 
-Tags: GDPR, CCPA, cookie notice, DSGVO, RGPD, LGPD, PIPEDA, cookies , cookie law, cookie consent, Opt-in, cookie policy, privacy, compliance
+Tags: GDPR, CCPA, cookie notice, DSGVO, RGPD, LGPD, PIPEDA, POPIA, cookies , cookie law, cookie consent, Opt-in, cookie policy, privacy, compliance
 Requires at least: 4.4.0
-Tested up to: 5.7
+Tested up to: 5.9
 Requires PHP: 5.6
-Stable tag: 2.0.1
+Stable tag: 2.0.9
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
-Easily set up cookie notice and get GDPR Cookie Consent as per EU GDPR/Cookie Law regulations. The plugin supports GDPR (DSGVO, RGPD), LGPD, CCPA Do Not Sell, and CNIL of France.
+Easily set up cookie notice, cookie policy and get GDPR cookie compliance. Supports GDPR (DSGVO, RGPD), LGPD, CCPA, CNIL, and POPIA.
 
 GDPR CookieConsent' plugin is getting renamed as ‘CookieYes - GDPR Cookie Consent & Compliance Notice' plugin. WebToffee will continue to develop and maintain this plugin. In addition to the current features, we have integrated a free Automatic Cookie Scan service into the plugin. You need an account with CookieYes in order to use the scan service, but no worries, we will automatically create an account for you when you initiate the scan.
 
@@ -31,13 +31,15 @@ The plugin is one of the best WordPress GDPR compliance plugins as it comes with
 
 - With the help of this WordPress GDPR plugin, you can fully customise the cookie notice style so it blends with your existing website: change the colours, fonts, styles, the position on the page and even how it behaves when you click “Accept”.
 
-- You can choose to make the cookie notice bar disappear after a few seconds (completely configurable) or to accept on scroll (an option available under Italian law).
+- You can choose to make the cookie notice bar disappear after a few seconds (completely configurable) or to accept on scroll.
 
 - It also has a Cookie Audit module so you can easily show what cookies your site uses and display them neatly in a table on your Privacy & Cookies Policy page.
 
 - The plugin can be configured to have a CCPA 'Do Not Sell My Personal Information' control to the cookie notice.
 
-- Assists in compliance with CNIL - A french administrative regulatory body
+- Assists in compliance of CNIL - A french administrative regulatory body
+
+- Helps in compliance with POPIA (Protection of Personal Information Act) - South Africa's data protection law
 
 - Integrates seamlessly with Official Facebook Pixel, Smash Balloon Instagram Feed & Twitter Feed.
 
@@ -188,6 +190,46 @@ For every update of the plugin, you will be notified of the installed plugins pa
 13. Add a privacy policy overview
 
 == Changelog ==
+
+= 2.0.9 =
+
+* Fix - Removed cache flush helper functions
+* Tested ok with WordPress version 5.9
+
+= 2.0.8 =
+
+* Fix - Compatibility issue with Wordpress 4.7.0 and below.
+
+= 2.0.7 =
+
+* Fix - Conflict with W3 Total Cache plugin
+* Fix - Accessibility issue ( Hidden element has a focusable content )
+* Fix - Opacity of the cookie banner is set to 0.1 after closing the settings popup.
+
+
+= 2.0.6 =
+
+* Fix: Removed extract() function from the shortcodes module to improve security.
+
+= 2.0.5 =
+
+* Enhancement: Disable cookie bar on page builders.
+* Tested ok with Wordpress version 5.8
+
+= 2.0.4 =
+
+* Bug fix: Do not sell option appears before Accept all button option on the admin settings.
+* Tested ok with Wordpress version 5.6
+* Enhancement: Added escaping to input attributes.
+
+= 2.0.3 =
+
+* Enhancement - Default cookie banner message update.
+
+= 2.0.2 =
+
+* Enhancement - Added reject button by default
+* Enhancement - Help text improvements
 
 = 2.0.1 =
 
@@ -504,10 +546,7 @@ For every update of the plugin, you will be notified of the installed plugins pa
 
 == Upgrade Notice ==
 
-= 2.0.1 =
+= 2.0.9 =
 
-* Enhancement - New shortcode [cookie_accept_all] to add accept all button to the banner
-* Enhancement - MonsterInsights integration
-* Enhancement - New filter `wt_cli_set_secure_cookies` to set plugin cookies as secure
-* Fix - Site map issue with cookie category
-* Fix - Cookie categories are not ordered properly in secondary languages
+* Fix - Removed cache flush helper functions
+* Tested ok with WordPress version 5.9

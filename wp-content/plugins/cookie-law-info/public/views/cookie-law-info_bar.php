@@ -37,7 +37,7 @@ if ( file_exists( $pop_content_html_file ) ) {
 						</div>
 						<?php if ( apply_filters( 'wt_cli_enable_ckyes_branding', true ) === true ) : ?>
 						<div class="wt-cli-ckyes-footer-section">
-							<div class="wt-cli-ckyes-brand-logo"><?php echo __( 'Powered by', 'cookie-law-info' ); ?> <a target="_blank" href="https://www.cookieyes.com/"><img src="<?php echo CLI_PLUGIN_URL . 'public/images/logo-cookieyes.svg'; ?>"></a></div>
+							<div class="wt-cli-ckyes-brand-logo"><?php echo __( 'Powered by', 'cookie-law-info' ); ?> <a href="https://www.cookieyes.com/"><img src="<?php echo esc_url( CLI_PLUGIN_URL . 'public/images/logo-cookieyes.svg' ); ?>" alt="CookieYes Logo"></a></div>
 						</div>
 						<?php endif; ?>
 

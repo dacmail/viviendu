@@ -78,7 +78,7 @@ class Cookie_Law_Info {
 		} 
 		else 	
 		{
-			$this->version = '2.0.1';
+			$this->version = '2.0.9';
 		}
 		$this->plugin_name = 'cookie-law-info';
 
@@ -233,8 +233,6 @@ class Cookie_Law_Info {
 
 		$plugin_public->common_modules();
  
-		//below hook's functions needs update
-		$this->loader->add_action( 'init',$plugin_public,'other_plugin_compatibility');
 		$this->loader->add_action( 'wp_footer',$plugin_public,'cookielawinfo_inject_cli_script');
 		$this->loader->add_action('wp_head',$plugin_public,'include_user_accepted_cookielawinfo');
 		$this->loader->add_action('wp_footer',$plugin_public,'include_user_accepted_cookielawinfo_in_body');
@@ -342,7 +340,7 @@ class Cookie_Law_Info {
 				$v=__($v, 'cookie-law-info');
 			}
 		?>
-			<a class="nav-tab" href="#<?php echo $k;?>"><?php echo $v; ?></a>
+			<a class="nav-tab" href="#<?php echo esc_attr( $k ); ?>"><?php echo esc_html( $v ); ?></a>
 		<?php
 		}
 	}
@@ -354,7 +352,7 @@ class Cookie_Law_Info {
 	public static function envelope_settings_tabcontent($target_id,$view_file="",$html="")
 	{
 	?>
-		<div class="cookie-law-info-tab-content" data-id="<?php echo $target_id;?>">
+		<div class="cookie-law-info-tab-content" data-id="<?php echo esc_attr( $target_id );?>">
 			<?php
 			if($view_file!="" && file_exists($view_file))
 			{
@@ -382,7 +380,7 @@ class Cookie_Law_Info {
 			'border' 						=> '#b1a6a6c2',
 			'border_on'						=> true,
 			'bar_style'				=> array(),
-			'button_1_text'					=> 'ACCEPT',
+			'button_1_text'					=> 'Accept',
 			'button_1_url' 					=> '#',
 			'button_1_action' 				=> '#cookie_action_close_header',
 			'button_1_link_colour' 			=> '#fff',
@@ -405,28 +403,28 @@ class Cookie_Law_Info {
 			'button_2_hidebar'					=>false,
 			'button_2_style'				=> array(),
 	            
-	        'button_3_text'					=> 'REJECT',
+	        'button_3_text'					=> 'Reject All',
 			'button_3_url' 					=> '#',
 			'button_3_action' 				=> '#cookie_action_close_header_reject',
-			'button_3_link_colour' 			=> '#fff',
+			'button_3_link_colour' 			=> '#333333',
 			'button_3_new_win' 				=> false,
 			'button_3_as_button' 			=> true,
-			'button_3_button_colour' 		=> '#3566bb',
+			'button_3_button_colour' 		=> '#dedfe0',
 			'button_3_button_size' 			=> 'medium',
 			'button_3_style'				=> array(),
 
-	        'button_4_text'					=> 'Cookie settings',
+	        'button_4_text'					=> 'Cookie Settings',
 			'button_4_url' 					=> '#',
 			'button_4_action' 				=> '#cookie_action_settings',
 			'button_4_link_colour' 			=> '#333333',
 			'button_4_new_win' 				=> false,
-			'button_4_as_button' 			=> false,
-			'button_4_button_colour' 		=> '#000',
+			'button_4_as_button' 			=> true,
+			'button_4_button_colour' 		=> '#dedfe0',
 			'button_4_button_size' 			=> 'medium',
 			'button_4_style'				=> array(),
 			'button_5_style'				=> array(),   
 
-			'button_7_text'					=> 'ACCEPT ALL',
+			'button_7_text'					=> 'Accept All',
 			'button_7_url' 					=> '#',
 			'button_7_action' 				=> '#cookie_action_close_header',
 			'button_7_link_colour' 			=> '#fff',
@@ -434,7 +432,7 @@ class Cookie_Law_Info {
 			'button_7_as_button' 			=> true,
 			'button_7_button_colour' 		=> '#61a229',
 			'button_7_button_size' 			=> 'medium',
-			'button_7_style'				=> array(),
+			'button_7_style'				=> array(),	
 
 			'font_family' 					=> 'inherit', // Pick the family, not the easy name (see helper function below)
 			'header_fix'                    => false,
@@ -446,7 +444,7 @@ class Cookie_Law_Info {
 			'notify_div_id' 				=> '#cookie-law-info-bar',
 			'notify_position_horizontal'	=> 'right',	// left | right
 			'notify_position_vertical'		=> 'bottom', // 'top' = header | 'bottom' = footer
-			'notify_message'				=> addslashes ( '<div class="cli-bar-container cli-style-v2"><div class="cli-bar-message">We use cookies on our website to give you the most relevant experience by remembering your preferences and repeat visits. By clicking “Accept”, you consent to the use of ALL the cookies.</div><div class="cli-bar-btn_container">[cookie_settings margin="0px 10px 0px 5px"][cookie_button]</div></div>'),
+			'notify_message'				=> addslashes ( '<div class="cli-bar-container cli-style-v2"><div class="cli-bar-message">We use cookies on our website to give you the most relevant experience by remembering your preferences and repeat visits. By clicking “Accept All”, you consent to the use of ALL the cookies. However, you may visit "Cookie Settings" to provide a controlled consent.</div><div class="cli-bar-btn_container">[cookie_settings margin="0px 5px 0px 0px"][cookie_accept_all]</div></div>'),
 			'scroll_close'                  => false,
 			'scroll_close_reload'           => false,
 	        'accept_close_reload'           => false,
@@ -677,6 +675,8 @@ class Cookie_Law_Info {
 	    global $wpdb;	    
 	    $args = array(
 	            'post_type' => CLI_POST_TYPE, 
+				'posts_per_page' => -1, 
+				'suppress_filters' => false,
 	            'meta_query' => array(
 								    array(
 								      'key' => '_cli_cookie_sensitivity',
@@ -983,7 +983,7 @@ class Cookie_Law_Info {
 
 		$js_blocking_enabled = false;
 		$js_option = self::get_js_option();
-		if( $js_option === true ) {
+		if( $js_option === true && !self::is_divi_enabled() ) {
 			$js_blocking_enabled = true;
 		}   
 		return apply_filters('wt_cli_enable_js_blocking',$js_blocking_enabled);
@@ -1030,6 +1030,17 @@ class Cookie_Law_Info {
 			return true;
 		}
 		return false;
+	}
+
+	/**
+	* Check whether DIVI builder is active or not
+	*
+	* @since  2.0.4
+	* @return bool
+	*/
+	public static function is_divi_enabled() {
+
+		return isset($_GET['et_fb']) ? true : false;
 	}
 	
 }

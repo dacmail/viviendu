@@ -184,6 +184,7 @@ class Cookie_Law_Info_Public
 				'ccpaEnabled' => $ccpa_enabled,
 				'ccpaRegionBased' => $ccpa_region_based,
 				'ccpaBarEnabled' => $ccpa_enable_bar,
+				'strictlyEnabled' => Cookie_Law_Info_Cookies::get_instance()->get_strictly_necessory_categories(),
 				'ccpaType' => $ccpa_type,
 				'js_blocking' => $js_blocking_enabled,
 				'custom_integration' => $enable_custom_integration,
@@ -237,9 +238,12 @@ class Cookie_Law_Info_Public
 	 */
 	public function cookielawinfo_inject_cli_script()
 	{
-		global $wp_customize;
 		$the_options = Cookie_Law_Info::get_settings();
-		if ($the_options['is_on'] == true) {
+		$show_cookie_bar = true;
+		if(apply_filters('wt_cli_hide_bar_on_page_editor', true) && $this->is_page_editor_active()) {
+			$show_cookie_bar = false;
+		}
+		if ( $the_options['is_on'] == true && $show_cookie_bar ){
 			// Output the HTML in the footer:
 			$message = nl2br($the_options['notify_message']);
 			$str = do_shortcode(stripslashes($message));
@@ -269,9 +273,6 @@ class Cookie_Law_Info_Public
 						$post_slug = $current_obj->post_name;
 					}
 				}
-			}
-			if (isset($wp_customize)) {
-				$notify_html = '';
 			}
 			$notify_html = apply_filters('cli_show_cookie_bar_only_on_selected_pages', $notify_html, $post_slug);
 			require_once plugin_dir_path(__FILE__) . 'views/cookie-law-info_bar.php';
@@ -396,90 +397,6 @@ class Cookie_Law_Info_Public
 		}
 		return $bypass_blocking;
 	}
-	public function other_plugin_compatibility()
-	{
-		if (!is_admin()) {
-			add_action('wp_head', array($this, 'other_plugin_clear_cache'));
-			//cache clear===========
-			if (isset($_GET['cli_action'])) {
-				// Clear Litespeed cache
-				if (class_exists('LiteSpeed_Cache_API') && method_exists('LiteSpeed_Cache_API', 'purge_all')) {
-					LiteSpeed_Cache_API::purge_all();
-				}
-
-				// WP Super Cache
-				if (function_exists('wp_cache_clear_cache')) {
-					wp_cache_clear_cache();
-				}
-
-				// W3 Total Cache
-				if (function_exists('w3tc_flush_all')) {
-					w3tc_flush_all();
-				}
-
-				// Site ground
-				if (class_exists('SG_CachePress_Supercacher') && method_exists('SG_CachePress_Supercacher', 'purge_cache')) {
-					SG_CachePress_Supercacher::purge_cache(true);
-				}
-
-				// Endurance Cache
-				if (class_exists('Endurance_Page_Cache') && method_exists('Endurance_Page_Cache', 'purge_all')) {
-					$e = new Endurance_Page_Cache;
-					$e->purge_all();
-				}
-
-				// WP Fastest Cache
-				if (isset($GLOBALS['wp_fastest_cache']) && method_exists($GLOBALS['wp_fastest_cache'], 'deleteCache')) {
-					$GLOBALS['wp_fastest_cache']->deleteCache(true);
-				}
-			}
-			//cache clear============
-		}
-	}
-	public function other_plugin_clear_cache()
-	{
-
-		$cli_flush_cache = false;
-		// Clear Litespeed cache
-		if (class_exists('LiteSpeed_Cache_API') && method_exists('LiteSpeed_Cache_API', 'purge_all')) {
-			$cli_flush_cache = true;
-		}
-
-		// WP Super Cache
-		if (function_exists('wp_cache_clear_cache')) {
-			$cli_flush_cache = true;
-		}
-
-		// W3 Total Cache
-		if (function_exists('w3tc_flush_all')) {
-			$cli_flush_cache = true;
-		}
-
-		// Site ground
-		if (class_exists('SG_CachePress_Supercacher') && method_exists('SG_CachePress_Supercacher', 'purge_cache')) {
-			$cli_flush_cache = true;
-		}
-
-		// Endurance Cache
-		if (class_exists('Endurance_Page_Cache') && method_exists('Endurance_Page_Cache', 'purge_all')) {
-			$cli_flush_cache = true;
-		}
-
-		// WP Fastest Cache
-		if (isset($GLOBALS['wp_fastest_cache']) && method_exists($GLOBALS['wp_fastest_cache'], 'deleteCache')) {
-			$cli_flush_cache = true;
-		}
-
-		$cli_flush_cache = apply_filters('wt_cli_enable_cache_flush', $cli_flush_cache);
-
-		if ($cli_flush_cache === true) :
-?>
-			<script type="text/javascript">
-				var cli_flush_cache = true;
-			</script>
-<?php
-		endif;
-	}
 	/**
 	* Check whether opted in CCPA or not
 	*
@@ -538,6 +455,25 @@ class Cookie_Law_Info_Public
 		if( 'viewed_cookie_policy' === $cookie || false !== strpos( $cookie, 'cookielawinfo-checkbox') ) {
 			return true;
 		}
+		return false;
+	}
+	/**
+	* Check whether any page editor is active or not
+	*
+	* @since  2.0.5
+	* @return bool
+	*/
+	public function is_page_editor_active() {
+		global $wp_customize;
+		if( isset($_GET['et_fb']) 
+			|| (defined( 'ET_FB_ENABLED' ) && ET_FB_ENABLED)
+			|| isset($_GET['elementor-preview']) 
+			|| isset($_POST['cs_preview_state'])
+			|| isset($wp_customize)
+		) {
+			return true;
+		}
+
 		return false;
 	}
 }

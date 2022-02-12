@@ -269,7 +269,7 @@ class Cookie_Law_Info_Admin {
 	{
 	   $links[] = '<a href="'. get_admin_url(null,'edit.php?post_type='.CLI_POST_TYPE.'&page=cookie-law-info') .'">'.__('Settings','cookie-law-info').'</a>';
 	   $links[] = '<a href="https://www.webtoffee.com/product/gdpr-cookie-consent/" target="_blank">'.__('Support','cookie-law-info').'</a>';
-	   $links[] = '<a href="https://www.webtoffee.com/product/gdpr-cookie-consent/?utm_source=free_plugin_listing&utm_medium=gdpr_basic&utm_campaign=GDPR&utm_content='.CLI_VERSION.'" target="_blank">'.__('Premium Upgrade','cookie-law-info').'</a>';
+	   $links[] = '<a href="https://www.webtoffee.com/product/gdpr-cookie-consent/?utm_source=free_plugin_listing&utm_medium=gdpr_basic&utm_campaign=GDPR&utm_content='.CLI_VERSION.'" target="_blank" style="color: #3db634; font-weight: 500;">'.__('Premium Upgrade','cookie-law-info').'</a>';
 	   return $links;
 	}
 	
@@ -435,7 +435,7 @@ class Cookie_Law_Info_Admin {
 			// Are on latest version
 			return true;
 		}
-		echo 'VERSION: ' . $version . '<br /> V2: ' . CLI_LATEST_VERSION_NUMBER;
+		echo 'VERSION: ' . esc_html( $version ). '<br /> V2: ' . CLI_LATEST_VERSION_NUMBER;
 		// If you got this far then you're on an inbetween version
 		return false;
 	}
@@ -458,7 +458,7 @@ class Cookie_Law_Info_Admin {
 			if ( $option['value'] == $selected ) {
 				echo ' selected="selected"';
 			}
-			echo '>' . $option['text'] . '</option>';
+			echo '>' . esc_html( $option['text'] ) . '</option>';
 		}
 	}
 
@@ -469,11 +469,11 @@ class Cookie_Law_Info_Admin {
 	public function get_js_actions() {
 		$js_actions = array(
 			'close_header' => array(
-				'text'=>__('Close Header','cookie-law-info'),
+				'text'=>__('Close consent bar','cookie-law-info'),
 				'value'=>'#cookie_action_close_header'
 				),
 			'open_url' => array(
-				'text' => __('Open URL','cookie-law-info'),
+				'text' => __('Redirect to URL on click','cookie-law-info'),
 				'value'=>'CONSTANT_OPEN_URL')	// Don't change this value, is used by jQuery
 		);
 		return $js_actions;

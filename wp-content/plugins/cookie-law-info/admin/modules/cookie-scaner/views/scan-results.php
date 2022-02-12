@@ -38,10 +38,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 			<div class="wt-cli-scan-result-summary">
 				<ul class="wt-cli-scan-result-summary-list">
 					<li>
-						<b><?php _e( 'Total URLs', 'cookie-law-info' ); ?></b>: <span class="wt-cli-cookie-scan-count"> <?php echo $scan_results['total_urls']; ?></span><br />
+						<b><?php _e( 'Total URLs', 'cookie-law-info' ); ?></b>: <span class="wt-cli-cookie-scan-count"> <?php echo esc_html( $scan_results['total_urls'] ); ?></span><br />
 					</li>
 					<li>
-						<b><?php _e( 'Total cookies', 'cookie-law-info' ); ?></b>: <span class="wt-cli-cookie-scan-count"> <?php echo $scan_results['total_cookies']; ?></span><br />
+						<b><?php _e( 'Total cookies', 'cookie-law-info' ); ?></b>: <span class="wt-cli-cookie-scan-count"> <?php echo esc_html( $scan_results['total_cookies'] ); ?></span><br />
 					</li>
 				</ul>
 			</div>
@@ -64,7 +64,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 					?>
 					</p>
 				
-				<a class="button-primary cli_import" data-scan-id="<?php echo $scan_results['scan_id']; ?>" style="margin-left:5px;"><?php _e( 'Add to cookie list', 'cookie-law-info' ); ?></a>
+				<a class="button-primary cli_import" data-scan-id="<?php echo esc_attr( $scan_results['scan_id'] ); ?>" style="margin-left:5px;"><?php _e( 'Add to cookie list', 'cookie-law-info' ); ?></a>
 					
 			</div>
 			<?php endif; ?>
