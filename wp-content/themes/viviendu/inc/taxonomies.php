@@ -116,9 +116,8 @@
 				} else {
 					$term_id = $tag_exists->term_id;
 				}
-			//error_log('Error al crear comercio_seccion viviendu_comercio_seccion_seccion: ' . $cat->term_id . ' comercio_seccion_' . $term_id);
-				uptate_field('viviendu_comercio_seccion_seccion', $cat->term_id, 'comercio_seccion_' . $term_id);
-				uptate_field('viviendu_comercio_seccion_comercio', $com->term_id, 'comercio_seccion_' . $term_id);
+				update_term_meta($term_id, 'viviendu_comercio_seccion_seccion', $cat->term_id);
+				update_term_meta($term_id, 'viviendu_comercio_seccion_comercio', $com->term_id);
 				$tags[] = $tag_slug;
 			endforeach;
 		endforeach;

@@ -124,7 +124,8 @@ document.addEventListener('lazybeforeunveil', function(e){
 	console.log('loading an image');
 	console.log(target);
 	var wrongSize = false;
-	var srcset = target.getAttribute('data-srcset');
+	var srcset  = target.getAttribute('data-srcset');
+	console.log('natural width of ' + target.getAttribute('src') + ' is ' + target.naturalWidth);
         if (target.naturalWidth && ! srcset) {
 		console.log('we have an image with no srcset');
         	if ((target.naturalWidth > 1) && (target.naturalHeight > 1)) {
@@ -159,6 +160,9 @@ document.addEventListener('lazybeforeunveil', function(e){
 					var newSrc = false;
 				} else if ( window.lazySizes.hC(target,'et_pb_jt_filterable_grid_item_image') || window.lazySizes.hC(target,'ss-foreground-image') || window.lazySizes.hC(target,'img-crop') ) {
 					console.log('img that needs a hard crop');
+					var newSrc = constrainSrc(src,targetWidth,targetHeight,'img-crop');
+				} else if ( window.lazySizes.hC(target,'ct-image') && window.lazySizes.hC(target,'object-cover') ) {
+					console.log('Oxygen cover img that needs a hard crop');
 					var newSrc = constrainSrc(src,targetWidth,targetHeight,'img-crop');
 				} else {
 					console.log('plain old img, constraining');

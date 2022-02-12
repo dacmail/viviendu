@@ -63,18 +63,30 @@ class EIO_JS_Webp extends EIO_Page_Parser {
 		if ( is_object( $eio_js_webp ) ) {
 			return 'you are doing it wrong';
 		}
-		if ( ewww_image_optimizer_ce_webp_enabled() ) {
-			return false;
-		}
 		parent::__construct();
 		$this->debug_message( '<b>' . __METHOD__ . '()</b>' );
+
+		$uri = add_query_arg( null, null );
+		$this->debug_message( "request uri is $uri" );
+
+		add_filter( 'eio_do_js_webp', array( $this, 'should_process_page' ), 10, 2 );
+
+		/**
+		 * Allow pre-empting JS WebP by page.
+		 *
+		 * @param bool Whether to parse the page for images to rewrite for WebP, default true.
+		 * @param string $uri The URL of the page.
+		 */
+		if ( ! apply_filters( 'eio_do_js_webp', true, $uri ) ) {
+			return;
+		}
 
 		// Hook into the output buffer callback function.
 		add_filter( 'ewww_image_optimizer_filter_page_output', array( $this, 'filter_page_output' ), 20 );
 		// Filter for NextGEN image urls within JSON.
 		add_filter( 'ngg_pro_lightbox_images_queue', array( $this, 'ngg_pro_lightbox_images_queue' ), 11 );
-		// Filter for WooCommerce product variations JSON.
-		add_filter( 'woocommerce_pre_json_available_variations', array( $this, 'woocommerce_pre_json_available_variations' ) );
+		// Filter for WooCommerce product variations (individual items).
+		add_filter( 'woocommerce_available_variation', array( $this, 'woocommerce_available_variation' ) );
 
 		// Load up the minified check script.
 		$this->check_webp_script = file_get_contents( EWWW_IMAGE_OPTIMIZER_PLUGIN_PATH . 'includes/check-webp.min.js' );
@@ -102,9 +114,116 @@ class EIO_JS_Webp extends EIO_Page_Parser {
 			add_action( 'wp_enqueue_scripts', array( $this, 'min_external_script' ), -99 );
 		} else {
 			add_action( 'wp_head', array( $this, 'inline_check_script' ), -99 );
-			add_action( 'wp_footer', array( $this, 'inline_load_script' ), -99 );
+			if ( defined( 'EWWW_IMAGE_OPTIMIZER_WEBP_FOOTER_SCRIPT' ) && EWWW_IMAGE_OPTIMIZER_WEBP_FOOTER_SCRIPT ) {
+				add_action( 'wp_footer', array( $this, 'inline_load_script' ), -99 );
+			} else {
+				add_action( 'wp_head', array( $this, 'inline_load_script' ), -90 );
+			}
 		}
 		$this->validate_user_exclusions();
+	}
+
+	/**
+	 * Check if pages should be processed, especially for things like page builders.
+	 *
+	 * @since 6.2.2
+	 *
+	 * @param boolean $should_process Whether JS WebP should process the page.
+	 * @param string  $uri The URI of the page (no domain or scheme included).
+	 * @return boolean True to process the page, false to skip.
+	 */
+	function should_process_page( $should_process = true, $uri = '' ) {
+		// Don't foul up the admin side of things, unless a plugin needs to.
+		if ( is_admin() &&
+			/**
+			 * Provide plugins a way of running JS WebP for images in the WordPress Admin, usually for admin-ajax.php.
+			 *
+			 * @param bool false Allow JS WebP to run on the Dashboard. Defaults to false.
+			 */
+			false === apply_filters( 'eio_allow_admin_js_webp', false )
+		) {
+			$this->debug_message( 'is_admin' );
+			return false;
+		}
+		if ( ewww_image_optimizer_ce_webp_enabled() ) {
+			return false;
+		}
+		if ( empty( $uri ) ) {
+			$uri = add_query_arg( null, null );
+		}
+		if ( false !== strpos( $uri, '?brizy-edit' ) ) {
+			return false;
+		}
+		if ( false !== strpos( $uri, '&builder=true' ) ) {
+			return false;
+		}
+		if ( false !== strpos( $uri, 'cornerstone=' ) || false !== strpos( $uri, 'cornerstone-endpoint' ) ) {
+			return false;
+		}
+		if ( false !== strpos( $uri, 'ct_builder=' ) ) {
+			return false;
+		}
+		if ( false !== strpos( $uri, 'ct_render_shortcode=' ) || false !== strpos( $uri, 'action=oxy_render' ) ) {
+			return false;
+		}
+		if ( did_action( 'cornerstone_boot_app' ) || did_action( 'cs_before_preview_frame' ) ) {
+			return false;
+		}
+		if ( false !== strpos( $uri, 'elementor-preview=' ) ) {
+			return false;
+		}
+		if ( false !== strpos( $uri, 'et_fb=' ) ) {
+			return false;
+		}
+		if ( false !== strpos( $uri, 'fb-edit=' ) ) {
+			return false;
+		}
+		if ( false !== strpos( $uri, '?fl_builder' ) ) {
+			return false;
+		}
+		if ( '/print/' === substr( $uri, -7 ) ) {
+			return false;
+		}
+		if ( defined( 'REST_REQUEST' ) && REST_REQUEST ) {
+			return false;
+		}
+		if ( false !== strpos( $uri, 'tatsu=' ) ) {
+			return false;
+		}
+		if ( false !== strpos( $uri, 'tve=true' ) ) {
+			return false;
+		}
+		if ( ! empty( $_POST['action'] ) && 'tatsu_get_concepts' === sanitize_text_field( wp_unslash( $_POST['action'] ) ) ) { // phpcs:ignore WordPress.Security.NonceVerification
+			return false;
+		}
+		if ( is_customize_preview() ) {
+			$this->debug_message( 'is_customize_preview' );
+			return false;
+		}
+		global $wp_query;
+		if ( ! isset( $wp_query ) || ! ( $wp_query instanceof WP_Query ) ) {
+			return $should_process;
+		}
+		if ( $this->is_amp() ) {
+			return false;
+		}
+		if ( is_embed() ) {
+			$this->debug_message( 'is_embed' );
+			return false;
+		}
+		if ( is_feed() ) {
+			$this->debug_message( 'is_feed' );
+			return false;
+		}
+		if ( is_preview() ) {
+			$this->debug_message( 'is_preview' );
+			return false;
+		}
+		if ( wp_script_is( 'twentytwenty-twentytwenty', 'enqueued' ) ) {
+			$this->debug_message( 'twentytwenty enqueued' );
+			return false;
+		}
+		return $should_process;
 	}
 
 	/**
@@ -114,13 +233,6 @@ class EIO_JS_Webp extends EIO_Page_Parser {
 	 */
 	function get_webp_domains() {
 		return $this->allowed_domains;
-	}
-
-	/**
-	 * Starts an output buffer and registers the callback function to do WebP replacement.
-	 */
-	function buffer_start() {
-		ob_start( array( $this, 'filter_page_output' ) );
 	}
 
 	/**
@@ -235,40 +347,30 @@ class EIO_JS_Webp extends EIO_Page_Parser {
 	 * @return string The altered buffer containing the full page with WebP images inserted.
 	 */
 	function filter_page_output( $buffer ) {
-		ewwwio_debug_message( '<b>' . __METHOD__ . '()</b>' );
-		// If any of this is true, don't filter the page.
-		$uri = add_query_arg( null, null );
-		$this->debug_message( "request uri is $uri" );
+		$this->debug_message( '<b>' . __METHOD__ . '()</b>' );
 		if (
 			empty( $buffer ) ||
-			is_admin() ||
-			strpos( $uri, 'cornerstone=' ) !== false ||
-			strpos( $uri, 'cornerstone-endpoint' ) !== false ||
-			did_action( 'cornerstone_boot_app' ) || did_action( 'cs_before_preview_frame' ) ||
-			'/print/' === substr( $uri, -7 ) ||
-			strpos( $uri, 'elementor-preview=' ) !== false ||
-			strpos( $uri, 'et_fb=' ) !== false ||
-			strpos( $uri, 'tatsu=' ) !== false ||
-			( ! empty( $_POST['action'] ) && 'tatsu_get_concepts' === sanitize_text_field( wp_unslash( $_POST['action'] ) ) ) || // phpcs:ignore WordPress.Security.NonceVerification
-			is_embed() ||
-			is_feed() ||
-			is_preview() ||
-			is_customize_preview() ||
-			( defined( 'REST_REQUEST' ) && REST_REQUEST ) ||
 			preg_match( '/^<\?xml/', $buffer ) ||
-			strpos( $buffer, 'amp-boilerplate' ) ||
-			$this->is_amp() ||
-			ewww_image_optimizer_ce_webp_enabled()
+			strpos( $buffer, 'amp-boilerplate' )
 		) {
-			ewwwio_debug_message( 'JS WebP disabled' );
+			$this->debug_message( 'JS WebP disabled' );
+			return $buffer;
+		}
+		if ( $this->is_json( $buffer ) ) {
+			return $buffer;
+		}
+		if ( ! $this->should_process_page() ) {
+			$this->debug_message( 'JS WebP should not process page' );
 			return $buffer;
 		}
 
-		$body_tags = $this->get_elements_from_html( $buffer, 'body' );
+		$body_tags        = $this->get_elements_from_html( $buffer, 'body' );
+		$body_webp_script = '<script data-cfasync="false">if(ewww_webp_supported){document.body.classList.add("webp-support");}</script>';
 		if ( $this->is_iterable( $body_tags ) && ! empty( $body_tags[0] ) && false !== strpos( $body_tags[0], '<body' ) ) {
-			$body_webp_script = '<script>if(ewww_webp_supported){document.body.classList.add("webp-support");}</script>';
 			// Add the WebP script right after the opening tag.
 			$buffer = str_replace( $body_tags[0], $body_tags[0] . "\n" . $body_webp_script, $buffer );
+		} else {
+			$buffer = str_replace( '<body>', "<body>\n$body_webp_script", $buffer );
 		}
 		$images = $this->get_images_from_html( preg_replace( '/<(picture|noscript).*?\/\1>/s', '', $buffer ), false );
 		if ( ! empty( $images[0] ) && $this->is_iterable( $images[0] ) ) {
@@ -716,41 +818,37 @@ class EIO_JS_Webp extends EIO_Page_Parser {
 	}
 
 	/**
-	 * Adds WebP URLs to the product variations data before it is JSON-encoded.
+	 * Adds WebP URLs to the product variation data before it is JSON-encoded.
 	 *
-	 * @param array $variations The product variations with all the associated data.
-	 * @return array The product variations with WebP image URLs added.
+	 * @param array $variation The product variation with all associated data.
+	 * @return array The product variation with WebP image URLs added.
 	 */
-	function woocommerce_pre_json_available_variations( $variations ) {
+	function woocommerce_available_variation( $variation ) {
 		$this->debug_message( '<b>' . __METHOD__ . '()</b>' );
-		if ( $this->is_iterable( $variations ) ) {
-			foreach ( $variations as $index => $variation ) {
-				if ( $this->is_iterable( $variation['image'] ) ) {
-					if ( ! empty( $variation['image']['src'] ) && $this->validate_image_url( $variation['image']['src'] ) ) {
-						$variations[ $index ]['image']['src_webp'] = $this->generate_url( $variation['image']['src'] );
-					}
-					if ( ! empty( $variation['image']['full_src'] ) && $this->validate_image_url( $variation['image']['full_src'] ) ) {
-						$variations[ $index ]['image']['full_src_webp'] = $this->generate_url( $variation['image']['full_src'] );
-					}
-					if ( ! empty( $variation['image']['gallery_thumbnail_src'] ) && $this->validate_image_url( $variation['image']['gallery_thumbnail_src'] ) ) {
-						$variations[ $index ]['image']['gallery_thumbnail_src_webp'] = $this->generate_url( $variation['image']['gallery_thumbnail_src'] );
-					}
-					if ( ! empty( $variation['image']['thumb_src'] ) && $this->validate_image_url( $variation['image']['thumb_src'] ) ) {
-						$variations[ $index ]['image']['thumb_src_webp'] = $this->generate_url( $variation['image']['thumb_src'] );
-					}
-					if ( ! empty( $variation['image']['srcset'] ) ) {
-						$webp_srcset = $this->srcset_replace( $variation['image']['srcset'] );
-						if ( $webp_srcset ) {
-							$variations[ $index ]['image']['srcset_webp'] = $webp_srcset;
-						}
-					}
+		if ( $this->is_iterable( $variation ) && $this->is_iterable( $variation['image'] ) ) {
+			if ( ! empty( $variation['image']['src'] ) && $this->validate_image_url( $variation['image']['src'] ) ) {
+				$variation['image']['src_webp'] = $this->generate_url( $variation['image']['src'] );
+			}
+			if ( ! empty( $variation['image']['full_src'] ) && $this->validate_image_url( $variation['image']['full_src'] ) ) {
+				$variation['image']['full_src_webp'] = $this->generate_url( $variation['image']['full_src'] );
+			}
+			if ( ! empty( $variation['image']['gallery_thumbnail_src'] ) && $this->validate_image_url( $variation['image']['gallery_thumbnail_src'] ) ) {
+				$variation['image']['gallery_thumbnail_src_webp'] = $this->generate_url( $variation['image']['gallery_thumbnail_src'] );
+			}
+			if ( ! empty( $variation['image']['thumb_src'] ) && $this->validate_image_url( $variation['image']['thumb_src'] ) ) {
+				$variation['image']['thumb_src_webp'] = $this->generate_url( $variation['image']['thumb_src'] );
+			}
+			if ( ! empty( $variation['image']['srcset'] ) ) {
+				$webp_srcset = $this->srcset_replace( $variation['image']['srcset'] );
+				if ( $webp_srcset ) {
+					$variation['image']['srcset_webp'] = $webp_srcset;
 				}
 			}
 			if ( $this->function_exists( 'print_r' ) ) {
-				$this->debug_message( print_r( $variations, true ) );
+				$this->debug_message( print_r( $variation, true ) );
 			}
 		}
-		return $variations;
+		return $variation;
 	}
 
 	/**
@@ -846,16 +944,14 @@ class EIO_JS_Webp extends EIO_Page_Parser {
 	 * @return bool True if the file exists or matches a forced path, false otherwise.
 	 */
 	function validate_image_url( $image ) {
-		$this->debug_message( "webp validation for $image" );
-		if (
-			strpos( $image, 'base64,R0lGOD' ) ||
-			strpos( $image, 'lazy-load/images/1x1' ) ||
-			strpos( $image, '/assets/images/' ) ||
-			strpos( $image, '/lazy/placeholder' )
-		) {
-			$this->debug_message( 'lazy load placeholder' );
+		$this->debug_message( __METHOD__ . "() webp validation for $image" );
+		if ( $this->is_lazy_placeholder( $image ) ) {
 			return false;
 		}
+		// Cleanup the image from encoded HTML characters.
+		$image = str_replace( '&#038;', '&', $image );
+		$image = str_replace( '#038;', '&', $image );
+
 		$extension  = '';
 		$image_path = $this->parse_url( $image, PHP_URL_PATH );
 		if ( ! is_null( $image_path ) && $image_path ) {
@@ -890,9 +986,7 @@ class EIO_JS_Webp extends EIO_Page_Parser {
 	}
 
 	/**
-	 * Generate a WebP url.
-	 *
-	 * Adds .webp to the end, or adds a webp parameter for ExactDN urls.
+	 * Generate a WebP URL by appending .webp to the filename.
 	 *
 	 * @param string $url The image url.
 	 * @return string The WebP version of the image url.
@@ -906,10 +1000,11 @@ class EIO_JS_Webp extends EIO_Page_Parser {
 	 * Load full WebP script when SCRIPT_DEBUG is enabled.
 	 */
 	function debug_script() {
-		if ( $this->is_amp() ) {
+		if ( ! $this->should_process_page() ) {
 			return;
 		}
 		if ( ! ewww_image_optimizer_ce_webp_enabled() ) {
+			wp_enqueue_script( 'ewww-webp-check-script', plugins_url( '/includes/check-webp.js', EWWW_IMAGE_OPTIMIZER_PLUGIN_FILE ), array(), EWWW_IMAGE_OPTIMIZER_VERSION );
 			wp_enqueue_script( 'ewww-webp-load-script', plugins_url( '/includes/load-webp.js', EWWW_IMAGE_OPTIMIZER_PLUGIN_FILE ), array(), EWWW_IMAGE_OPTIMIZER_VERSION, true );
 		}
 	}
@@ -918,10 +1013,11 @@ class EIO_JS_Webp extends EIO_Page_Parser {
 	 * Load minified WebP script when EWWW_IMAGE_OPTIMIZER_WEBP_EXTERNAL_SCRIPT is set.
 	 */
 	function min_external_script() {
-		if ( $this->is_amp() ) {
+		if ( ! $this->should_process_page() ) {
 			return;
 		}
 		if ( ! ewww_image_optimizer_ce_webp_enabled() ) {
+			wp_enqueue_script( 'ewww-webp-check-script', plugins_url( '/includes/check-webp.min.js', EWWW_IMAGE_OPTIMIZER_PLUGIN_FILE ), array(), EWWW_IMAGE_OPTIMIZER_VERSION );
 			wp_enqueue_script( 'ewww-webp-load-script', plugins_url( '/includes/load-webp.min.js', EWWW_IMAGE_OPTIMIZER_PLUGIN_FILE ), array(), EWWW_IMAGE_OPTIMIZER_VERSION, true );
 		}
 	}
@@ -930,10 +1026,10 @@ class EIO_JS_Webp extends EIO_Page_Parser {
 	 * Load minified inline version of check WebP script.
 	 */
 	function inline_check_script() {
-		if ( defined( 'EWWW_IMAGE_OPTIMIZER_NO_JS' ) && EWWW_IMAGE_OPTIMIZER_NO_JS ) {
+		if ( ! $this->should_process_page() ) {
 			return;
 		}
-		if ( $this->is_amp() ) {
+		if ( defined( 'EWWW_IMAGE_OPTIMIZER_NO_JS' ) && EWWW_IMAGE_OPTIMIZER_NO_JS ) {
 			return;
 		}
 		$this->debug_message( 'inlining check webp script' );
@@ -947,7 +1043,7 @@ class EIO_JS_Webp extends EIO_Page_Parser {
 		if ( defined( 'EWWW_IMAGE_OPTIMIZER_NO_JS' ) && EWWW_IMAGE_OPTIMIZER_NO_JS ) {
 			return;
 		}
-		if ( $this->is_amp() ) {
+		if ( ! $this->should_process_page() ) {
 			return;
 		}
 		$this->debug_message( 'inlining load webp script' );
