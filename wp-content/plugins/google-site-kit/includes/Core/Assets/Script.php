@@ -68,21 +68,13 @@ class Script extends Asset {
 		$src     = $this->args['src'];
 		$version = $this->args['version'];
 
-		$filename = '';
-		if ( class_exists( '\Google\Site_Kit\Core\Assets\Manifest' ) ) {
-			if ( isset( Manifest::$assets[ $this->handle ] ) ) {
-				$filename = Manifest::$assets[ $this->handle ];
-			} else {
-				$handle = str_replace( 'googlesitekit-', '', $this->handle );
-				if ( isset( Manifest::$assets[ $handle ] ) ) {
-					$filename = Manifest::$assets[ $handle ];
-				}
-			}
-		}
+		if ( $src ) {
+			list( $filename, $hash ) = Manifest::get( $this->handle );
 
-		if ( ! empty( $filename ) ) {
-			$src     = $context->url( 'dist/assets/js/' . $filename );
-			$version = null;
+			if ( $filename ) {
+				$src     = $context->url( 'dist/assets/js/' . $filename );
+				$version = $hash;
+			}
 		}
 
 		wp_register_script(

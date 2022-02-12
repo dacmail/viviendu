@@ -12,8 +12,8 @@ namespace Google\Site_Kit\Core\Authentication;
 
 use Google\Site_Kit\Context;
 use Google\Site_Kit\Core\Util\Feature_Flags;
-use WP_Error;
 use Exception;
+use WP_Error;
 
 /**
  * Class for authentication service.
@@ -24,21 +24,26 @@ use Exception;
  */
 class Google_Proxy {
 
-	const PRODUCTION_BASE_URL     = 'https://sitekit.withgoogle.com';
-	const STAGING_BASE_URL        = 'https://site-kit-dev.appspot.com';
-	const OAUTH2_SITE_URI         = '/o/oauth2/site/';
-	const OAUTH2_REVOKE_URI       = '/o/oauth2/revoke/';
-	const OAUTH2_TOKEN_URI        = '/o/oauth2/token/';
-	const OAUTH2_AUTH_URI         = '/o/oauth2/auth/';
-	const OAUTH2_DELETE_SITE_URI  = '/o/oauth2/delete-site/';
-	const SETUP_URI               = '/site-management/setup/';
-	const PERMISSIONS_URI         = '/site-management/permissions/';
-	const USER_INPUT_SETTINGS_URI = '/site-management/settings/';
-	const FEATURES_URI            = '/site-management/features/';
-	const SURVEY_TRIGGER_URI      = '/survey/trigger/';
-	const SURVEY_EVENT_URI        = '/survey/event/';
-	const ACTION_SETUP            = 'googlesitekit_proxy_setup';
-	const ACTION_PERMISSIONS      = 'googlesitekit_proxy_permissions';
+	const PRODUCTION_BASE_URL       = 'https://sitekit.withgoogle.com';
+	const STAGING_BASE_URL          = 'https://site-kit-dev.appspot.com';
+	const OAUTH2_SITE_URI           = '/o/oauth2/site/';
+	const OAUTH2_REVOKE_URI         = '/o/oauth2/revoke/';
+	const OAUTH2_TOKEN_URI          = '/o/oauth2/token/';
+	const OAUTH2_AUTH_URI           = '/o/oauth2/auth/';
+	const OAUTH2_DELETE_SITE_URI    = '/o/oauth2/delete-site/';
+	const SETUP_URI                 = '/site-management/setup/';
+	const SETUP_URI_V2              = '/v2/site-management/setup/';
+	const PERMISSIONS_URI           = '/site-management/permissions/';
+	const USER_INPUT_SETTINGS_URI   = '/site-management/settings/';
+	const FEATURES_URI              = '/site-management/features/';
+	const SURVEY_TRIGGER_URI        = '/survey/trigger/';
+	const SURVEY_EVENT_URI          = '/survey/event/';
+	const ACTION_EXCHANGE_SITE_CODE = 'googlesitekit_proxy_exchange_site_code';
+	const ACTION_SETUP              = 'googlesitekit_proxy_setup';
+	const ACTION_SETUP_START        = 'googlesitekit_proxy_setup_start';
+	const ACTION_PERMISSIONS        = 'googlesitekit_proxy_permissions';
+	const ACTION_VERIFY             = 'googlesitekit_proxy_verify';
+	const NONCE_ACTION              = 'googlesitekit_proxy_nonce';
 
 	/**
 	 * Plugin context.
@@ -114,7 +119,7 @@ class Google_Proxy {
 			$query_params,
 			array(
 				'supports' => rawurlencode( implode( ' ', $this->get_supports() ) ),
-				'nonce'    => rawurlencode( wp_create_nonce( self::ACTION_SETUP ) ),
+				'nonce'    => rawurlencode( wp_create_nonce( self::NONCE_ACTION ) ),
 			)
 		);
 
@@ -143,6 +148,53 @@ class Google_Proxy {
 		$params['hl']               = $this->context->get_locale( 'user' );
 
 		return add_query_arg( $params, $this->url( self::SETUP_URI ) );
+	}
+
+	/**
+	 * Returns the setup URL to the authentication proxy.
+	 *
+	 * TODO: Rename this function to replace `setup_url` once the `serviceSetupV2` feature is fully developed and the feature flag is removed.
+	 *
+	 * @since 1.49.0
+	 *
+	 * @param array $query_params Query parameters to include in the URL.
+	 * @return string URL to the setup page on the authentication proxy.
+	 *
+	 * @throws Exception Thrown if called without the required query parameters.
+	 */
+	public function setup_url_v2( array $query_params = array() ) {
+		if ( empty( $query_params['code'] ) ) {
+			throw new Exception( __( 'Missing code parameter for setup URL.', 'google-site-kit' ) );
+		}
+		if ( empty( $query_params['site_id'] ) && empty( $query_params['site_code'] ) ) {
+			throw new Exception( __( 'Missing site_id or site_code parameter for setup URL.', 'google-site-kit' ) );
+		}
+
+		return add_query_arg( $query_params, $this->url( self::SETUP_URI_V2 ) );
+	}
+
+	/**
+	 * Conditionally adds the `step` parameter to the passed query parameters, depending on the given error code.
+	 *
+	 * @since 1.49.0
+	 *
+	 * @param array  $query_params Query parameters.
+	 * @param string $error_code Error code.
+	 * @return array Query parameters with `step` included, depending on the error code.
+	 */
+	public function add_setup_step_from_error_code( $query_params, $error_code ) {
+		switch ( $error_code ) {
+			case 'missing_verification':
+				$query_params['step'] = 'verification';
+				break;
+			case 'missing_delegation_consent':
+				$query_params['step'] = 'delegation_consent';
+				break;
+			case 'missing_search_console_property':
+				$query_params['step'] = 'search_console_property';
+				break;
+		}
+		return $query_params;
 	}
 
 	/**
@@ -204,6 +256,7 @@ class Google_Proxy {
 		$request_args = array(
 			'headers' => ! empty( $args['headers'] ) && is_array( $args['headers'] ) ? $args['headers'] : array(),
 			'body'    => ! empty( $args['body'] ) && is_array( $args['body'] ) ? $args['body'] : array(),
+			'timeout' => isset( $args['timeout'] ) ? $args['timeout'] : 15,
 		);
 
 		if ( $credentials && $credentials instanceof Credentials ) {

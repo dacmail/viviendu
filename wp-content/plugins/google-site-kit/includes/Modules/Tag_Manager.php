@@ -10,39 +10,41 @@
 
 namespace Google\Site_Kit\Modules;
 
+use Exception;
 use Google\Site_Kit\Context;
 use Google\Site_Kit\Core\Assets\Asset;
 use Google\Site_Kit\Core\Assets\Script;
+use Google\Site_Kit\Core\Authentication\Clients\Google_Site_Kit_Client;
 use Google\Site_Kit\Core\Modules\Module;
 use Google\Site_Kit\Core\Modules\Module_Settings;
 use Google\Site_Kit\Core\Modules\Module_With_Assets;
 use Google\Site_Kit\Core\Modules\Module_With_Assets_Trait;
 use Google\Site_Kit\Core\Modules\Module_With_Deactivation;
 use Google\Site_Kit\Core\Modules\Module_With_Debug_Fields;
+use Google\Site_Kit\Core\Modules\Module_With_Owner;
+use Google\Site_Kit\Core\Modules\Module_With_Owner_Trait;
 use Google\Site_Kit\Core\Modules\Module_With_Scopes;
 use Google\Site_Kit\Core\Modules\Module_With_Scopes_Trait;
 use Google\Site_Kit\Core\Modules\Module_With_Settings;
 use Google\Site_Kit\Core\Modules\Module_With_Settings_Trait;
-use Google\Site_Kit\Core\Modules\Module_With_Owner;
-use Google\Site_Kit\Core\Modules\Module_With_Owner_Trait;
-use Google\Site_Kit\Core\REST_API\Exception\Invalid_Datapoint_Exception;
-use Google\Site_Kit\Core\Authentication\Clients\Google_Site_Kit_Client;
 use Google\Site_Kit\Core\REST_API\Data_Request;
+use Google\Site_Kit\Core\REST_API\Exception\Invalid_Datapoint_Exception;
+use Google\Site_Kit\Core\Tags\Guards\Tag_Production_Guard;
 use Google\Site_Kit\Core\Tags\Guards\Tag_Verify_Guard;
+use Google\Site_Kit\Core\Util\BC_Functions;
 use Google\Site_Kit\Core\Util\Debug_Data;
 use Google\Site_Kit\Core\Util\Method_Proxy_Trait;
 use Google\Site_Kit\Modules\Tag_Manager\AMP_Tag;
 use Google\Site_Kit\Modules\Tag_Manager\Settings;
 use Google\Site_Kit\Modules\Tag_Manager\Tag_Guard;
 use Google\Site_Kit\Modules\Tag_Manager\Web_Tag;
-use Google\Site_Kit_Dependencies\Google_Service_TagManager;
-use Google\Site_Kit_Dependencies\Google_Service_TagManager_Account;
-use Google\Site_Kit_Dependencies\Google_Service_TagManager_Container;
-use Google\Site_Kit_Dependencies\Google_Service_TagManager_ListAccountsResponse;
-use Google\Site_Kit_Dependencies\Google_Service_TagManager_ListContainersResponse;
+use Google\Site_Kit_Dependencies\Google\Service\TagManager as Google_Service_TagManager;
+use Google\Site_Kit_Dependencies\Google\Service\TagManager\Account as Google_Service_TagManager_Account;
+use Google\Site_Kit_Dependencies\Google\Service\TagManager\Container as Google_Service_TagManager_Container;
+use Google\Site_Kit_Dependencies\Google\Service\TagManager\ListAccountsResponse as Google_Service_TagManager_ListAccountsResponse;
+use Google\Site_Kit_Dependencies\Google\Service\TagManager\ListContainersResponse as Google_Service_TagManager_ListContainersResponse;
 use Google\Site_Kit_Dependencies\Psr\Http\Message\RequestInterface;
 use WP_Error;
-use Exception;
 
 /**
  * Class representing the Tag Manager module.
@@ -98,6 +100,7 @@ final class Tag_Manager extends Module
 		add_action( 'googlesitekit_analytics_can_use_snippet', $this->get_method_proxy( 'can_analytics_use_snippet' ) );
 		// Filter whether certain users can be excluded from tracking.
 		add_action( 'googlesitekit_allow_tracking_disabled', $this->get_method_proxy( 'filter_analytics_allow_tracking_disabled' ) );
+		add_action( 'googlesitekit_analytics_tracking_opt_out', $this->get_method_proxy( 'analytics_tracking_opt_out' ) );
 	}
 
 	/**
@@ -274,7 +277,7 @@ final class Tag_Manager extends Module
 					);
 				}
 
-				$usage_context = $data['usageContext'] ?: self::USAGE_CONTEXT_WEB;
+				$usage_context = $data['usageContext'] ?: array( self::USAGE_CONTEXT_WEB, self::USAGE_CONTEXT_AMP );
 
 				if ( empty( $this->context_map[ $usage_context ] ) ) {
 					return new WP_Error(
@@ -330,8 +333,7 @@ final class Tag_Manager extends Module
 				);
 			case 'GET:tag-permission':
 				return function () use ( $data ) {
-					// TODO: Remove 'tag' fallback once legacy components are refactored.
-					$container_id = $data['containerID'] ?: $data['tag'];
+					$container_id = $data['containerID'];
 
 					if ( ! $container_id ) {
 						return new WP_Error(
@@ -454,7 +456,7 @@ final class Tag_Manager extends Module
 				return array_merge( $response, compact( 'containers' ) );
 			case 'GET:containers':
 				/* @var Google_Service_TagManager_ListContainersResponse $response Response object. */
-				$usage_context = $data['usageContext'] ?: self::USAGE_CONTEXT_WEB;
+				$usage_context = $data['usageContext'] ?: array( self::USAGE_CONTEXT_WEB, self::USAGE_CONTEXT_AMP );
 				/* @var Google_Service_TagManager_Container[] $containers Filtered containers. */
 				$containers = array_filter(
 					(array) $response->getContainer(),
@@ -615,6 +617,7 @@ final class Tag_Manager extends Module
 		if ( ! $tag->is_tag_blocked() ) {
 			$tag->use_guard( new Tag_Verify_Guard( $this->context->input() ) );
 			$tag->use_guard( new Tag_Guard( $module_settings, $is_amp ) );
+			$tag->use_guard( new Tag_Production_Guard() );
 
 			if ( $tag->can_register() ) {
 				$tag->register();
@@ -640,6 +643,29 @@ final class Tag_Manager extends Module
 		}
 
 		return $original_value;
+	}
+
+	/**
+	 * Handles Analytics measurement opt-out for the configured Analytics property in the container(s).
+	 *
+	 * @since 1.41.0
+	 *
+	 * @param string $property_id Analytics property_id.
+	 */
+	private function analytics_tracking_opt_out( $property_id ) {
+		$settings       = $this->get_settings()->get();
+		$ga_property_id = $settings['gaPropertyID'];
+		if ( ! $ga_property_id || $ga_property_id === $property_id ) {
+			return;
+		}
+
+		BC_Functions::wp_print_inline_script_tag(
+			sprintf(
+				'window["ga-disable-%s"] = true;',
+				esc_attr( $ga_property_id )
+			)
+		);
+
 	}
 
 	/**

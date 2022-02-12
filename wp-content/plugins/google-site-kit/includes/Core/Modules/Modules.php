@@ -11,6 +11,8 @@
 namespace Google\Site_Kit\Core\Modules;
 
 use Google\Site_Kit\Context;
+use Google\Site_Kit\Core\Assets\Assets;
+use Google\Site_Kit\Core\Authentication\Clients\OAuth_Client;
 use Google\Site_Kit\Core\Permissions\Permissions;
 use Google\Site_Kit\Core\REST_API\REST_Route;
 use Google\Site_Kit\Core\REST_API\REST_Routes;
@@ -28,6 +30,7 @@ use Google\Site_Kit\Modules\PageSpeed_Insights;
 use Google\Site_Kit\Modules\Search_Console;
 use Google\Site_Kit\Modules\Site_Verification;
 use Google\Site_Kit\Modules\Tag_Manager;
+use Google\Site_Kit\Modules\Subscribe_With_Google;
 use WP_REST_Server;
 use WP_REST_Request;
 use WP_REST_Response;
@@ -110,19 +113,27 @@ final class Modules {
 	private $registry;
 
 	/**
+	 * Assets API instance.
+	 *
+	 * @since 1.40.0
+	 * @var Assets
+	 */
+	private $assets;
+
+	/**
 	 * Core module class names.
 	 *
 	 * @since 1.21.0
 	 * @var string[] Core module class names.
 	 */
 	private $core_modules = array(
-		Site_Verification::class,
-		Search_Console::class,
-		Analytics::class,
-		Optimize::class,
-		Tag_Manager::class,
-		AdSense::class,
-		PageSpeed_Insights::class,
+		Site_Verification::MODULE_SLUG  => Site_Verification::class,
+		Search_Console::MODULE_SLUG     => Search_Console::class,
+		Analytics::MODULE_SLUG          => Analytics::class,
+		Optimize::MODULE_SLUG           => Optimize::class,
+		Tag_Manager::MODULE_SLUG        => Tag_Manager::class,
+		AdSense::MODULE_SLUG            => AdSense::class,
+		PageSpeed_Insights::MODULE_SLUG => PageSpeed_Insights::class,
 	);
 
 	/**
@@ -134,23 +145,28 @@ final class Modules {
 	 * @param Options        $options        Optional. Option API instance. Default is a new instance.
 	 * @param User_Options   $user_options   Optional. User Option API instance. Default is a new instance.
 	 * @param Authentication $authentication Optional. Authentication instance. Default is a new instance.
+	 * @param Assets         $assets  Optional. Assets API instance. Default is a new instance.
 	 */
 	public function __construct(
 		Context $context,
 		Options $options = null,
 		User_Options $user_options = null,
-		Authentication $authentication = null
+		Authentication $authentication = null,
+		Assets $assets = null
 	) {
 		$this->context        = $context;
 		$this->options        = $options ?: new Options( $this->context );
 		$this->user_options   = $user_options ?: new User_Options( $this->context );
 		$this->authentication = $authentication ?: new Authentication( $this->context, $this->options, $this->user_options );
+		$this->assets         = $assets ?: new Assets( $this->context );
 
-		if ( Feature_Flags::enabled( 'ga4setup' ) ) {
-			$this->core_modules[] = Analytics_4::class;
-		}
+		$this->core_modules[ Analytics_4::MODULE_SLUG ] = Analytics_4::class;
+
 		if ( Feature_Flags::enabled( 'ideaHubModule' ) ) {
-			$this->core_modules[] = Idea_Hub::class;
+			$this->core_modules[ Idea_Hub::MODULE_SLUG ] = Idea_Hub::class;
+		}
+		if ( Feature_Flags::enabled( 'swgModule' ) ) {
+			$this->core_modules[ Subscribe_With_Google::MODULE_SLUG ] = Subscribe_With_Google::class;
 		}
 	}
 
@@ -160,32 +176,6 @@ final class Modules {
 	 * @since 1.0.0
 	 */
 	public function register() {
-		add_filter(
-			'googlesitekit_modules_data',
-			function( $data ) {
-				foreach ( $this->get_available_modules() as $module ) {
-					$data[ $module->slug ]                  = $module->prepare_info_for_js();
-					$data[ $module->slug ]['active']        = $this->is_module_active( $module->slug );
-					$data[ $module->slug ]['setupComplete'] = $data[ $module->slug ]['active'] && $this->is_module_connected( $module->slug );
-					$data[ $module->slug ]['dependencies']  = $this->get_module_dependencies( $module->slug );
-					$data[ $module->slug ]['dependants']    = $this->get_module_dependants( $module->slug );
-					$data[ $module->slug ]['owner']         = null;
-
-					if ( current_user_can( 'list_users' ) && $module instanceof Module_With_Owner ) {
-						$owner_id = $module->get_owner_id();
-						if ( $owner_id ) {
-							$data[ $module->slug ]['owner'] = array(
-								'id'    => $owner_id,
-								'login' => get_the_author_meta( 'user_login', $owner_id ),
-							);
-						}
-					}
-				}
-
-				return $data;
-			}
-		);
-
 		add_filter(
 			'googlesitekit_rest_routes',
 			function( $routes ) {
@@ -210,6 +200,10 @@ final class Modules {
 			function( Module $module ) {
 				if ( $module instanceof Module_With_Settings ) {
 					$module->get_settings()->register();
+				}
+
+				if ( $module instanceof Module_With_Persistent_Registration ) {
+					$module->register_persistent();
 				}
 			}
 		);
@@ -250,6 +244,73 @@ final class Modules {
 				return array_merge( $paths, array_filter( $settings_routes ) );
 			}
 		);
+
+		add_action(
+			'googlesitekit_authorize_user',
+			function( $token_response ) {
+				if ( empty( $token_response['analytics_configuration'] ) ) {
+					return;
+				}
+
+				// Do nothing if the Analytics module is already activated.
+				if ( $this->is_module_active( Analytics::MODULE_SLUG ) ) {
+					return;
+				}
+
+				$this->activate_module( Analytics::MODULE_SLUG );
+
+				$extra_scopes = $this->user_options->get( OAuth_Client::OPTION_ADDITIONAL_AUTH_SCOPES );
+				if ( is_array( $extra_scopes ) ) {
+					$readonly_scope_index = array_search( Analytics::READONLY_SCOPE, $extra_scopes, true );
+					if ( $readonly_scope_index >= 0 ) {
+						unset( $extra_scopes[ $readonly_scope_index ] );
+
+						$auth_scopes = $this->user_options->get( OAuth_Client::OPTION_AUTH_SCOPES );
+						if ( is_array( $auth_scopes ) ) {
+							$auth_scopes[] = Analytics::READONLY_SCOPE;
+							$auth_scopes   = array_unique( $auth_scopes );
+
+							$this->user_options->set( OAuth_Client::OPTION_ADDITIONAL_AUTH_SCOPES, array_values( $extra_scopes ) );
+							$this->user_options->set( OAuth_Client::OPTION_AUTH_SCOPES, $auth_scopes );
+						}
+					}
+				}
+
+				try {
+					$analytics = $this->get_module( Analytics::MODULE_SLUG );
+					$analytics->handle_token_response_data( $token_response );
+				} catch ( Exception $e ) {
+					return;
+				}
+			},
+			1
+		);
+
+		add_filter(
+			'googlesitekit_inline_base_data',
+			function ( $data ) {
+				$all_active_modules = $this->get_active_modules();
+
+				$non_internal_active_modules = array_filter(
+					$all_active_modules,
+					function( Module $module ) {
+						return false === $module->internal;
+					}
+				);
+
+				$data['activeModules'] = array_keys( $non_internal_active_modules );
+
+				return $data;
+			}
+		);
+
+		add_filter(
+			'googlesitekit_dashboard_sharing_data',
+			function ( $data ) {
+				$data['recoverableModules'] = array_keys( $this->get_recoverable_modules() );
+				return $data;
+			}
+		);
 	}
 
 	/**
@@ -263,7 +324,7 @@ final class Modules {
 		if ( empty( $this->modules ) ) {
 			$module_classes = $this->get_registry()->get_all();
 			foreach ( $module_classes as $module_class ) {
-				$instance = new $module_class( $this->context, $this->options, $this->user_options, $this->authentication );
+				$instance = new $module_class( $this->context, $this->options, $this->user_options, $this->authentication, $this->assets );
 
 				$this->modules[ $instance->slug ]      = $instance;
 				$this->dependencies[ $instance->slug ] = array();
@@ -458,6 +519,19 @@ final class Modules {
 	}
 
 	/**
+	 * Checks whether the module identified by the given slug is enabled by the option.
+	 *
+	 * @since 1.46.0
+	 *
+	 * @param string $slug Unique module slug.
+	 * @return bool True if module has been manually enabled, false otherwise.
+	 */
+	private function manually_enabled( $slug ) {
+		$option = $this->get_active_modules_option();
+		return in_array( $slug, $option, true );
+	}
+
+	/**
 	 * Deactivates the module identified by the given slug.
 	 *
 	 * @since 1.0.0
@@ -543,9 +617,23 @@ final class Modules {
 	 */
 	protected function setup_registry() {
 		$registry = new Module_Registry();
+		/**
+		 * Filters core module slugs before registering them in the module registry. Each slug presented on this array will
+		 * be registered for inclusion. If a module is forced to be active, then it will be included even if the module slug is
+		 * removed from this filter.
+		 *
+		 * @since 1.49.0
+		 *
+		 * @param array $available_modules An array of core module slugs available for registration in the module registry.
+		 * @return array An array of filtered module slugs.
+		 */
+		$available_modules = (array) apply_filters( 'googlesitekit_available_modules', array_keys( $this->core_modules ) );
+		$modules           = array_fill_keys( $available_modules, true );
 
-		foreach ( $this->core_modules as $core_module ) {
-			$registry->register( $core_module );
+		foreach ( $this->core_modules as $slug => $module ) {
+			if ( isset( $modules[ $slug ] ) || call_user_func( array( $module, 'is_force_active' ) ) ) {
+				$registry->register( $module );
+			}
 		}
 
 		return $registry;
@@ -873,6 +961,7 @@ final class Modules {
 			'internal'     => $module->internal,
 			'order'        => $module->order,
 			'forceActive'  => $module->force_active,
+			'shareable'    => $module->is_shareable(),
 			'active'       => $this->is_module_active( $module->slug ),
 			'connected'    => $this->is_module_connected( $module->slug ),
 			'dependencies' => $this->get_module_dependencies( $module->slug ),
@@ -990,8 +1079,9 @@ final class Modules {
 			$option = $this->options->get( 'googlesitekit-active-modules' );
 		}
 
+		// If both options are not arrays, use the default value.
 		if ( ! is_array( $option ) ) {
-			$option = array();
+			$option = array( PageSpeed_Insights::MODULE_SLUG );
 		}
 
 		$includes_analytics   = in_array( Analytics::MODULE_SLUG, $option, true );
@@ -1016,6 +1106,63 @@ final class Modules {
 		}
 
 		$this->options->set( self::OPTION_ACTIVE_MODULES, $option );
+	}
+
+	/**
+	 * Gets the shareable active modules.
+	 *
+	 * @since 1.50.0
+	 *
+	 * @return array Shareable modules as $slug => $module pairs.
+	 */
+	public function get_shareable_modules() {
+		$all_active_modules = $this->get_active_modules();
+
+		return array_filter(
+			$all_active_modules,
+			function( Module $module ) {
+				return $module->is_shareable();
+			}
+		);
+	}
+
+	/**
+	 * Gets the recoverable modules.
+	 *
+	 * A module is recoverable if:
+	 * - No user is identified by its owner ID
+	 * - the owner lacks the capability to authenticate
+	 * - the owner is no longer authenticated
+	 * - no user exists for the owner ID
+	 *
+	 * @since 1.50.0
+	 *
+	 * @return array Recoverable modules as $slug => $module pairs.
+	 */
+	protected function get_recoverable_modules() {
+		return array_filter(
+			$this->get_shareable_modules(),
+			function ( Module $module ) {
+				if ( ! $module instanceof Module_With_Owner ) {
+					return false;
+				}
+
+				$owner_id = $module->get_owner_id();
+				if ( ! $owner_id || ! user_can( $owner_id, Permissions::AUTHENTICATE ) ) {
+					return true;
+				}
+
+				$restore_user        = $this->user_options->switch_user( $owner_id );
+				$owner_authenticated = $this->authentication->is_authenticated();
+				$restore_user();
+
+				if ( ! $owner_authenticated ) {
+					return true;
+				}
+
+				return false;
+			}
+		);
 	}
 
 }

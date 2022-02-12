@@ -31,8 +31,10 @@ use Google\Site_Kit\Core\Assets\Script;
 use Google\Site_Kit\Core\Authentication\Clients\Google_Site_Kit_Client;
 use Google\Site_Kit\Core\Permissions\Permissions;
 use Google\Site_Kit\Core\REST_API\Data_Request;
+use Google\Site_Kit\Core\Tags\Guards\Tag_Production_Guard;
 use Google\Site_Kit\Core\Tags\Guards\Tag_Verify_Guard;
 use Google\Site_Kit\Core\Util\Debug_Data;
+use Google\Site_Kit\Core\Util\Feature_Flags;
 use Google\Site_Kit\Core\Util\Method_Proxy_Trait;
 use Google\Site_Kit\Modules\Analytics\Google_Service_AnalyticsProvisioning;
 use Google\Site_Kit\Modules\Analytics\AMP_Tag;
@@ -41,25 +43,26 @@ use Google\Site_Kit\Modules\Analytics\Tag_Guard;
 use Google\Site_Kit\Modules\Analytics\Web_Tag;
 use Google\Site_Kit\Modules\Analytics\Proxy_AccountTicket;
 use Google\Site_Kit\Modules\Analytics\Advanced_Tracking;
-use Google\Site_Kit_Dependencies\Google_Service_Analytics;
-use Google\Site_Kit_Dependencies\Google_Service_AnalyticsReporting;
-use Google\Site_Kit_Dependencies\Google_Service_AnalyticsReporting_GetReportsRequest;
-use Google\Site_Kit_Dependencies\Google_Service_AnalyticsReporting_ReportRequest;
-use Google\Site_Kit_Dependencies\Google_Service_AnalyticsReporting_Dimension;
-use Google\Site_Kit_Dependencies\Google_Service_AnalyticsReporting_DimensionFilter;
-use Google\Site_Kit_Dependencies\Google_Service_AnalyticsReporting_DimensionFilterClause;
-use Google\Site_Kit_Dependencies\Google_Service_AnalyticsReporting_DateRange;
-use Google\Site_Kit_Dependencies\Google_Service_AnalyticsReporting_Metric;
-use Google\Site_Kit_Dependencies\Google_Service_AnalyticsReporting_OrderBy;
-use Google\Site_Kit_Dependencies\Google_Service_Analytics_Accounts;
-use Google\Site_Kit_Dependencies\Google_Service_Analytics_Account;
-use Google\Site_Kit_Dependencies\Google_Service_Analytics_Webproperties;
-use Google\Site_Kit_Dependencies\Google_Service_Analytics_Webproperty;
-use Google\Site_Kit_Dependencies\Google_Service_Analytics_Profile;
-use Google\Site_Kit_Dependencies\Google_Service_Exception;
+use Google\Site_Kit_Dependencies\Google\Service\Analytics as Google_Service_Analytics;
+use Google\Site_Kit_Dependencies\Google\Service\AnalyticsReporting as Google_Service_AnalyticsReporting;
+use Google\Site_Kit_Dependencies\Google\Service\AnalyticsReporting\GetReportsRequest as Google_Service_AnalyticsReporting_GetReportsRequest;
+use Google\Site_Kit_Dependencies\Google\Service\AnalyticsReporting\ReportRequest as Google_Service_AnalyticsReporting_ReportRequest;
+use Google\Site_Kit_Dependencies\Google\Service\AnalyticsReporting\Dimension as Google_Service_AnalyticsReporting_Dimension;
+use Google\Site_Kit_Dependencies\Google\Service\AnalyticsReporting\DimensionFilter as Google_Service_AnalyticsReporting_DimensionFilter;
+use Google\Site_Kit_Dependencies\Google\Service\AnalyticsReporting\DimensionFilterClause as Google_Service_AnalyticsReporting_DimensionFilterClause;
+use Google\Site_Kit_Dependencies\Google\Service\AnalyticsReporting\DateRange as Google_Service_AnalyticsReporting_DateRange;
+use Google\Site_Kit_Dependencies\Google\Service\AnalyticsReporting\Metric as Google_Service_AnalyticsReporting_Metric;
+use Google\Site_Kit_Dependencies\Google\Service\AnalyticsReporting\OrderBy as Google_Service_AnalyticsReporting_OrderBy;
+use Google\Site_Kit_Dependencies\Google\Service\Analytics\Accounts as Google_Service_Analytics_Accounts;
+use Google\Site_Kit_Dependencies\Google\Service\Analytics\Account as Google_Service_Analytics_Account;
+use Google\Site_Kit_Dependencies\Google\Service\Analytics\Webproperties as Google_Service_Analytics_Webproperties;
+use Google\Site_Kit_Dependencies\Google\Service\Analytics\Webproperty as Google_Service_Analytics_Webproperty;
+use Google\Site_Kit_Dependencies\Google\Service\Analytics\Profile as Google_Service_Analytics_Profile;
+use Google\Site_Kit_Dependencies\Google\Service\Exception as Google_Service_Exception;
 use Google\Site_Kit_Dependencies\Psr\Http\Message\RequestInterface;
 use WP_Error;
 use Exception;
+use Google\Site_Kit\Core\Util\BC_Functions;
 
 /**
  * Class representing the Analytics module.
@@ -79,6 +82,10 @@ final class Analytics extends Module
 
 	const PROVISION_ACCOUNT_TICKET_ID = 'googlesitekit_analytics_provision_account_ticket_id';
 
+	const READONLY_SCOPE  = 'https://www.googleapis.com/auth/analytics.readonly';
+	const PROVISION_SCOPE = 'https://www.googleapis.com/auth/analytics.provision';
+	const EDIT_SCOPE      = 'https://www.googleapis.com/auth/analytics.edit';
+
 	/**
 	 * Module slug name.
 	 */
@@ -92,7 +99,9 @@ final class Analytics extends Module
 	public function register() {
 		$this->register_scopes_hook();
 
-		$this->register_screen_hook();
+		if ( ! Feature_Flags::enabled( 'unifiedDashboard' ) ) {
+			$this->register_screen_hook();
+		}
 
 		/**
 		 * This filter only exists to be unhooked by the AdSense module if active.
@@ -102,12 +111,16 @@ final class Analytics extends Module
 		add_filter( 'googlesitekit_analytics_adsense_linked', '__return_false' );
 
 		add_action( 'admin_init', $this->get_method_proxy( 'handle_provisioning_callback' ) );
+		add_action( 'googlesitekit_authorize_user', array( $this, 'handle_token_response_data' ) );
+
 		// For non-AMP and AMP.
 		add_action( 'wp_head', $this->get_method_proxy( 'print_tracking_opt_out' ), 0 );
 		// For Web Stories plugin.
 		add_action( 'web_stories_story_head', $this->get_method_proxy( 'print_tracking_opt_out' ), 0 );
 		// Analytics tag placement logic.
 		add_action( 'template_redirect', $this->get_method_proxy( 'register_tag' ) );
+
+		add_filter( 'googlesitekit_proxy_setup_url_params', $this->get_method_proxy( 'update_proxy_setup_mode' ) );
 
 		( new Advanced_Tracking( $this->context ) )->register();
 	}
@@ -152,7 +165,7 @@ final class Analytics extends Module
 	 */
 	public function get_scopes() {
 		return array(
-			'https://www.googleapis.com/auth/analytics.readonly',
+			self::READONLY_SCOPE,
 		);
 	}
 
@@ -332,23 +345,29 @@ final class Analytics extends Module
 			'GET:accounts-properties-profiles' => array( 'service' => 'analytics' ),
 			'POST:create-account-ticket'       => array(
 				'service'                => 'analyticsprovisioning',
-				'scopes'                 => array( 'https://www.googleapis.com/auth/analytics.provision' ),
+				'scopes'                 => array( self::PROVISION_SCOPE ),
 				'request_scopes_message' => __( 'You’ll need to grant Site Kit permission to create a new Analytics account on your behalf.', 'google-site-kit' ),
 			),
 			'POST:create-profile'              => array(
 				'service'                => 'analytics',
-				'scopes'                 => array( 'https://www.googleapis.com/auth/analytics.edit' ),
+				'scopes'                 => array( self::EDIT_SCOPE ),
 				'request_scopes_message' => __( 'You’ll need to grant Site Kit permission to create a new Analytics view on your behalf.', 'google-site-kit' ),
 			),
 			'POST:create-property'             => array(
 				'service'                => 'analytics',
-				'scopes'                 => array( 'https://www.googleapis.com/auth/analytics.edit' ),
+				'scopes'                 => array( self::EDIT_SCOPE ),
 				'request_scopes_message' => __( 'You’ll need to grant Site Kit permission to create a new Analytics property on your behalf.', 'google-site-kit' ),
 			),
-			'GET:goals'                        => array( 'service' => 'analytics' ),
+			'GET:goals'                        => array(
+				'service'   => 'analytics',
+				'shareable' => Feature_Flags::enabled( 'dashboardSharing' ),
+			),
 			'GET:profiles'                     => array( 'service' => 'analytics' ),
 			'GET:properties-profiles'          => array( 'service' => 'analytics' ),
-			'GET:report'                       => array( 'service' => 'analyticsreporting' ),
+			'GET:report'                       => array(
+				'service'   => 'analyticsreporting',
+				'shareable' => Feature_Flags::enabled( 'dashboardSharing' ),
+			),
 			'GET:tag-permission'               => array( 'service' => '' ),
 		);
 	}
@@ -534,8 +553,13 @@ final class Analytics extends Module
 					foreach ( $dimension_filters as $dimension_name => $dimension_value ) {
 						$dimension_filter = new Google_Service_AnalyticsReporting_DimensionFilter();
 						$dimension_filter->setDimensionName( $dimension_name );
-						$dimension_filter->setOperator( 'EXACT' );
-						$dimension_filter->setExpressions( array( $dimension_value ) );
+						if ( is_array( $dimension_value ) ) {
+							$dimension_filter->setOperator( 'IN_LIST' );
+							$dimension_filter->setExpressions( $dimension_value );
+						} else {
+							$dimension_filter->setOperator( 'EXACT' );
+							$dimension_filter->setExpressions( array( $dimension_value ) );
+						}
 						$dimension_filter_instances[] = $dimension_filter;
 					}
 
@@ -570,7 +594,7 @@ final class Analytics extends Module
 					// When using multiple date ranges, it changes the structure of the response,
 					// where each date range becomes an item in a list.
 					if ( ! empty( $data['multiDateRange'] ) ) {
-						$date_ranges[] = $this->parse_date_range( $date_range, 1, 1, true, true );
+						$date_ranges[] = $this->parse_date_range( $date_range, 1, 1, true );
 					}
 				}
 
@@ -1195,15 +1219,25 @@ final class Analytics extends Module
 		if ( ! $this->is_tracking_disabled() ) {
 			return;
 		}
+		$settings    = $this->get_settings()->get();
+		$account_id  = $settings['accountID'];
+		$property_id = $settings['propertyID'];
 
-		?>
-		<!-- <?php esc_html_e( 'Google Analytics user opt-out added via Site Kit by Google', 'google-site-kit' ); ?> -->
-		<?php if ( $this->context->is_amp() ) : ?>
+		if ( $this->context->is_amp() ) : ?>
+			<!-- <?php esc_html_e( 'Google Analytics AMP opt-out snippet added by Site Kit', 'google-site-kit' ); ?> -->
 			<meta name="ga-opt-out" content="" id="__gaOptOutExtension">
+			<!-- <?php esc_html_e( 'End Google Analytics AMP opt-out snippet added by Site Kit', 'google-site-kit' ); ?> -->
 		<?php else : ?>
-			<script type="text/javascript">window["_gaUserPrefs"] = { ioo : function() { return true; } }</script>
-		<?php endif; ?>
-		<?php
+			<!-- <?php esc_html_e( 'Google Analytics opt-out snippet added by Site Kit', 'google-site-kit' ); ?> -->
+			<?php
+			BC_Functions::wp_print_inline_script_tag(
+				sprintf( 'window["ga-disable-%s"] = true;', esc_attr( $property_id ) )
+			);
+			?>
+			<?php do_action( 'googlesitekit_analytics_tracking_opt_out', $property_id, $account_id ); ?>
+			<!-- <?php esc_html_e( 'End Google Analytics opt-out snippet added by Site Kit', 'google-site-kit' ); ?> -->
+			<?php
+		endif;
 	}
 
 	/**
@@ -1240,7 +1274,6 @@ final class Analytics extends Module
 						'googlesitekit-datastore-site',
 						'googlesitekit-datastore-user',
 						'googlesitekit-datastore-forms',
-						'googlesitekit-google-charts',
 					),
 				)
 			),
@@ -1282,6 +1315,7 @@ final class Analytics extends Module
 
 		$tag->use_guard( new Tag_Verify_Guard( $this->context->input() ) );
 		$tag->use_guard( new Tag_Guard( $this->get_settings() ) );
+		$tag->use_guard( new Tag_Production_Guard() );
 
 		if ( $tag->can_register() ) {
 			$tag->set_anonymize_ip( $settings['anonymizeIP'] );
@@ -1322,6 +1356,59 @@ final class Analytics extends Module
 		}
 
 		return null;
+	}
+
+	/**
+	 * Populates Analytics settings using the incoming token response data.
+	 *
+	 * @since 1.50.0
+	 *
+	 * @param array $token_response Token response data.
+	 */
+	public function handle_token_response_data( $token_response ) {
+		if ( empty( $token_response['analytics_configuration'] ) || $this->is_connected() ) {
+			return;
+		}
+
+		$configuration = $token_response['analytics_configuration'];
+		if ( ! is_array( $configuration ) ) {
+			return;
+		}
+
+		$keys_map = array(
+			'ga_account_id'               => 'accountID',
+			'ua_property_id'              => 'propertyID',
+			'ua_internal_web_property_id' => 'internalWebPropertyID',
+			'ua_profile_id'               => 'profileID',
+		);
+
+		$settings = array();
+		foreach ( $keys_map as $key => $setting ) {
+			if ( ! empty( $configuration[ $key ] ) && is_string( $configuration[ $key ] ) ) {
+				$settings[ $setting ] = $configuration[ $key ];
+			}
+		}
+
+		// Save new settings only if all keys are not empty.
+		if ( ! empty( $settings ) && count( $settings ) === 4 ) {
+			$this->get_settings()->merge( $settings );
+		}
+	}
+
+	/**
+	 * Adds mode=analytics-step to the proxy params if the serviceSetupV2 feature flag is enabled.
+	 *
+	 * @since 1.48.0
+	 *
+	 * @param array $params An array of Google Proxy setup URL parameters.
+	 * @return array Updated array with the mode=analytics-step parameter.
+	 */
+	private function update_proxy_setup_mode( $params ) {
+		if ( Feature_Flags::enabled( 'serviceSetupV2' ) && ! $this->is_connected() ) {
+			$params['mode'] = 'analytics-step';
+		}
+
+		return $params;
 	}
 
 }

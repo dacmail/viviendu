@@ -10,10 +10,8 @@
 
 namespace Google\Site_Kit;
 
-use Google\Site_Kit\Core\Feature_Tours\Feature_Tours;
 use Google\Site_Kit\Core\Util\Build_Mode;
 use Google\Site_Kit\Core\Util\Feature_Flags;
-use Google\Site_Kit\Core\Util\JSON_File;
 
 /**
  * Main class for the plugin.
@@ -157,6 +155,7 @@ final class Plugin {
 			function() use ( $options, $activation_flag ) {
 				$transients   = new Core\Storage\Transients( $this->context );
 				$user_options = new Core\Storage\User_Options( $this->context, get_current_user_id() );
+				$assets       = new Core\Assets\Assets( $this->context );
 
 				$authentication = new Core\Authentication\Authentication( $this->context, $options, $user_options, $transients );
 				$authentication->register();
@@ -164,19 +163,25 @@ final class Plugin {
 				$permissions = new Core\Permissions\Permissions( $this->context, $authentication );
 				$permissions->register();
 
-				$modules = new Core\Modules\Modules( $this->context, $options, $user_options, $authentication );
+				$modules = new Core\Modules\Modules( $this->context, $options, $user_options, $authentication, $assets );
 				$modules->register();
 
-				$assets = new Core\Assets\Assets( $this->context );
+				// Assets must be registered after Modules instance is registered.
 				$assets->register();
 
 				$screens = new Core\Admin\Screens( $this->context, $assets, $modules );
 				$screens->register();
 
+				if ( Feature_Flags::enabled( 'serviceSetupV2' ) ) {
+					( new Core\Authentication\Setup_V2( $this->context, $user_options, $authentication ) )->register();
+				} else {
+					( new Core\Authentication\Setup_V1( $this->context, $user_options, $authentication ) )->register();
+				}
+
 				( new Core\Util\Reset( $this->context ) )->register();
 				( new Core\Util\Reset_Persistent( $this->context ) )->register();
 				( new Core\Util\Developer_Plugin_Installer( $this->context ) )->register();
-				( new Core\Util\Tracking( $this->context, $user_options, $screens ) )->register();
+				( new Core\Tracking\Tracking( $this->context, $user_options, $screens ) )->register();
 				( new Core\REST_API\REST_Routes( $this->context, $authentication, $modules ) )->register();
 				( new Core\Admin_Bar\Admin_Bar( $this->context, $assets, $modules ) )->register();
 				( new Core\Admin\Available_Tools() )->register();
@@ -229,6 +234,9 @@ final class Plugin {
 
 		// Add Plugin Row Meta.
 		( new Core\Admin\Plugin_Row_Meta() )->register();
+
+		// Add Plugin Action Links.
+		( new Core\Admin\Plugin_Action_Links( $this->context ) )->register();
 	}
 
 	/**
@@ -255,9 +263,11 @@ final class Plugin {
 			return false;
 		}
 
-		$config = new JSON_File( GOOGLESITEKIT_PLUGIN_DIR_PATH . 'dist/config.json' );
-		Build_Mode::set_mode( $config['buildMode'] );
-		Feature_Flags::set_features( (array) $config['features'] );
+		if ( file_exists( GOOGLESITEKIT_PLUGIN_DIR_PATH . 'dist/config.php' ) ) {
+			$config = include GOOGLESITEKIT_PLUGIN_DIR_PATH . 'dist/config.php';
+			Build_Mode::set_mode( $config['buildMode'] );
+			Feature_Flags::set_features( (array) $config['features'] );
+		}
 
 		static::$instance = new static( $main_file );
 		static::$instance->register();
