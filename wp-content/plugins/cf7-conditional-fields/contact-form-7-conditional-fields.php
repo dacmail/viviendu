@@ -1,12 +1,15 @@
 <?php
 /**
-Plugin Name: Contact Form 7 Conditional Fields
-Plugin URI: http://bdwm.be/
-Description: Adds support for conditional fields to Contact Form 7. This plugin depends on Contact Form 7.
-Author: Jules Colle
-Version: 1.3.4
-Author URI: http://bdwm.be/
- */
+* Plugin Name: Conditional Fields for Contact Form 7
+* Plugin URI: http://bdwm.be/
+* Description: Adds support for conditional fields to Contact Form 7. This plugin depends on Contact Form 7.
+* Author: Jules Colle
+* Version: 2.1
+* Author URI: http://bdwm.be/
+* Text Domain: cf7-conditional-fields
+* License: GPL v2 or later
+* License URI: https://www.gnu.org/licenses/gpl-2.0.html
+*/
 
 /**
  * This program is free software; you can redistribute it and/or modify
@@ -24,32 +27,22 @@ Author URI: http://bdwm.be/
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-if (!defined('WPCF7CF_VERSION')) define( 'WPCF7CF_VERSION', '1.3.4' );
-if (!defined('WPCF7CF_REQUIRED_WP_VERSION')) define( 'WPCF7CF_REQUIRED_WP_VERSION', '4.1' );
-if (!defined('WPCF7CF_PLUGIN')) define( 'WPCF7CF_PLUGIN', __FILE__ );
-if (!defined('WPCF7CF_PLUGIN_BASENAME')) define( 'WPCF7CF_PLUGIN_BASENAME', plugin_basename( WPCF7CF_PLUGIN ) );
-if (!defined('WPCF7CF_PLUGIN_NAME')) define( 'WPCF7CF_PLUGIN_NAME', trim( dirname( WPCF7CF_PLUGIN_BASENAME ), '/' ) );
-if (!defined('WPCF7CF_PLUGIN_DIR')) define( 'WPCF7CF_PLUGIN_DIR', untrailingslashit( dirname( WPCF7CF_PLUGIN ) ) );
 
-function wpcf7cf_plugin_path( $path = '' ) {
-	return path_join( WPCF7CF_PLUGIN_DIR, trim( $path, '/' ) );
-}
-
-function wpcf7cf_plugin_url( $path = '' ) {
-	$url = plugins_url( $path, WPCF7CF_PLUGIN );
-	if ( is_ssl() && 'http:' == substr( $url, 0, 5 ) ) {
-		$url = 'https:' . substr( $url, 5 );
-	}
-	return $url;
-}
-
-if(file_exists(WPCF7CF_PLUGIN_DIR.'/pro/pro-functions.php')) {
-    if (!defined('WPCF7CF_IS_PRO')) define( 'WPCF7CF_IS_PRO', true );
-    require_once WPCF7CF_PLUGIN_DIR.'/pro/pro-functions.php';
+if ( function_exists( 'wpcf7cf_pro_deactivate_free_version_notice' ) ) {
+	add_action( 'admin_notices', 'wpcf7cf_pro_deactivate_free_version_notice' );
 } else {
-    if (!defined('WPCF7CF_IS_PRO')) define( 'WPCF7CF_IS_PRO', false );
+
+	function wpcf7cf_pro_deactivate_free_version_notice() {
+		?>
+        <div class="notice notice-error is-dismissible">
+			<p><?php 
+			// translators: 1. <a>, 2. </a> 
+			printf( __( '<strong>Conditional Fields for Contact Form 7</strong> needs to %1$sdeactivate the free plugin%1$s', 'cf7-conditional-fields' ), '<a href="' . wp_nonce_url( 'plugins.php?action=deactivate&amp;plugin=cf7-conditional-fields%2Fcontact-form-7-conditional-fields.php&amp;plugin_status=all&amp;paged=1&amp;s=', 'deactivate-plugin_cf7-conditional-fields/contact-form-7-conditional-fields.php' ) . '">', '</a>' ); 
+			?></p>
+        </div>
+		<?php
+	}
+
+    require_once __DIR__.'/init.php';
+
 }
-
-require_once 'cf7cf.php';
-require_once 'wpcf7cf-options.php';
-
