@@ -47,7 +47,15 @@ function wpcf7_quiz_form_tag_handler( $tag ) {
 	$atts['tabindex'] = $tag->get_option( 'tabindex', 'signed_int', true );
 	$atts['autocomplete'] = 'off';
 	$atts['aria-required'] = 'true';
-	$atts['aria-invalid'] = $validation_error ? 'true' : 'false';
+
+	if ( $validation_error ) {
+		$atts['aria-invalid'] = 'true';
+		$atts['aria-describedby'] = wpcf7_get_validation_error_reference(
+			$tag->name
+		);
+	} else {
+		$atts['aria-invalid'] = 'false';
+	}
 
 	$pipes = $tag->pipes;
 
@@ -62,7 +70,9 @@ function wpcf7_quiz_form_tag_handler( $tag ) {
 		$answer = '2';
 	}
 
-	$answer = wpcf7_canonicalize( $answer );
+	$answer = wpcf7_canonicalize( $answer, array(
+		'strip_separators' => true,
+	) );
 
 	$atts['type'] = 'text';
 	$atts['name'] = $tag->name;
@@ -87,8 +97,11 @@ add_filter( 'wpcf7_validate_quiz', 'wpcf7_quiz_validation_filter', 10, 2 );
 function wpcf7_quiz_validation_filter( $result, $tag ) {
 	$name = $tag->name;
 
-	$answer = isset( $_POST[$name] ) ? wpcf7_canonicalize( $_POST[$name] ) : '';
-	$answer = wp_unslash( $answer );
+	$answer = isset( $_POST[$name] ) ? wp_unslash( $_POST[$name] ) : '';
+
+	$answer = wpcf7_canonicalize( $answer, array(
+		'strip_separators' => true,
+	) );
 
 	$answer_hash = wp_hash( $answer, 'wpcf7_quiz' );
 
@@ -96,7 +109,7 @@ function wpcf7_quiz_validation_filter( $result, $tag ) {
 		? (string) $_POST['_wpcf7_quiz_answer_' . $name]
 		: '';
 
-	if ( $answer_hash !== $expected_hash ) {
+	if ( ! hash_equals( $expected_hash, $answer_hash ) ) {
 		$result->invalidate( $tag, wpcf7_get_message( 'quiz_answer_not_correct' ) );
 	}
 
@@ -106,8 +119,8 @@ function wpcf7_quiz_validation_filter( $result, $tag ) {
 
 /* Ajax echo filter */
 
-add_filter( 'wpcf7_ajax_onload', 'wpcf7_quiz_ajax_refill', 10, 1 );
-add_filter( 'wpcf7_ajax_json_echo', 'wpcf7_quiz_ajax_refill', 10, 1 );
+add_filter( 'wpcf7_refill_response', 'wpcf7_quiz_ajax_refill', 10, 1 );
+add_filter( 'wpcf7_feedback_response', 'wpcf7_quiz_ajax_refill', 10, 1 );
 
 function wpcf7_quiz_ajax_refill( $items ) {
 	if ( ! is_array( $items ) ) {
@@ -141,7 +154,9 @@ function wpcf7_quiz_ajax_refill( $items ) {
 			$answer = '2';
 		}
 
-		$answer = wpcf7_canonicalize( $answer );
+		$answer = wpcf7_canonicalize( $answer, array(
+			'strip_separators' => true,
+		) );
 
 		$refill[$name] = array( $question, wp_hash( $answer, 'wpcf7_quiz' ) );
 	}
@@ -151,6 +166,24 @@ function wpcf7_quiz_ajax_refill( $items ) {
 	}
 
 	return $items;
+}
+
+
+/* Mail-tag replacement */
+
+add_filter( 'wpcf7_mail_tag_replaced_quiz', 'wpcf7_quiz_mail_tag', 10, 4 );
+
+function wpcf7_quiz_mail_tag( $replaced, $submitted, $html, $mail_tag ) {
+	$field_name = $mail_tag->field_name();
+	$submitted = isset( $_POST[$field_name] ) ? $_POST[$field_name] : '';
+	$replaced = $submitted;
+
+	if ( $html ) {
+		$replaced = esc_html( $replaced );
+		$replaced = wptexturize( $replaced );
+	}
+
+	return $replaced;
 }
 
 
