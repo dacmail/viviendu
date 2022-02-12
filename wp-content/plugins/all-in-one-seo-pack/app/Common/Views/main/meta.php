@@ -14,16 +14,16 @@ if ( ! defined( 'ABSPATH' ) ) {
 // phpcs:disable Generic.WhiteSpace.ScopeIndent.Incorrect
 // phpcs:disable Generic.WhiteSpace.ScopeIndent.IncorrectExact
 $description           = aioseo()->helpers->encodeOutputHtml( aioseo()->meta->description->getDescription() );
-$robots                = $this->robots->meta();
+$robots                = aioseo()->meta->robots->meta();
 $keywords              = $this->keywords->getKeywords();
 $canonical             = aioseo()->helpers->canonicalUrl();
 $links                 = $this->links->getLinks();
 ?>
 <?php if ( $description ) : ?>
-		<meta name="description" content="<?php echo esc_attr( $description ); ?>"/>
+		<meta name="description" content="<?php echo esc_attr( $description ); ?>" />
 <?php endif; ?>
 <?php if ( $robots ) : ?>
-		<meta name="robots" content="<?php echo esc_html( $robots ); ?>"/>
+		<meta name="robots" content="<?php echo esc_html( $robots ); ?>" />
 <?php endif; ?>
 <?php
 // Adds the site verification meta for webmaster tools.

@@ -19,6 +19,7 @@ class SetupWizard {
 	 */
 	public function __construct() {
 		add_action( 'admin_menu', [ $this, 'addDashboardPage' ] );
+		add_action( 'admin_head', [ $this, 'hideDashboardPageFromMenu' ] );
 		add_action( 'admin_init', [ $this, 'maybeLoadOnboardingWizard' ] );
 		add_action( 'admin_init', [ $this, 'redirect' ], 9999 );
 	}
@@ -35,12 +36,12 @@ class SetupWizard {
 	 */
 	public function redirect() {
 		// Check if we should consider redirection.
-		if ( ! aioseo()->transients->get( 'activation_redirect' ) ) {
+		if ( ! aioseo()->cache->get( 'activation_redirect' ) ) {
 			return;
 		}
 
 		// If we are redirecting, clear the transient so it only happens once.
-		aioseo()->transients->delete( 'activation_redirect' );
+		aioseo()->cache->delete( 'activation_redirect' );
 
 		// Check option to disable welcome redirect.
 		if ( get_option( 'aioseo_activation_redirect', false ) ) {
@@ -64,7 +65,17 @@ class SetupWizard {
 	 * @return void
 	 */
 	public function addDashboardPage() {
-		add_dashboard_page( '', '', 'aioseo_setup_wizard', 'aioseo-setup-wizard', '' );
+		add_dashboard_page( '', '', aioseo()->admin->getPageRequiredCapability( 'aioseo-setup-wizard' ), 'aioseo-setup-wizard', '' );
+	}
+
+	/**
+	 * Hide the dashboard page from the menu.
+	 *
+	 * @since 4.1.5
+	 *
+	 * @return void
+	 */
+	public function hideDashboardPageFromMenu() {
 		remove_submenu_page( 'index.php', 'aioseo-setup-wizard' );
 	}
 
@@ -87,7 +98,7 @@ class SetupWizard {
 		if (
 			! isset( $_GET['page'] ) ||
 			'aioseo-setup-wizard' !== wp_unslash( $_GET['page'] ) || // phpcs:ignore HM.Security.ValidatedSanitizedInput.InputNotSanitized
-			! current_user_can( 'aioseo_setup_wizard' )
+			! current_user_can( aioseo()->admin->getPageRequiredCapability( 'aioseo-setup-wizard' ) )
 		) {
 			return;
 		}
@@ -98,7 +109,7 @@ class SetupWizard {
 		remove_action( 'admin_print_styles', 'gutenberg_block_editor_admin_print_styles' );
 
 		// If we are redirecting, clear the transient so it only happens once.
-		aioseo()->transients->delete( 'activation_redirect' );
+		aioseo()->cache->delete( 'activation_redirect' );
 
 		$this->loadOnboardingWizard();
 	}
@@ -130,43 +141,24 @@ class SetupWizard {
 		remove_all_actions( 'admin_notices' );
 		remove_all_actions( 'all_admin_notices' );
 
-		// Scripts.
-		aioseo()->helpers->enqueueScript(
-			'aioseo-vendors',
-			'js/chunk-vendors.js'
-		);
-		aioseo()->helpers->enqueueScript(
-			'aioseo-common',
-			'js/chunk-common.js'
-		);
+		aioseo()->helpers->enqueueChunkedAssets();
 		aioseo()->helpers->enqueueScript(
 			'aioseo-setup-wizard-script',
 			'js/setup-wizard.js'
 		);
 
-		// Styles.
-		$rtl = is_rtl() ? '.rtl' : '';
-		aioseo()->helpers->enqueueStyle(
-			'aioseo-vendors',
-			"css/chunk-vendors$rtl.css"
-		);
-		aioseo()->helpers->enqueueStyle(
-			'aioseo-common',
-			"css/chunk-common$rtl.css"
-		);
-		// aioseo()->helpers->enqueueStyle(
-		//  'aioseo-setup-wizard-style',
-		//  "css/setup-wizard$rtl.css"
-		// );
-		// aioseo()->helpers->enqueueStyle(
-		//  'aioseo-setup-wizard-vendors-style',
-		//  "css/chunk-setup-wizard-vendors$rtl.css"
-		// );
-
 		wp_localize_script(
 			'aioseo-setup-wizard-script',
 			'aioseo',
 			aioseo()->helpers->getVueData( 'setup-wizard' )
+		);
+
+		wp_localize_script(
+			'aioseo-setup-wizard-script',
+			'aioseoTranslations',
+			[
+				'translations' => aioseo()->helpers->getJedLocaleData( 'all-in-one-seo-pack' )
+			]
 		);
 
 		wp_enqueue_style( 'common' );

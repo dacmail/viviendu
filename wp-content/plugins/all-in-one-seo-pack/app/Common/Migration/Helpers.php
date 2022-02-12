@@ -34,13 +34,15 @@ class Helpers {
 			return;
 		}
 
+		$mainOptions    = aioseo()->options->noConflict();
+		$dynamicOptions = aioseo()->dynamicOptions->noConflict();
 		foreach ( $mappings as $name => $values ) {
 			if ( ! isset( $group[ $name ] ) ) {
 				continue;
 			}
 
 			$error      = false;
-			$options    = aioseo()->options->noConflict();
+			$options    = ! empty( $values['dynamic'] ) ? $dynamicOptions : $mainOptions;
 			$lastOption = '';
 			for ( $i = 0; $i < count( $values['newOption'] ); $i++ ) {
 				$lastOption = $values['newOption'][ $i ];
@@ -81,8 +83,6 @@ class Helpers {
 					break;
 			}
 		}
-
-		aioseo()->options->refresh();
 	}
 
 	/**
@@ -189,6 +189,7 @@ class Helpers {
 		}
 
 		$string = preg_replace( '/%([a-f0-9]{2}[^%]*)%/i', '#$1#', $string );
+
 		return $string;
 	}
 
@@ -236,19 +237,10 @@ class Helpers {
 			->whereRaw( "`option_name` LIKE 'aioseo_options_internal%'" )
 			->run();
 
-		aioseo()->transients->delete( 'v3_migration_in_progress_posts' );
-		aioseo()->transients->delete( 'v3_migration_in_progress_terms' );
+		aioseo()->cache->delete( 'v3_migration_in_progress_posts' );
+		aioseo()->cache->delete( 'v3_migration_in_progress_terms' );
 
-		try {
-			if ( as_next_scheduled_action( 'aioseo_migrate_post_meta' ) ) {
-				as_unschedule_action( 'aioseo_migrate_post_meta', [], 'aioseo' );
-			}
-
-			if ( as_next_scheduled_action( 'aioseo_migrate_term_meta' ) ) {
-				as_unschedule_action( 'aioseo_migrate_term_meta', [], 'aioseo' );
-			}
-		} catch ( \Exception $e ) {
-			// Do nothing.
-		}
+		aioseo()->helpers->unscheduleAction( 'aioseo_migrate_post_meta' );
+		aioseo()->helpers->unscheduleAction( 'aioseo_migrate_term_meta' );
 	}
 }

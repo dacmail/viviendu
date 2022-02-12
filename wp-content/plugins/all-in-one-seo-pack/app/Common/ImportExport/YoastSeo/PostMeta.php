@@ -28,8 +28,8 @@ class PostMeta {
 				return;
 			}
 
-			if ( ! aioseo()->transients->get( 'import_post_meta_yoast_seo' ) ) {
-				aioseo()->transients->update( 'import_post_meta_yoast_seo', time(), WEEK_IN_SECONDS );
+			if ( ! aioseo()->cache->get( 'import_post_meta_yoast_seo' ) ) {
+				aioseo()->cache->update( 'import_post_meta_yoast_seo', time(), WEEK_IN_SECONDS );
 			}
 
 			as_schedule_single_action( time(), aioseo()->importExport->yoastSeo->postActionName, [], 'aioseo' );
@@ -48,14 +48,12 @@ class PostMeta {
 	public function importPostMeta() {
 		$postsPerAction  = 100;
 		$publicPostTypes = implode( "', '", aioseo()->helpers->getPublicPostTypes( true ) );
-		$timeStarted     = gmdate( 'Y-m-d H:i:s', aioseo()->transients->get( 'import_post_meta_yoast_seo' ) );
+		$timeStarted     = gmdate( 'Y-m-d H:i:s', aioseo()->cache->get( 'import_post_meta_yoast_seo' ) );
 
 		$posts = aioseo()->db
 			->start( 'posts' . ' as p' )
 			->select( 'p.ID, p.post_type' )
-			->join( 'postmeta as pm', '`p`.`ID` = `pm`.`post_id`' )
 			->leftJoin( 'aioseo_posts as ap', '`p`.`ID` = `ap`.`post_id`' )
-			->whereRaw( "pm.meta_key LIKE '_yoast_wpseo_%'" )
 			->whereRaw( "( p.post_type IN ( '$publicPostTypes' ) )" )
 			->whereRaw( "( ap.post_id IS NULL OR ap.updated < '$timeStarted' )" )
 			->orderBy( 'p.ID DESC' )
@@ -64,7 +62,8 @@ class PostMeta {
 			->result();
 
 		if ( ! $posts || ! count( $posts ) ) {
-			aioseo()->transients->delete( 'import_post_meta_yoast_seo' );
+			aioseo()->cache->delete( 'import_post_meta_yoast_seo' );
+
 			return;
 		}
 
@@ -84,7 +83,8 @@ class PostMeta {
 			'_yoast_wpseo_twitter-description'   => 'twitter_description',
 			'_yoast_wpseo_twitter-image'         => 'twitter_image_custom_url',
 			'_yoast_wpseo_schema_page_type'      => '',
-			'_yoast_wpseo_schema_article_type'   => ''
+			'_yoast_wpseo_schema_article_type'   => '',
+			'_yoast_wpseo_primary_category'      => 'og_article_section'
 		];
 
 		foreach ( $posts as $post ) {
@@ -96,14 +96,25 @@ class PostMeta {
 				->run()
 				->result();
 
+			$categories    = aioseo()->helpers->getAllCategories( $post->ID );
+			$featuredImage = get_the_post_thumbnail_url( $post->ID );
+			$meta          = [
+				'post_id'            => (int) $post->ID,
+				'twitter_use_og'     => true,
+				'og_image_type'      => $featuredImage ? 'featured' : 'content',
+				'og_article_section' => ! empty( $categories ) ? $categories[0] : null
+			];
+
 			if ( ! $postMeta || ! count( $postMeta ) ) {
+				$aioseoPost = Models\Post::getPost( (int) $post->ID );
+				$aioseoPost->set( $meta );
+				$aioseoPost->save();
+
+				aioseo()->migration->meta->migrateAdditionalPostMeta( $post->ID );
 				continue;
 			}
 
-			$meta = [
-				'post_id' => (int) $post->ID,
-			];
-
+			$title = '';
 			foreach ( $postMeta as $record ) {
 				$name  = $record->meta_key;
 				$value = $record->meta_value;
@@ -113,6 +124,17 @@ class PostMeta {
 				}
 
 				switch ( $name ) {
+					case '_yoast_wpseo_primary_category':
+						$primaryCategory = get_cat_name( $value );
+						foreach ( $categories as $category ) {
+							if ( aioseo()->helpers->toLowerCase( $primaryCategory ) === aioseo()->helpers->toLowerCase( $category ) ) {
+								$meta[ $mappedMeta[ $name ] ] = $category;
+								break 2;
+							}
+						}
+
+						$meta[ $mappedMeta[ $name ] ] = ! empty( $categories ) ? $categories[0] : ( ! empty( $primaryCategory ) ? $primaryCategory : '' );
+						break;
 					case '_yoast_wpseo_meta-robots-noindex':
 					case '_yoast_wpseo_meta-robots-nofollow':
 						if ( (bool) $value ) {
@@ -205,20 +227,39 @@ class PostMeta {
 					case '_yoast_wpseo_metadesc':
 					case '_yoast_wpseo_opengraph-title':
 					case '_yoast_wpseo_opengraph-description':
+					case '_yoast_wpseo_twitter-title':
+					case '_yoast_wpseo_twitter-description':
 						if ( 'page' === $post->post_type ) {
 							$value = aioseo()->helpers->pregReplace( '#%%primary_category%%#', '', $value );
 							$value = aioseo()->helpers->pregReplace( '#%%excerpt%%#', '', $value );
 						}
+
+						if ( '_yoast_wpseo_twitter-title' === $name || '_yoast_wpseo_twitter-description' === $name ) {
+							$meta['twitter_use_og'] = false;
+						}
+
 						$value = aioseo()->importExport->yoastSeo->helpers->macrosToSmartTags( $value, 'post', $post->post_type );
+
+						if ( '_yoast_wpseo_title' === $name ) {
+							$title = $value;
+						}
 					default:
 						$meta[ $mappedMeta[ $name ] ] = esc_html( wp_strip_all_tags( strval( $value ) ) );
 						break;
 				}
 			}
 
+			// Resetting the `twitter_use_og` option if the user has a custom title and no twitter title.
+			if ( $meta['twitter_use_og'] && $title && empty( $meta['twitter_title'] ) ) {
+				$meta['twitter_use_og'] = false;
+				$meta['twitter_title']  = $title;
+			}
+
 			$aioseoPost = Models\Post::getPost( (int) $post->ID );
 			$aioseoPost->set( $meta );
 			$aioseoPost->save();
+
+			aioseo()->migration->meta->migrateAdditionalPostMeta( $post->ID );
 		}
 
 		if ( count( $posts ) === $postsPerAction ) {
@@ -228,7 +269,7 @@ class PostMeta {
 				// Do nothing.
 			}
 		} else {
-			aioseo()->transients->delete( 'import_post_meta_yoast_seo' );
+			aioseo()->cache->delete( 'import_post_meta_yoast_seo' );
 		}
 	}
 }

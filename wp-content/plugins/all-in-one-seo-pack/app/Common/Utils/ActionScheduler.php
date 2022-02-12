@@ -21,8 +21,7 @@ class ActionScheduler extends \ActionScheduler_ListTable {
 	 * @param $logger
 	 * @param $runner
 	 */
-	public function __construct( $store, $logger, $runner ) {
-		global $wpdb;
+	public function __construct( $store, $logger, $runner ) { // phpcs:ignore VariableAnalysis.CodeAnalysis.VariableAnalysis.UnusedVariable
 		if (
 				(
 					is_a( $store, 'ActionScheduler_HybridStore' ) ||
@@ -38,51 +37,31 @@ class ActionScheduler extends \ActionScheduler_ListTable {
 				'actionscheduler_claims',
 			];
 
-			$foundTables = $wpdb->get_col( "SHOW TABLES LIKE '{$wpdb->prefix}actionscheduler%'" );
 			foreach ( $tableList as $tableName ) {
-				if ( ! in_array( $wpdb->prefix . $tableName, $foundTables, true ) ) {
+				if ( ! aioseo()->db->tableExists( $tableName ) ) {
 					$this->recreate_tables();
+
 					return;
 				}
 			}
 		}
 
-		add_action( 'init', [ $this, 'cleanup' ] );
+		add_action( 'action_scheduler_after_execute', [ $this, 'cleanup' ], 1000, 2 );
 	}
 
 	/**
-	 * Begins the task of cleaning up the action scheduler items
-	 * by setting an action to do it.
+	 * Cleans up the Action Scheduler tables after one of our actions completes.
 	 *
 	 * @since 4.0.10
 	 *
 	 * @return void
 	 */
-	public function cleanup() {
-		try {
-			// Register the action handler.
-			add_action( 'aioseo_cleanup_action_scheduler', [ $this, 'processCleanup' ] );
-
-			if ( ! as_next_scheduled_action( 'aioseo_cleanup_action_scheduler' ) ) {
-				as_schedule_recurring_action( strtotime( '+24 hours' ), DAY_IN_SECONDS, 'aioseo_cleanup_action_scheduler', [], 'aioseo' );
-
-				// Run the task immediately using an async action.
-				as_enqueue_async_action( 'aioseo_cleanup_action_scheduler', [], 'aioseo' );
-			}
-		} catch ( \Exception $e ) {
-			// Do nothing.
-		}
-	}
-
-	/**
-	 * Actually runs the cleanup command.
-	 *
-	 * @since 4.0.10
-	 *
-	 * @return void
-	 */
-	public function processCleanup() {
+	public function cleanup( $actionId, $action ) {
 		if (
+			// Bail if this isn't one of our actions or if we're in a dev environment.
+			'aioseo' !== $action->get_group() ||
+			defined( 'AIOSEO_DEV_VERSION' ) ||
+			// Bail if the tables don't exist.
 			! aioseo()->db->tableExists( 'actionscheduler_actions' ) ||
 			! aioseo()->db->tableExists( 'actionscheduler_groups' )
 		) {

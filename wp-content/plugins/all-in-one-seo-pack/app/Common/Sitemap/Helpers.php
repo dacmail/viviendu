@@ -35,6 +35,7 @@ class Helpers {
 		if ( ! $type ) {
 			$type = isset( aioseo()->sitemap->type ) ? aioseo()->sitemap->type : 'general';
 		}
+
 		return apply_filters( 'aioseo_sitemap_filename', aioseo()->options->sitemap->$type->filename );
 	}
 
@@ -64,6 +65,7 @@ class Helpers {
 		if ( ! $query->post_count ) {
 			return false;
 		}
+
 		return $query->posts[0];
 	}
 
@@ -95,7 +97,7 @@ class Helpers {
 			->result();
 
 		return ! empty( $lastModified[0]->last_modified )
-			? aioseo()->helpers->formatDateTime( $lastModified[0]->last_modified )
+			? aioseo()->helpers->dateTimeToIso8601( $lastModified[0]->last_modified )
 			: '';
 	}
 
@@ -142,10 +144,11 @@ class Helpers {
 					$lastModified = $timestamp;
 				}
 			}
-			return 0 !== $lastModified ? aioseo()->helpers->formatDateTime( gmdate( 'Y-m-d H:i:s', $timestamp ) ) : false;
+
+			return 0 !== $lastModified ? aioseo()->helpers->dateTimeToIso8601( gmdate( 'Y-m-d H:i:s', $timestamp ) ) : false;
 		}
 
-		return aioseo()->helpers->formatDateTime( gmdate( 'Y-m-d H:i:s', max( $pages ) ) );
+		return aioseo()->helpers->dateTimeToIso8601( gmdate( 'Y-m-d H:i:s', max( $pages ) ) );
 	}
 
 	/**
@@ -160,6 +163,7 @@ class Helpers {
 		// Remove URL parameters.
 		$url = strtok( $url, '?' );
 		$url = htmlspecialchars( $url, ENT_COMPAT, 'UTF-8', false );
+
 		return aioseo()->helpers->makeUrlAbsolute( $url );
 	}
 
@@ -175,6 +179,7 @@ class Helpers {
 		if ( ! $this->performance ) {
 			$this->performance['time']   = microtime( true );
 			$this->performance['memory'] = ( memory_get_peak_usage( true ) / 1024 ) / 1024;
+
 			return;
 		}
 
@@ -208,10 +213,11 @@ class Helpers {
 		}
 
 		$options         = aioseo()->options->noConflict();
+		$dynamicOptions  = aioseo()->dynamicOptions->noConflict();
 		$publicPostTypes = aioseo()->helpers->getPublicPostTypes( true, $hasArchivesOnly );
 		foreach ( $postTypes as $postType ) {
 			// Check if post type is no longer registered.
-			if ( ! in_array( $postType, $publicPostTypes, true ) || ! $options->searchAppearance->dynamic->postTypes->has( $postType ) ) {
+			if ( ! in_array( $postType, $publicPostTypes, true ) || ! $dynamicOptions->searchAppearance->postTypes->has( $postType ) ) {
 				$postTypes = aioseo()->helpers->unsetValue( $postTypes, $postType );
 				continue;
 			}
@@ -225,7 +231,7 @@ class Helpers {
 			}
 
 			if (
-				$options->searchAppearance->dynamic->postTypes->$postType->advanced->robotsMeta->default &&
+				$dynamicOptions->searchAppearance->postTypes->$postType->advanced->robotsMeta->default &&
 				! $options->searchAppearance->advanced->globalRobotsMeta->default &&
 				$options->searchAppearance->advanced->globalRobotsMeta->noindex
 			) {
@@ -235,6 +241,7 @@ class Helpers {
 				}
 			}
 		}
+
 		return $postTypes;
 	}
 
@@ -261,6 +268,7 @@ class Helpers {
 		if ( $posts && count( $posts ) ) {
 			return true;
 		}
+
 		return false;
 	}
 
@@ -284,10 +292,11 @@ class Helpers {
 		}
 
 		$options          = aioseo()->options->noConflict();
+		$dynamicOptions   = aioseo()->dynamicOptions->noConflict();
 		$publicTaxonomies = aioseo()->helpers->getPublicTaxonomies( true );
 		foreach ( $taxonomies as $taxonomy ) {
 			// Check if taxonomy is no longer registered.
-			if ( ! in_array( $taxonomy, $publicTaxonomies, true ) || ! $options->searchAppearance->dynamic->taxonomies->has( $taxonomy ) ) {
+			if ( ! in_array( $taxonomy, $publicTaxonomies, true ) || ! $dynamicOptions->searchAppearance->taxonomies->has( $taxonomy ) ) {
 				$taxonomies = aioseo()->helpers->unsetValue( $taxonomies, $taxonomy );
 				continue;
 			}
@@ -299,7 +308,7 @@ class Helpers {
 			}
 
 			if (
-				$options->searchAppearance->dynamic->taxonomies->$taxonomy->advanced->robotsMeta->default &&
+				$dynamicOptions->searchAppearance->taxonomies->$taxonomy->advanced->robotsMeta->default &&
 				! $options->searchAppearance->advanced->globalRobotsMeta->default &&
 				$options->searchAppearance->advanced->globalRobotsMeta->noindex
 			) {
@@ -307,6 +316,7 @@ class Helpers {
 				continue;
 			}
 		}
+
 		return $taxonomies;
 	}
 
@@ -327,7 +337,7 @@ class Helpers {
 	 *
 	 * @since 4.0.0
 	 *
-	 * @param  string $page The additional page object.
+	 * @param  object $page The additional page object.
 	 * @return string       The formatted datetime.
 	 */
 	public function lastModifiedAdditionalPage( $page ) {
@@ -373,9 +383,13 @@ class Helpers {
 			$type = 'general';
 		}
 
-		$advanced = aioseo()->options->sitemap->$type->advancedSettings->enable;
-		$excluded = aioseo()->options->sitemap->$type->advancedSettings->$option;
-		if ( ! $advanced || null === $excluded || ! count( $excluded ) ) {
+		$hasFilter = has_filter( 'aioseo_sitemap_' . aioseo()->helpers->toSnakeCase( $option ) );
+		$advanced  = aioseo()->options->sitemap->$type->advancedSettings->enable;
+		$excluded  = aioseo()->options->sitemap->$type->advancedSettings->$option;
+		if (
+			( ! $advanced || empty( $excluded ) ) &&
+			! $hasFilter
+		) {
 			return '';
 		}
 
@@ -386,6 +400,15 @@ class Helpers {
 				$ids[] = $object->value;
 			}
 		}
+
+		if ( 'excludePosts' === $option ) {
+			$ids = apply_filters( 'aioseo_sitemap_exclude_posts', $ids, $type );
+		}
+
+		if ( 'excludeTerms' === $option ) {
+			$ids = apply_filters( 'aioseo_sitemap_exclude_terms', $ids, $type );
+		}
+
 		return count( $ids ) ? esc_sql( implode( ', ', $ids ) ) : '';
 	}
 
@@ -402,23 +425,52 @@ class Helpers {
 			return $urls;
 		}
 
-		foreach ( aioseo()->sitemap->addons as $addon => $classes ) {
+		foreach ( aioseo()->sitemap->addons as $classes ) {
 			if ( ! empty( $classes['helpers'] ) ) {
-				$urls = $urls + $classes['helpers']->getSitemapUrls();
+				$urls = array_merge( $urls, $classes['helpers']->getSitemapUrls() );
 			}
 		}
 
-		// Check if user has a custom filename from the V3 migration.
-		$filename = aioseo()->options->sitemap->general->advancedSettings->enable &&
-			! aioseo()->options->sitemap->general->advancedSettings->dynamic && aioseo()->sitemap->helpers->filename( 'general' )
-			? aioseo()->sitemap->helpers->filename( 'general' ) :
-			'sitemap';
 		if ( aioseo()->options->sitemap->general->enable ) {
-			$urls[] = 'Sitemap: ' . trailingslashit( home_url() ) . $filename . '.xml';
+			$urls[] = $this->getUrl( 'general' );
 		}
 		if ( aioseo()->options->sitemap->rss->enable ) {
-			$urls[] = 'Sitemap: ' . trailingslashit( home_url() ) . 'sitemap.rss';
+			$urls[] = $this->getUrl( 'rss' );
 		}
+
+		foreach ( $urls as &$url ) {
+			$url = 'Sitemap: ' . $url;
+		}
+
 		return $urls;
+	}
+
+	/**
+	 * Returns the URL of the given sitemap type.
+	 *
+	 * @since 4.1.5
+	 *
+	 * @param  string $type The sitemap type.
+	 * @return string       The sitemap URL.
+	 */
+	public function getUrl( $type ) {
+		$url = home_url( 'sitemap.xml' );
+
+		if ( 'rss' === $type ) {
+			$url = home_url( 'sitemap.rss' );
+		}
+
+		if ( 'general' === $type ) {
+			// Check if user has a custom filename from the V3 migration.
+			$filename = $this->filename( 'general' ) ?: 'sitemap';
+			$url      = home_url( $filename . '.xml' );
+		}
+
+		$addon = aioseo()->addons->getLoadedAddon( $type );
+		if ( ! empty( $addon->helpers ) && method_exists( $addon->helpers, 'getUrl' ) ) {
+			$url = $addon->helpers->getUrl();
+		}
+
+		return $url;
 	}
 }

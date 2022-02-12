@@ -20,8 +20,8 @@ class BreadcrumbList extends Graph {
 	 * @return array $data The graph data.
 	 */
 	public function get() {
-		$breadcrumbs = aioseo()->schema->context['breadcrumb'];
-		if ( ! is_array( $breadcrumbs ) || ! count( $breadcrumbs ) ) {
+		$breadcrumbs = isset( aioseo()->schema->context['breadcrumb'] ) ? aioseo()->schema->context['breadcrumb'] : '';
+		if ( ! $breadcrumbs || ! count( $breadcrumbs ) ) {
 			return [];
 		}
 
@@ -61,6 +61,7 @@ class BreadcrumbList extends Graph {
 
 			$data['itemListElement'][] = $listItem;
 		}
+
 		return $data;
 	}
 }

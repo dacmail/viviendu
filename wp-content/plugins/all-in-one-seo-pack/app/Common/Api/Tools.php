@@ -47,10 +47,7 @@ class Tools {
 
 		return new \WP_REST_Response( [
 			'success'       => true,
-			'notifications' => [
-				'active'    => Models\Notification::getAllActiveNotifications(),
-				'dismissed' => Models\Notification::getAllDismissedNotifications()
-			]
+			'notifications' => Models\Notification::getNotifications()
 		], 200 );
 	}
 
@@ -74,10 +71,7 @@ class Tools {
 
 		return new \WP_REST_Response( [
 			'success'       => true,
-			'notifications' => [
-				'active'    => Models\Notification::getAllActiveNotifications(),
-				'dismissed' => Models\Notification::getAllDismissedNotifications()
-			]
+			'notifications' => Models\Notification::getNotifications()
 		], 200 );
 	}
 
@@ -105,7 +99,7 @@ class Tools {
 		// Translators: 1 - The plugin name ("All in One SEO"), 2 - The Site URL.
 		$html = sprintf( __( '%1$s Debug Info from %2$s', 'all-in-one-seo-pack' ), AIOSEO_PLUGIN_NAME, aioseo()->helpers->getSiteDomain() ) . "\r\n------------------\r\n\r\n";
 		$info = CommonTools\SystemStatus::getSystemStatusInfo();
-		foreach ( $info as $key => $group ) {
+		foreach ( $info as $group ) {
 			if ( empty( $group['results'] ) ) {
 				continue;
 			}
@@ -216,6 +210,14 @@ class Tools {
 		$body     = $request->get_json_params();
 		$htaccess = ! empty( $body['htaccess'] ) ? sanitize_textarea_field( $body['htaccess'] ) : '';
 
+		if ( empty( $htaccess ) ) {
+			return new \WP_REST_Response( [
+				'success' => false,
+				'message' => __( '.htaccess file is empty.', 'all-in-one-seo-pack' )
+			], 400 );
+		}
+
+		$htaccess = aioseo()->helpers->decodeHtmlEntities( $htaccess );
 		if ( ! aioseo()->htaccess->saveContents( $htaccess ) ) {
 			return new \WP_REST_Response( [
 				'success' => false,

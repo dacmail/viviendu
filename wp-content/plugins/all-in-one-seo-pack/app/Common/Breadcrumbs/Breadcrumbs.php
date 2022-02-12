@@ -163,6 +163,8 @@ namespace AIOSEO\Plugin\Common\Breadcrumbs {
 				case 'notFound':
 					$this->addCrumbs( $this->getNotFoundCrumb() );
 					break;
+				case 'preview':
+					$this->addCrumbs( $this->getPreviewCrumb( $reference ) );
 			}
 
 			// Paged crumb.
@@ -214,6 +216,18 @@ namespace AIOSEO\Plugin\Common\Breadcrumbs {
 		 */
 		public function getSearchCrumb( $searchQuery ) {
 			return $this->makeCrumb( aioseo()->options->breadcrumbs->searchResultFormat, get_search_link( $searchQuery ), 'search', $searchQuery );
+		}
+
+		/**
+		 * Gets the preview crumb.
+		 *
+		 * @since 4.1.5
+		 *
+		 * @param  string $label The preview label.
+		 * @return array         A crumb.
+		 */
+		public function getPreviewCrumb( $label ) {
+			return $this->makeCrumb( $label, '', 'preview' );
 		}
 
 		/**
@@ -404,7 +418,7 @@ namespace AIOSEO\Plugin\Common\Breadcrumbs {
 			if ( ! empty( $termHierarchy['terms'] ) ) {
 				foreach ( $termHierarchy['terms'] as $termId ) {
 					$term     = get_term( $termId, $termHierarchy['taxonomy'] );
-					$crumbs[] = $this->makeCrumb( $term->name, get_term_link( $term, $termHierarchy['taxonomy'] ), 'taxonomy', $termHierarchy['taxonomy'], 'parent' );
+					$crumbs[] = $this->makeCrumb( $term->name, get_term_link( $term, $termHierarchy['taxonomy'] ), 'taxonomy', $term, 'parent' );
 				}
 			}
 
@@ -449,8 +463,8 @@ namespace AIOSEO\Plugin\Common\Breadcrumbs {
 		 * @param  mixed  $reference The breadcrumb reference.
 		 * @return bool              Show current item.
 		 */
-		public function showCurrentItem( $type = null, $reference = null ) { // phpcs:ignore VariableAnalysis.CodeAnalysis.VariableAnalysis.UnusedVariable
-			return aioseo()->options->breadcrumbs->showCurrentItem;
+		public function showCurrentItem( $type = null, $reference = null ) {
+			return apply_filters( 'aioseo_breadcrumbs_show_current_item', aioseo()->options->breadcrumbs->showCurrentItem, $type, $reference );
 		}
 
 		/**
@@ -548,6 +562,8 @@ namespace AIOSEO\Plugin\Common\Breadcrumbs {
 					'terms'    => $termHierarchy
 				];
 			}
+
+			return [];
 		}
 
 		/**
@@ -630,10 +646,11 @@ namespace {
 		 *
 		 * @since 4.1.1
 		 *
-		 * @return void
+		 * @param  boolean     $echo Echo or return the output.
+		 * @return string|void       The output.
 		 */
-		function aioseo_breadcrumbs() {
-			aioseo()->breadcrumbs->frontend->display();
+		function aioseo_breadcrumbs( $echo = true ) {
+			return aioseo()->breadcrumbs->frontend->display( $echo );
 		}
 	}
 }

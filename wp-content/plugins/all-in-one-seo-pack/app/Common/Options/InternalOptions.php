@@ -1,5 +1,5 @@
 <?php
-namespace AIOSEO\Plugin\Common\Utils;
+namespace AIOSEO\Plugin\Common\Options;
 
 // Exit if accessed directly.
 if ( ! defined( 'ABSPATH' ) ) {
@@ -56,6 +56,9 @@ class InternalOptions {
 				'results'      => [ 'type' => 'string' ],
 				'competitors'  => [ 'type' => 'array', 'default' => [], 'preserveHtml' => true ]
 			],
+			'headlineAnalysis'  => [
+				'headlines' => [ 'type' => 'array', 'default' => [] ]
+			],
 			'wizard'            => [ 'type' => 'string' ],
 			'category'          => [ 'type' => 'string' ],
 			'categoryOther'     => [ 'type' => 'string' ],
@@ -68,6 +71,9 @@ class InternalOptions {
 				'expires'      => [ 'type' => 'string' ],
 				'refreshToken' => [ 'type' => 'string' ]
 			]
+		],
+		'database'     => [
+			'installedTables' => [ 'type' => 'string' ]
 		]
 		// phpcs:enable WordPress.Arrays.ArrayDeclarationSpacing.AssociativeArrayFound
 	];
@@ -77,12 +83,14 @@ class InternalOptions {
 	 *
 	 * @since 4.0.0
 	 *
-	 * @param string $optionsName An array of options.
+	 * @param string $optionsName The options name.
 	 */
 	public function __construct( $optionsName = 'aioseo_options_internal' ) {
 		$this->optionsName = is_network_admin() ? $optionsName . '_network' : $optionsName;
 
 		$this->init();
+
+		add_action( 'shutdown', [ $this, 'save' ] );
 	}
 
 	/**
@@ -94,10 +102,7 @@ class InternalOptions {
 	 */
 	protected function init() {
 		// Options from the DB.
-		$dbOptions = json_decode( get_option( $this->optionsName ), true );
-		if ( empty( $dbOptions ) ) {
-			$dbOptions = [];
-		}
+		$dbOptions = $this->getDbOptions( $this->optionsName );
 
 		// Refactor options.
 		$this->defaultsMerged = array_replace_recursive( $this->defaults, $this->defaultsMerged );
@@ -107,7 +112,7 @@ class InternalOptions {
 			$this->addValueToValuesArray( $this->defaultsMerged, $dbOptions )
 		);
 
-		$this->options = apply_filters( 'aioseo_get_options_internal', $options );
+		aioseo()->optionsCache->setOptions( $this->optionsName, apply_filters( 'aioseo_get_options_internal', $options ) );
 
 		// Get the localized options.
 		$dbOptionsLocalized = get_option( $this->optionsName . '_localized' );
@@ -142,17 +147,20 @@ class InternalOptions {
 		}
 
 		// Refactor options.
-		$this->options = array_replace_recursive(
-			$this->options,
-			$this->addValueToValuesArray( $this->options, $options, [], true )
+		$cachedOptions = aioseo()->optionsCache->getOptions( $this->optionsName );
+		$dbOptions     = array_replace_recursive(
+			$cachedOptions,
+			$this->addValueToValuesArray( $cachedOptions, $options, [], true )
 		);
 
-		$this->options['internal']['siteAnalysis']['competitors']['value'] = $this->sanitizeField( $options['internal']['siteAnalysis']['competitors'], 'array', true );
+		$dbOptions['internal']['siteAnalysis']['competitors']['value'] = $this->sanitizeField( $options['internal']['siteAnalysis']['competitors'], 'array', true );
+
+		aioseo()->optionsCache->setOptions( $this->optionsName, $dbOptions );
 
 		// Update localized options.
 		update_option( $this->optionsName . '_localized', $this->localized );
 
 		// Update values.
-		$this->update();
+		$this->save( true );
 	}
 }

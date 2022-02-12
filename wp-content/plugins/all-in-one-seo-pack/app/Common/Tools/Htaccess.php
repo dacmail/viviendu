@@ -38,7 +38,9 @@ class Htaccess {
 			return false;
 		}
 
-		return @$wpfs->get_contents( $this->path );
+		$contents = @$wpfs->get_contents( $this->path );
+
+		return aioseo()->helpers->encodeOutputHtml( $contents );
 	}
 
 	/**

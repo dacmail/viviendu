@@ -85,6 +85,7 @@ class Priority {
 
 		if ( ! isset( self::$globalPriority[ $pageType . $objectType ] ) ) {
 			$options = aioseo()->options->noConflict();
+
 			$pageTypeConditional = 'date' === $pageType ? 'archive' : $pageType;
 			self::$globalPriority[ $pageType . $objectType ] = self::$advanced && $options->sitemap->general->advancedSettings->priority->has( $pageTypeConditional )
 				? json_decode( $options->sitemap->general->advancedSettings->priority->$pageTypeConditional->priority )
@@ -102,8 +103,10 @@ class Priority {
 
 		if ( empty( self::$grouped[ $pageType . $objectType ] ) && self::$advanced ) {
 			if ( ! isset( self::$objectTypePriority[ $pageType . $objectType ] ) ) {
-				self::$objectTypePriority[ $pageType . $objectType ] = $options->sitemap->dynamic->priority->has( $pageType ) && $options->sitemap->dynamic->priority->$pageType->has( $objectType )
-					? json_decode( $options->sitemap->dynamic->priority->$pageType->$objectType->priority )
+				$dynamicOptions = aioseo()->dynamicOptions->noConflict();
+
+				self::$objectTypePriority[ $pageType . $objectType ] = $dynamicOptions->sitemap->priority->has( $pageType ) && $dynamicOptions->sitemap->priority->$pageType->has( $objectType )
+					? json_decode( $dynamicOptions->sitemap->priority->$pageType->$objectType->priority )
 					: false;
 			}
 		}
@@ -117,6 +120,7 @@ class Priority {
 					: self::$globalPriority[ $pageType . $objectType ];
 			$priority     = 'default' === $defaultValue->value ? $priority : $defaultValue->value;
 		}
+
 		return $priority;
 	}
 
@@ -155,8 +159,10 @@ class Priority {
 
 		if ( empty( self::$grouped[ $pageType . $objectType ] ) && self::$advanced ) {
 			if ( ! isset( self::$objectTypeFrequency[ $pageType . $objectType ] ) ) {
-				self::$objectTypeFrequency[ $pageType . $objectType ] = $options->sitemap->dynamic->priority->has( $pageType ) && $options->sitemap->dynamic->priority->$pageType->has( $objectType )
-					? json_decode( $options->sitemap->dynamic->priority->$pageType->$objectType->frequency )
+				$dynamicOptions = aioseo()->dynamicOptions->noConflict();
+
+				self::$objectTypeFrequency[ $pageType . $objectType ] = $dynamicOptions->sitemap->priority->has( $pageType ) && $dynamicOptions->sitemap->priority->$pageType->has( $objectType )
+					? json_decode( $dynamicOptions->sitemap->priority->$pageType->$objectType->frequency )
 					: false;
 			}
 		}
@@ -170,6 +176,7 @@ class Priority {
 					: self::$globalFrequency[ $pageType . $objectType ];
 			$frequency    = 'default' === $defaultValue->value ? $frequency : $defaultValue->value;
 		}
+
 		return $frequency;
 	}
 
@@ -196,6 +203,7 @@ class Priority {
 		if ( array_key_exists( $pageType, $defaults ) ) {
 			return $defaults[ $pageType ];
 		}
+
 		return $defaults['other'];
 	}
 
@@ -222,6 +230,7 @@ class Priority {
 		if ( array_key_exists( $pageType, $defaults ) ) {
 			return $defaults[ $pageType ];
 		}
+
 		return $defaults['other'];
 	}
 }

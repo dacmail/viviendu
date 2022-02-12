@@ -23,6 +23,7 @@ class Blocks {
 		global $wp_version;
 		if ( version_compare( $wp_version, '5.8', '<' ) ) {
 			add_filter( 'block_categories', [ $this, 'blockCategories' ], 10 );
+
 			return;
 		}
 		add_filter( 'block_categories_all', [ $this, 'blockCategories' ], 10 );

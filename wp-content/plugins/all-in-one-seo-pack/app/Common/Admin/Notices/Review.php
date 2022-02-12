@@ -137,6 +137,7 @@ class Review {
 	 * Print the script for dismissing the notice.
 	 *
 	 * @since 4.0.13
+	 *
 	 * @return void
 	 */
 	public function printScript() {
@@ -253,6 +254,7 @@ class Review {
 
 		if ( ! $delay ) {
 			update_user_meta( get_current_user_id(), '_aioseo_plugin_review_dismissed', $relay ? '2' : '1' );
+
 			return wp_send_json_success();
 		}
 

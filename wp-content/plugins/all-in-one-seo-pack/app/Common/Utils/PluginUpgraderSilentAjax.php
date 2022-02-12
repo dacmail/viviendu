@@ -32,18 +32,24 @@ class PluginUpgraderSilentAjax extends \Plugin_Upgrader {
 	 * @var array
 	 */
 	public $pluginLinks = [
-		'optinMonster'  => 'https://downloads.wordpress.org/plugin/optinmonster.zip',
-		'wpForms'       => 'https://downloads.wordpress.org/plugin/wpforms-lite.zip',
-		'miLite'        => 'https://downloads.wordpress.org/plugin/google-analytics-for-wordpress.zip',
-		'emLite'        => 'https://downloads.wordpress.org/plugin/google-analytics-dashboard-for-wp.zip',
-		'wpMail'        => 'https://downloads.wordpress.org/plugin/wp-mail-smtp.zip',
-		'rafflePress'   => 'https://downloads.wordpress.org/plugin/rafflepress.zip',
-		'seedProd'      => 'https://downloads.wordpress.org/plugin/coming-soon.zip',
-		'trustPulse'    => 'https://downloads.wordpress.org/plugin/trustpulse-api.zip',
-		'instagramFeed' => 'https://downloads.wordpress.org/plugin/instagram-feed.zip',
-		'facebookFeed'  => 'https://downloads.wordpress.org/plugin/custom-facebook-feed.zip',
-		'twitterFeed'   => 'https://downloads.wordpress.org/plugin/custom-twitter-feeds.zip',
-		'youTubeFeed'   => 'https://downloads.wordpress.org/plugin/feeds-for-youtube.zip'
+		'optinMonster'         => 'https://downloads.wordpress.org/plugin/optinmonster.zip',
+		'wpForms'              => 'https://downloads.wordpress.org/plugin/wpforms-lite.zip',
+		'miLite'               => 'https://downloads.wordpress.org/plugin/google-analytics-for-wordpress.zip',
+		'emLite'               => 'https://downloads.wordpress.org/plugin/google-analytics-dashboard-for-wp.zip',
+		'wpMail'               => 'https://downloads.wordpress.org/plugin/wp-mail-smtp.zip',
+		'rafflePress'          => 'https://downloads.wordpress.org/plugin/rafflepress.zip',
+		'seedProd'             => 'https://downloads.wordpress.org/plugin/coming-soon.zip',
+		'trustPulse'           => 'https://downloads.wordpress.org/plugin/trustpulse-api.zip',
+		'instagramFeed'        => 'https://downloads.wordpress.org/plugin/instagram-feed.zip',
+		'facebookFeed'         => 'https://downloads.wordpress.org/plugin/custom-facebook-feed.zip',
+		'twitterFeed'          => 'https://downloads.wordpress.org/plugin/custom-twitter-feeds.zip',
+		'youTubeFeed'          => 'https://downloads.wordpress.org/plugin/feeds-for-youtube.zip',
+		'pushEngage'           => 'https://downloads.wordpress.org/plugins/pushengage.zip',
+		'sugarCalendar'        => 'https://downloads.wordpress.org/plugins/sugar-calendar-lite.zip',
+		'wpSimplePay'          => 'https://downloads.wordpress.org/plugins/stripe.zip',
+		'easyDigitalDownloads' => 'https://downloads.wordpress.org/plugins/easy-digital-downloads.zip',
+		'searchWp'             => '',
+		'affiliateWp'          => ''
 	];
 
 	/**
@@ -65,7 +71,12 @@ class PluginUpgraderSilentAjax extends \Plugin_Upgrader {
 		'instagramFeed' => 'https://wordpress.org/plugin/instagram-feed/',
 		'facebookFeed'  => 'https://wordpress.org/plugin/custom-facebook-feed/',
 		'twitterFeed'   => 'https://wordpress.org/plugin/custom-twitter-feeds/',
-		'youTubeFeed'   => 'https://wordpress.org/plugin/feeds-for-youtube/'
+		'youTubeFeed'   => 'https://wordpress.org/plugin/feeds-for-youtube/',
+		'pushEngage'    => 'https://wordpress.org/plugins/pushengage/',
+		'sugarCalendar' => 'https://wordpress.org/plugins/sugar-calendar-lite/',
+		'wpSimplePay'   => 'https://wordpress.org/plugins/stripe/',
+		'searchWp'      => 'https://searchwp.com/',
+		'affiliateWp'   => 'https://affiliatewp.com/'
 	];
 
 	/**
@@ -76,28 +87,36 @@ class PluginUpgraderSilentAjax extends \Plugin_Upgrader {
 	 * @var array
 	 */
 	public $pluginSlugs = [
-		'optinMonster'     => 'optinmonster/optin-monster-wp-api.php',
-		'wpForms'          => 'wpforms-lite/wpforms.php',
-		'wpFormsPro'       => 'wpforms/wpforms.php',
-		'miLite'           => 'google-analytics-for-wordpress/googleanalytics.php',
-		'miPro'            => 'google-analytics-premium/googleanalytics-premium.php',
-		'emLite'           => 'google-analytics-dashboard-for-wp/gadwp.php',
-		'emPro'            => 'exactmetrics-premium/exactmetrics-premium.php',
-		'wpMail'           => 'wp-mail-smtp/wp_mail_smtp.php',
-		'wpMailPro'        => 'wp-mail-smtp-pro/wp_mail_smtp.php',
-		'rafflePress'      => 'rafflepress/rafflepress.php',
-		'rafflePressPro'   => 'rafflepress-pro/rafflepress-pro.php',
-		'seedProd'         => 'coming-soon/coming-soon.php',
-		'seedProdPro'      => 'seedprod-coming-soon-pro-5/seedprod-coming-soon-pro-5.php',
-		'trustPulse'       => 'trustpulse-api/trustpulse.php',
-		'instagramFeed'    => 'instagram-feed/instagram-feed.php',
-		'instagramFeedPro' => 'instagram-feed-pro/instagram-feed.php',
-		'facebookFeed'     => 'custom-facebook-feed/custom-facebook-feed.php',
-		'facebookFeedPro'  => 'custom-facebook-feed-pro/custom-facebook-feed.php',
-		'twitterFeed'      => 'custom-twitter-feeds/custom-twitter-feed.php',
-		'twitterFeedPro'   => 'custom-twitter-feeds-pro/custom-twitter-feed.php',
-		'youTubeFeed'      => 'feeds-for-youtube/youtube-feed.php',
-		'youTubeFeedPro'   => 'youtube-feed-pro/youtube-feed.php'
+		'optinMonster'         => 'optinmonster/optin-monster-wp-api.php',
+		'wpForms'              => 'wpforms-lite/wpforms.php',
+		'wpFormsPro'           => 'wpforms/wpforms.php',
+		'miLite'               => 'google-analytics-for-wordpress/googleanalytics.php',
+		'miPro'                => 'google-analytics-premium/googleanalytics-premium.php',
+		'emLite'               => 'google-analytics-dashboard-for-wp/gadwp.php',
+		'emPro'                => 'exactmetrics-premium/exactmetrics-premium.php',
+		'wpMail'               => 'wp-mail-smtp/wp_mail_smtp.php',
+		'wpMailPro'            => 'wp-mail-smtp-pro/wp_mail_smtp.php',
+		'rafflePress'          => 'rafflepress/rafflepress.php',
+		'rafflePressPro'       => 'rafflepress-pro/rafflepress-pro.php',
+		'seedProd'             => 'coming-soon/coming-soon.php',
+		'seedProdPro'          => 'seedprod-coming-soon-pro-5/seedprod-coming-soon-pro-5.php',
+		'trustPulse'           => 'trustpulse-api/trustpulse.php',
+		'instagramFeed'        => 'instagram-feed/instagram-feed.php',
+		'instagramFeedPro'     => 'instagram-feed-pro/instagram-feed.php',
+		'facebookFeed'         => 'custom-facebook-feed/custom-facebook-feed.php',
+		'facebookFeedPro'      => 'custom-facebook-feed-pro/custom-facebook-feed.php',
+		'twitterFeed'          => 'custom-twitter-feeds/custom-twitter-feed.php',
+		'twitterFeedPro'       => 'custom-twitter-feeds-pro/custom-twitter-feed.php',
+		'youTubeFeed'          => 'feeds-for-youtube/youtube-feed.php',
+		'youTubeFeedPro'       => 'youtube-feed-pro/youtube-feed.php',
+		'pushEngage'           => 'pushengage/main.php',
+		'sugarCalendar'        => 'sugar-calendar-lite/sugar-calendar-lite.php',
+		'sugarCalendarPro'     => 'sugar-calendar/sugar-calendar.php',
+		'wpSimplePay'          => 'stripe/stripe-checkout.php',
+		'wpSimplePayPro'       => 'wp-simple-pay-pro-3/simple-pay.php',
+		'easyDigitalDownloads' => 'easy-digital-downloads/easy-digital-downloads.php',
+		'searchWp'             => 'searchwp/index.php',
+		'affiliateWp'          => 'affiliate-wp/affiliate-wp.php'
 	];
 
 	/**
@@ -108,28 +127,36 @@ class PluginUpgraderSilentAjax extends \Plugin_Upgrader {
 	 * @var array
 	 */
 	public $pluginAdminUrls = [
-		'optinMonster'     => 'admin.php?page=optin-monster-api-settings',
-		'wpForms'          => 'admin.php?page=wpforms-settings',
-		'wpFormsPro'       => 'admin.php?page=wpforms-settings',
-		'miLite'           => 'admin.php?page=monsterinsights_settings#/',
-		'miPro'            => 'admin.php?page=monsterinsights_settings#/',
-		'emLite'           => 'admin.php?page=exactmetrics_settings#/',
-		'emPro'            => 'admin.php?page=exactmetrics_settings#/',
-		'wpMail'           => 'admin.php?page=wp-mail-smtp',
-		'wpMailPro'        => 'admin.php?page=wp-mail-smtp',
-		'seedProd'         => 'admin.php?page=seed_csp4',
-		'seedProdPro'      => 'admin.php?page=seed_csp4',
-		'rafflePress'      => 'admin.php?page=rafflepress_lite#/settings',
-		'rafflePressPro'   => 'admin.php?page=rafflepress_lite#/settings',
-		'trustPulse'       => 'admin.php?page=trustpulse',
-		'instagramFeed'    => 'admin.php?page=sb-instagram-feed',
-		'instagramFeedPro' => 'admin.php?page=sb-instagram-feed',
-		'facebookFeed'     => 'admin.php?page=cff-top',
-		'facebookFeedPro'  => 'admin.php?page=cff-top',
-		'twitterFeed'      => 'admin.php?page=custom-twitter-feeds',
-		'twitterFeedPro'   => 'admin.php?page=custom-twitter-feeds',
-		'youTubeFeed'      => 'admin.php?page=youtube-feed',
-		'youTubeFeedPro'   => 'admin.php?page=youtube-feed'
+		'optinMonster'         => 'admin.php?page=optin-monster-api-settings',
+		'wpForms'              => 'admin.php?page=wpforms-settings',
+		'wpFormsPro'           => 'admin.php?page=wpforms-settings',
+		'miLite'               => 'admin.php?page=monsterinsights_settings#/',
+		'miPro'                => 'admin.php?page=monsterinsights_settings#/',
+		'emLite'               => 'admin.php?page=exactmetrics_settings#/',
+		'emPro'                => 'admin.php?page=exactmetrics_settings#/',
+		'wpMail'               => 'admin.php?page=wp-mail-smtp',
+		'wpMailPro'            => 'admin.php?page=wp-mail-smtp',
+		'seedProd'             => 'admin.php?page=seed_csp4',
+		'seedProdPro'          => 'admin.php?page=seed_csp4',
+		'rafflePress'          => 'admin.php?page=rafflepress_lite#/settings',
+		'rafflePressPro'       => 'admin.php?page=rafflepress_lite#/settings',
+		'trustPulse'           => 'admin.php?page=trustpulse',
+		'instagramFeed'        => 'admin.php?page=sb-instagram-feed',
+		'instagramFeedPro'     => 'admin.php?page=sb-instagram-feed',
+		'facebookFeed'         => 'admin.php?page=cff-top',
+		'facebookFeedPro'      => 'admin.php?page=cff-top',
+		'twitterFeed'          => 'admin.php?page=custom-twitter-feeds',
+		'twitterFeedPro'       => 'admin.php?page=custom-twitter-feeds',
+		'youTubeFeed'          => 'admin.php?page=youtube-feed',
+		'youTubeFeedPro'       => 'admin.php?page=youtube-feed',
+		'pushEngage'           => 'admin.php?page=pushengage-admin',
+		'sugarCalendar'        => 'admin.php?page=sugar-calendar',
+		'sugarCalendarPro'     => 'admin.php?page=sugar-calendar',
+		'wpSimplePay'          => 'edit.php?post_type=simple-pay',
+		'wpSimplePayPro'       => 'edit.php?post_type=simple-pay',
+		'easyDigitalDownloads' => 'edit.php?post_type=download',
+		'searchWp'             => 'options-general.php?page=searchwp',
+		'affiliateWp'          => 'admin.php?page=affiliate-wp'
 	];
 
 	/**
@@ -222,6 +249,7 @@ class PluginUpgraderSilentAjax extends \Plugin_Upgrader {
 			if ( ! $options['is_multi'] ) {
 				$this->skin->footer();
 			}
+
 			return false;
 		}
 
@@ -233,6 +261,7 @@ class PluginUpgraderSilentAjax extends \Plugin_Upgrader {
 			if ( ! $options['is_multi'] ) {
 				$this->skin->footer();
 			}
+
 			return $res;
 		}
 
@@ -270,6 +299,7 @@ class PluginUpgraderSilentAjax extends \Plugin_Upgrader {
 			if ( ! $options['is_multi'] ) {
 				$this->skin->footer();
 			}
+
 			return $download;
 		}
 
@@ -283,6 +313,7 @@ class PluginUpgraderSilentAjax extends \Plugin_Upgrader {
 			if ( ! $options['is_multi'] ) {
 				$this->skin->footer();
 			}
+
 			return $working_dir;
 		}
 
@@ -360,7 +391,7 @@ class PluginUpgraderSilentAjax extends \Plugin_Upgrader {
 	 *
 	 * @param bool $enable True to enable maintenance mode, false to disable.
 	 */
-	public function maintenance_mode( $enable = false ) {
+	public function maintenance_mode( $enable = false ) { // phpcs:ignore PSR1.Methods.CamelCapsMethodName.NotCamelCaps
 		global $wp_filesystem;
 		$file = $wp_filesystem->abspath() . '.maintenance';
 		if ( $enable ) {
@@ -387,7 +418,7 @@ class PluginUpgraderSilentAjax extends \Plugin_Upgrader {
 	 * @param array  $hook_extra       Extra arguments to pass to the filter hooks. Default empty array.
 	 * @return string|WP_Error The full path to the downloaded package file, or a WP_Error object.
 	 */
-	public function download_package( $package, $check_signatures = false, $hook_extra = [] ) {
+	public function download_package( $package, $check_signatures = false, $hook_extra = [] ) { // phpcs:ignore PSR1.Methods.CamelCapsMethodName.NotCamelCaps
 
 		/**
 		 * Filters whether to return the package.
@@ -437,7 +468,7 @@ class PluginUpgraderSilentAjax extends \Plugin_Upgrader {
 	 *                               to unpack it. Default true.
 	 * @return string|WP_Error The path to the unpacked contents, or a WP_Error on failure.
 	 */
-	public function unpack_package( $package, $delete_package = true ) {
+	public function unpack_package( $package, $delete_package = true ) { // phpcs:ignore PSR1.Methods.CamelCapsMethodName.NotCamelCaps
 		global $wp_filesystem;
 
 		//$this->skin->feedback( 'unpack_package' );
@@ -473,6 +504,7 @@ class PluginUpgraderSilentAjax extends \Plugin_Upgrader {
 			if ( 'incompatible_archive' === $result->get_error_code() ) {
 				return new WP_Error( 'incompatible_archive', $this->strings['incompatible_archive'], $result->get_error_data() );
 			}
+
 			return $result;
 		}
 
@@ -509,7 +541,7 @@ class PluginUpgraderSilentAjax extends \Plugin_Upgrader {
 	 *
 	 * @return array|WP_Error The result (also stored in `WP_Upgrader::$result`), or a WP_Error on failure.
 	 */
-	public function install_package( $args = [] ) {
+	public function install_package( $args = [] ) { // phpcs:ignore PSR1.Methods.CamelCapsMethodName.NotCamelCaps
 		global $wp_filesystem, $wp_theme_directories;
 
 		$defaults = [
@@ -636,6 +668,7 @@ class PluginUpgraderSilentAjax extends \Plugin_Upgrader {
 			$_files = $wp_filesystem->dirlist( $remote_destination );
 			if ( ! empty( $_files ) ) {
 				$wp_filesystem->delete( $remote_source, true ); //Clear out the source files.
+
 				return new WP_Error( 'folder_exists', $this->strings['folder_exists'], $remote_destination );
 			}
 		}
@@ -652,6 +685,7 @@ class PluginUpgraderSilentAjax extends \Plugin_Upgrader {
 			if ( $args['clear_working'] ) {
 				$wp_filesystem->delete( $remote_source, true );
 			}
+
 			return $result;
 		}
 
@@ -680,6 +714,7 @@ class PluginUpgraderSilentAjax extends \Plugin_Upgrader {
 
 		if ( is_wp_error( $res ) ) {
 			$this->result = $res;
+
 			return $res;
 		}
 

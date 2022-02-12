@@ -25,6 +25,7 @@ class Twitter {
 		}
 
 		$userName = aioseo()->options->social->profiles->sameUsername->username;
+
 		return ( $userName && in_array( 'twitterUrl', aioseo()->options->social->profiles->sameUsername->included, true ) )
 			? 'https://twitter.com/' . $userName
 			: '';
@@ -43,6 +44,7 @@ class Twitter {
 		}
 
 		$metaData = aioseo()->meta->metaData->getMetaData();
+
 		return ! empty( $metaData->twitter_card ) && 'default' !== $metaData->twitter_card ? $metaData->twitter_card : aioseo()->options->social->twitter->general->defaultCardType;
 	}
 
@@ -58,8 +60,10 @@ class Twitter {
 		$post   = aioseo()->helpers->getPost();
 		if ( $post && aioseo()->options->social->twitter->general->showAuthor ) {
 			$twitterUser = get_the_author_meta( 'aioseo_twitter', $post->post_author );
-			$author      = aioseo()->social->twitter->prepareUsername( $twitterUser );
+			$author      = $twitterUser ? $twitterUser : aioseo()->social->twitter->getTwitterUrl();
+			$author      = aioseo()->social->twitter->prepareUsername( $author );
 		}
+
 		return $author;
 	}
 
@@ -68,10 +72,11 @@ class Twitter {
 	 *
 	 * @since 4.0.0
 	 *
-	 * @return string The image URL.
+	 * @param  int    $postId The post ID (optional).
+	 * @return string         The image URL.
 	 */
-	public function getImage() {
-		$post = aioseo()->helpers->getPost();
+	public function getImage( $postId = null ) {
+		$post = aioseo()->helpers->getPost( $postId );
 		if ( is_home() && 'posts' === get_option( 'show_on_front' ) ) {
 			$image = aioseo()->options->social->twitter->homePage->image;
 			if ( empty( $image ) ) {
@@ -113,6 +118,7 @@ class Twitter {
 	public function getTitle( $post = null ) {
 		if ( is_home() && 'posts' === get_option( 'show_on_front' ) ) {
 			$title = aioseo()->meta->title->helpers->prepare( aioseo()->options->social->twitter->homePage->title );
+
 			return $title ? $title : aioseo()->social->facebook->getTitle( $post );
 		}
 
@@ -142,6 +148,7 @@ class Twitter {
 	public function getDescription( $post = null ) {
 		if ( is_home() && 'posts' === get_option( 'show_on_front' ) ) {
 			$description = aioseo()->meta->description->helpers->prepare( aioseo()->options->social->twitter->homePage->description );
+
 			return $description ? $description : aioseo()->social->facebook->getDescription( $post );
 		}
 
@@ -224,7 +231,7 @@ class Twitter {
 		}
 
 		if ( ! empty( $post->post_content ) ) {
-			$minutes = aioseo()->helpers->getReadingTime( $post->post_content );
+			$minutes = $this->getReadingTime( $post->post_content );
 			if ( ! empty( $minutes ) ) {
 				$data[] = [
 					'label' => __( 'Est. reading time', 'all-in-one-seo-pack' ),
@@ -235,5 +242,20 @@ class Twitter {
 		}
 
 		return $data;
+	}
+
+	/**
+	 * Returns the estimated reading time for a string.
+	 *
+	 * @since 4.0.0
+	 *
+	 * @param  string  $string The string to count.
+	 * @return integer         The estimated reading time as an integer.
+	 */
+	private function getReadingTime( $string ) {
+		$wpm  = 200;
+		$word = str_word_count( wp_strip_all_tags( $string ) );
+
+		return round( $word / $wpm );
 	}
 }

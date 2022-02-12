@@ -40,6 +40,7 @@ class Article extends Graph {
 			'@id'              => aioseo()->schema->context['url'] . '#article',
 			'name'             => aioseo()->schema->context['name'],
 			'description'      => aioseo()->schema->context['description'],
+			'inLanguage'       => aioseo()->helpers->currentLanguageCodeBCP47(),
 			'headline'         => $post->post_title,
 			'author'           => [ '@id' => get_author_posts_url( $post->post_author ) . '#author' ],
 			'publisher'        => [ '@id' => trailingslashit( home_url() ) . '#' . aioseo()->options->searchAppearance->global->schema->siteRepresents ],
@@ -57,9 +58,10 @@ class Article extends Graph {
 		}
 
 		$image = $this->postImage( $post );
-		if ( $image ) {
+		if ( ! empty( $image ) ) {
 			$data['image'] = $image;
 		}
+
 		return $data;
 	}
 
@@ -89,8 +91,9 @@ class Article extends Graph {
 
 		if ( 'organization' === aioseo()->options->searchAppearance->global->schema->siteRepresents ) {
 			$logo = ( new Organization() )->logo();
-			if ( $logo ) {
+			if ( ! empty( $logo ) ) {
 				$logo['@id'] = trailingslashit( home_url() ) . '#articleImage';
+
 				return $logo;
 			}
 		} else {
@@ -104,5 +107,7 @@ class Article extends Graph {
 		if ( $imageId ) {
 			return $this->image( $imageId, 'articleImage' );
 		}
+
+		return [];
 	}
 }

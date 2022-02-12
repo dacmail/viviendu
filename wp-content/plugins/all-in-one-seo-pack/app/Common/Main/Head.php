@@ -35,7 +35,6 @@ class Head {
 
 		$this->analytics    = new GoogleAnalytics();
 		$this->links        = new Meta\Links();
-		$this->robots       = new Meta\Robots();
 		$this->keywords     = new Meta\Keywords();
 		$this->verification = new Meta\SiteVerification();
 		$this->views        = [
@@ -107,6 +106,7 @@ class Head {
 			return self::$pageTitle;
 		}
 		self::$pageTitle = aioseo()->meta->title->filterPageTitle( $wpTitle );
+
 		return self::$pageTitle;
 	}
 

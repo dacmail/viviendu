@@ -58,11 +58,16 @@ class Widget extends \WP_Widget {
 
 		// Title.
 		if ( ! empty( $instance['title'] ) ) {
-			echo $args['before_title'] . apply_filters( 'widget_title', $instance['title'], $instance, $this->id_base ) . $args['after_title']; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped,Generic.Files.LineLength.MaxExceeded
+			echo $args['before_title'] . apply_filters( // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+				'widget_title', $instance['title'], $instance, $this->id_base
+			) . $args['after_title']; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 		}
 
 		// Breadcrumb.
-		aioseo()->breadcrumbs->frontend->display();
+		! empty( $_GET['legacy-widget-preview'] ) ? aioseo()->breadcrumbs->frontend->preview() : aioseo()->breadcrumbs->frontend->display();
+
+		// Workaround for a bug in the Gutenberg widget preview.
+		echo '<span style="display: none">a</span>';  // TODO: remove this when the preview bug is fixed.
 
 		echo $args['after_widget']; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 	}

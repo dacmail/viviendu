@@ -30,7 +30,12 @@ class Migration {
 		$this->meta    = new Meta();
 		$this->helpers = new Helpers();
 
+		// NOTE: This needs to go above the is_admin check in order for it to run at all.
 		add_action( 'aioseo_migrate_post_meta', [ $this->meta, 'migratePostMeta' ] );
+
+		if ( ! is_admin() ) {
+			return;
+		}
 
 		if ( wp_doing_ajax() || wp_doing_cron() ) {
 			return;
@@ -67,16 +72,12 @@ class Migration {
 
 		// Stop migration for new v4 users where it was incorrectly triggered.
 		if ( version_compare( $lastActiveVersion[0], '4.0.4', '=' ) && ! get_option( 'aioseop_options' ) ) {
-			aioseo()->transients->delete( 'v3_migration_in_progress_posts' );
-			aioseo()->transients->delete( 'v3_migration_in_progress_terms' );
+			aioseo()->cache->delete( 'v3_migration_in_progress_posts' );
+			aioseo()->cache->delete( 'v3_migration_in_progress_terms' );
 
 			try {
-				if ( as_next_scheduled_action( 'aioseo_migrate_post_meta' ) ) {
-					as_unschedule_action( 'aioseo_migrate_post_meta', [], 'aioseo' );
-				}
-				if ( as_next_scheduled_action( 'aioseo_migrate_term_meta' ) ) {
-					as_unschedule_action( 'aioseo_migrate_term_meta', [], 'aioseo' );
-				}
+				aioseo()->helpers->unscheduleAction( 'aioseo_migrate_post_meta' );
+				aioseo()->helpers->unscheduleAction( 'aioseo_migrate_term_meta' );
 			} catch ( \Exception $e ) {
 				// Do nothing.
 			}
@@ -108,7 +109,7 @@ class Migration {
 
 		update_option( 'aioseo_options_v3', $this->oldOptions );
 
-		aioseo()->transients->update( 'v3_migration_in_progress_posts', time(), WEEK_IN_SECONDS );
+		aioseo()->cache->update( 'v3_migration_in_progress_posts', time(), WEEK_IN_SECONDS );
 
 		$this->migrateSettings();
 		$this->meta->migrateMeta();
@@ -124,7 +125,7 @@ class Migration {
 	 * @return void
 	 */
 	public function redoMetaMigration() {
-		aioseo()->transients->update( 'v3_migration_in_progress_posts', time(), WEEK_IN_SECONDS );
+		aioseo()->cache->update( 'v3_migration_in_progress_posts', time(), WEEK_IN_SECONDS );
 		$this->meta->migrateMeta();
 	}
 
@@ -149,13 +150,14 @@ class Migration {
 			}
 		}
 
-		aioseo()->transients->update( 'v3_migration_in_progress_settings', time() );
+		aioseo()->cache->update( 'v3_migration_in_progress_settings', time() );
 
 		new GeneralSettings();
 
 		if ( ! isset( $this->oldOptions['modules']['aiosp_feature_manager_options'] ) ) {
 			new Sitemap();
-			aioseo()->transients->delete( 'v3_migration_in_progress_settings' );
+			aioseo()->cache->delete( 'v3_migration_in_progress_settings' );
+
 			return;
 		}
 
@@ -181,7 +183,7 @@ class Migration {
 			new Wpml();
 		}
 
-		aioseo()->transients->delete( 'v3_migration_in_progress_settings' );
+		aioseo()->cache->delete( 'v3_migration_in_progress_settings' );
 	}
 
 	/**

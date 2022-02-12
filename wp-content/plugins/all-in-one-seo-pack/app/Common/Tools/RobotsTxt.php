@@ -17,11 +17,11 @@ class RobotsTxt {
 	public function __construct() {
 		add_filter( 'robots_txt', [ $this, 'buildRules' ], 10000, 2 );
 
-		// If our tables do not exist, create them now.
-		if ( ! aioseo()->db->tableExists( 'aioseo_notifications' ) ) {
-			aioseo()->updates->addInitialCustomTablesForV4();
+		if ( ! is_admin() ) {
+			return;
 		}
-		$this->checkForPhysicalFiles();
+
+		add_action( 'init', [ $this, 'checkForPhysicalFiles' ] );
 	}
 
 	/**
@@ -39,7 +39,6 @@ class RobotsTxt {
 		}
 
 		$original      = explode( "\n", $original );
-		$sitemapUrls   = implode( "\r\n", array_merge( aioseo()->sitemap->helpers->getSitemapUrls(), $this->extractSitemapUrls( $original ) ) );
 		$originalRules = $this->extractRules( $original );
 		$networkRules  = [];
 		if ( is_multisite() ) {
@@ -53,13 +52,14 @@ class RobotsTxt {
 		if ( ! aioseo()->options->tools->robots->enable ) {
 			$networkAndOriginal = $this->mergeRules( $originalRules, $this->parseRules( $networkRules ) );
 			$networkAndOriginal = $this->robotsArrayUnique( $networkAndOriginal );
-			return $this->stringify( $networkAndOriginal ) . "\r\n" . $sitemapUrls;
+
+			return $this->stringify( $networkAndOriginal );
 		}
 
 		$allRules = $this->mergeRules( $originalRules, $this->mergeRules( $this->parseRules( $networkRules ), $this->parseRules( aioseo()->options->tools->robots->rules ) ), true );
 		$allRules = $this->robotsArrayUnique( $allRules );
 
-		return $this->stringify( $allRules ) . "\r\n" . $sitemapUrls;
+		return $this->stringify( $allRules );
 	}
 
 	/**
@@ -165,6 +165,7 @@ class RobotsTxt {
 				unset( $rules2[ $userAgent ][ $directive ][ $index1 ] );
 			}
 		}
+
 		return [ $rules1, $rules2 ];
 	}
 
@@ -195,7 +196,31 @@ class RobotsTxt {
 
 			$robots[] = '';
 		}
-		return implode( "\r\n", $robots );
+
+		$robots = implode( "\r\n", $robots ) . "\r\n";
+
+		$sitemapUrls = $this->getSitemapRules();
+		if ( ! empty( $sitemapUrls ) ) {
+			$sitemapUrls = implode( "\r\n", $sitemapUrls );
+			$robots     .= $sitemapUrls . "\r\n\r\n";
+		}
+
+		return $robots;
+	}
+
+	/**
+	 * Get Sitemap URLs excluding the default ones.
+	 *
+	 * @since 4.1.7
+	 *
+	 * @return array An array of the Sitemap URLs.
+	 */
+	private function getSitemapRules() {
+		$defaultRobots   = $this->getDefaultRobots();
+		$defaultSitemaps = $this->extractSitemapUrls( $defaultRobots );
+		$sitemapRules    = aioseo()->sitemap->helpers->getSitemapUrls();
+
+		return array_diff( $sitemapRules, $defaultSitemaps );
 	}
 
 	/**
@@ -231,7 +256,7 @@ class RobotsTxt {
 	 * @param  array $lines The lines to extract from.
 	 * @return array        An array of extracted rules.
 	 */
-	private function extractRules( $lines ) {
+	public function extractRules( $lines ) {
 		$rules     = [];
 		$userAgent = null;
 		foreach ( $lines as $line ) {
@@ -286,6 +311,7 @@ class RobotsTxt {
 				$sitemapUrls[] = trim( $line );
 			}
 		}
+
 		return $sitemapUrls;
 	}
 
@@ -321,7 +347,7 @@ class RobotsTxt {
 	 *
 	 * @return void
 	 */
-	private function checkForPhysicalFiles() {
+	public function checkForPhysicalFiles() {
 		if ( ! $this->hasPhysicalRobotsTxt() ) {
 			return;
 		}
@@ -379,6 +405,20 @@ class RobotsTxt {
 		$currentRules = $this->parseRules( aioseo()->options->tools->robots->rules );
 		$allRules     = $this->mergeRules( $currentRules, $allRules, false, true );
 
+		aioseo()->options->tools->robots->rules = aioseo()->robotsTxt->prepareRobotsTxt( $allRules );
+
+		return true;
+	}
+
+	/**
+	 * Prepare robots.txt rules to save.
+	 *
+	 * @since 4.1.4
+	 *
+	 * @param  array $allRules Array with the rules.
+	 * @return array           The prepared rules array.
+	 */
+	public function prepareRobotsTxt( $allRules = [] ) {
 		$robots = [];
 		foreach ( $allRules as $userAgent => $rules ) {
 			if ( empty( $userAgent ) ) {
@@ -407,9 +447,7 @@ class RobotsTxt {
 			}
 		}
 
-		aioseo()->options->tools->robots->rules = $robots;
-
-		return true;
+		return $robots;
 	}
 
 	/**
@@ -442,17 +480,18 @@ class RobotsTxt {
 	public function deletePhysicalRobotsTxt() {
 		$wpfs = aioseo()->helpers->wpfs();
 		$file = trailingslashit( $wpfs->abspath() ) . 'robots.txt';
+
 		return @$wpfs->delete( $file );
 	}
 
 	/**
-	 * Get the default Robots.txt rules (excluding our own).
+	 * Get the default Robots.txt lines (excluding our own).
 	 *
-	 * @since 4.0.0
+	 * @since 4.1.7
 	 *
 	 * @return array An array of robots.txt rules (excluding our own).
 	 */
-	public function getDefaultRules() {
+	public function getDefaultRobots() {
 		// First, we need to remove our filter, so that it doesn't run unintentionally.
 		remove_filter( 'robots_txt', [ $this, 'buildRules' ], 10000 );
 
@@ -467,7 +506,20 @@ class RobotsTxt {
 		// Add the filter back.
 		add_filter( 'robots_txt', [ $this, 'buildRules' ], 10000, 2 );
 
-		return $this->extractRules( explode( "\n", $rules ) );
+		return explode( "\n", $rules );
+	}
+
+	/**
+	 * Get the default Robots.txt rules (excluding our own).
+	 *
+	 * @since 4.0.0
+	 *
+	 * @return array An array of robots.txt rules (excluding our own).
+	 */
+	public function getDefaultRules() {
+		$originalRobots = $this->getDefaultRobots();
+
+		return $this->extractRules( $originalRobots );
 	}
 
 	/**

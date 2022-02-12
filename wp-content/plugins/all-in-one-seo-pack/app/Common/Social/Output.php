@@ -26,10 +26,12 @@ class Output {
 			! is_front_page() &&
 			! is_home() &&
 			! is_singular() &&
+			! is_post_type_archive() &&
 			! aioseo()->helpers->isWooCommerceShopPage()
 		) {
 			return false;
 		}
+
 		return true;
 	}
 
@@ -46,6 +48,7 @@ class Output {
 		}
 
 		$meta = [
+			'og:locale'      => aioseo()->social->facebook->getLocale(),
 			'og:site_name'   => aioseo()->helpers->encodeOutputHtml( aioseo()->social->facebook->getSiteName() ),
 			'og:type'        => aioseo()->social->facebook->getObjectType(),
 			'og:title'       => aioseo()->helpers->encodeOutputHtml( aioseo()->social->facebook->getTitle() ),
@@ -58,6 +61,7 @@ class Output {
 		$image = aioseo()->social->facebook->getImage();
 		if ( $image ) {
 			$image = is_array( $image ) ? $image[0] : $image;
+			$image = aioseo()->helpers->makeUrlAbsolute( $image );
 			$image = set_url_scheme( esc_url( $image ) );
 
 			$meta += [
@@ -109,7 +113,6 @@ class Output {
 		$meta = [
 			'twitter:card'        => aioseo()->social->twitter->getCardType(),
 			'twitter:site'        => aioseo()->social->twitter->prepareUsername( aioseo()->social->twitter->getTwitterUrl() ),
-			'twitter:domain'      => aioseo()->helpers->getSiteDomain(),
 			'twitter:title'       => aioseo()->helpers->encodeOutputHtml( aioseo()->social->twitter->getTitle() ),
 			'twitter:description' => aioseo()->helpers->encodeOutputHtml( aioseo()->social->twitter->getDescription() ),
 			'twitter:creator'     => aioseo()->social->twitter->getCreator()
@@ -117,11 +120,11 @@ class Output {
 
 		$image = aioseo()->social->twitter->getImage();
 		if ( $image ) {
-			if ( is_array( $image ) ) {
-				$meta['twitter:image'] = $image[0];
-			} else {
-				$meta['twitter:image'] = $image;
-			}
+			$image = is_array( $image ) ? $image[0] : $image;
+			$image = aioseo()->helpers->makeUrlAbsolute( $image );
+
+			// Set the twitter image meta.
+			$meta['twitter:image'] = $image;
 		}
 
 		if ( is_singular() ) {

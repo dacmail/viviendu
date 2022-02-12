@@ -6,6 +6,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+use AIOSEO\Plugin\Common\Models;
+
 /**
  * Abstract class that Pro and Lite both extend.
  *
@@ -33,34 +35,44 @@ class Main {
 	 * @return void
 	 */
 	public function enqueueAssets() {
+		aioseo()->helpers->enqueueChunkedAssets();
+
 		// Scripts.
-		aioseo()->helpers->enqueueScript(
+		$standalone = [
+			'app',
+			'notifications'
+		];
+
+		foreach ( $standalone as $key ) {
+			aioseo()->helpers->enqueueScript(
+				'aioseo-' . $key,
+				'js/' . $key . '.js'
+			);
+		}
+
+		wp_localize_script(
 			'aioseo-app',
-			'js/app.js'
-		);
-		aioseo()->helpers->enqueueScript(
-			'aioseo-vendors',
-			'js/chunk-vendors.js'
-		);
-		aioseo()->helpers->enqueueScript(
-			'aioseo-common',
-			'js/chunk-common.js'
+			'aioseoTranslations',
+			[
+				'translations' => aioseo()->helpers->getJedLocaleData( 'all-in-one-seo-pack' )
+			]
 		);
 
-		// Styles.
+		wp_localize_script(
+			'aioseo-notifications',
+			'aioseoNotifications',
+			[
+				'newNotifications' => count( Models\Notification::getNewNotifications() )
+			]
+		);
+
 		$rtl = is_rtl() ? '.rtl' : '';
-		aioseo()->helpers->enqueueStyle(
-			'aioseo-common',
-			"css/chunk-common$rtl.css"
-		);
-		aioseo()->helpers->enqueueStyle(
-			'aioseo-vendors',
-			"css/chunk-vendors$rtl.css"
-		);
-		aioseo()->helpers->enqueueStyle(
-			'aioseo-app-style',
-			"css/app$rtl.css"
-		);
+		foreach ( $standalone as $key ) {
+			aioseo()->helpers->enqueueStyle(
+				"aioseo-$key-style",
+				"css/$key$rtl.css"
+			);
+		}
 	}
 
 	/**
@@ -71,14 +83,19 @@ class Main {
 	 * @return void
 	 */
 	public function enqueueFrontEndAssets() {
-		if ( ! is_user_logged_in() || ! current_user_can( 'aioseo_manage_seo' ) ) {
+		$canManageSeo = apply_filters( 'aioseo_manage_seo', 'aioseo_manage_seo' );
+		if (
+			! is_admin_bar_showing() ||
+			! ( current_user_can( $canManageSeo ) || aioseo()->access->canManage() )
+		) {
 			return;
 		}
 
 		// Styles.
 		aioseo()->helpers->enqueueStyle(
 			'aioseo-admin-bar',
-			'css/aioseo-admin-bar.css'
+			'css/aioseo-admin-bar.css',
+			false
 		);
 	}
 

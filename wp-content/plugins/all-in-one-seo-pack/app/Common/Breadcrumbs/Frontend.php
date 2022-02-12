@@ -30,46 +30,48 @@ class Frontend {
 	 */
 	public function getBreadcrumbs() {
 		if ( ! empty( $this->breadcrumbs ) ) {
-			return $this->breadcrumbs;
+			return apply_filters( 'aioseo_breadcrumbs_trail', $this->breadcrumbs );
 		}
 
 		$type      = '';
 		$reference = get_queried_object();
+		// These types need the queried object for reference.
+		if ( is_object( $reference ) ) {
+			if ( is_single() ) {
+				$type = 'single';
+			}
 
-		if ( is_single() ) {
-			$type = 'single';
-		}
+			if ( is_singular( 'post' ) ) {
+				$type = 'post';
+			}
 
-		if ( is_singular( 'post' ) ) {
-			$type = 'post';
-		}
+			if ( is_page() && ! is_front_page() ) {
+				$type = 'page';
+			}
 
-		if ( is_page() && ! is_front_page() ) {
-			$type = 'page';
-		}
+			if ( is_category() || is_tag() ) {
+				$type = 'category';
+			}
 
-		if ( is_category() || is_tag() ) {
-			$type = 'category';
-		}
+			if ( is_tax() ) {
+				$type = 'taxonomy';
+			}
 
-		if ( is_tax() ) {
-			$type = 'taxonomy';
-		}
+			if ( is_post_type_archive() ) {
+				$type = 'postTypeArchive';
+			}
 
-		if ( is_post_type_archive() ) {
-			$type = 'postTypeArchive';
-		}
+			if ( is_author() ) {
+				$type = 'author';
+			}
 
-		if ( is_author() ) {
-			$type = 'author';
-		}
-
-		if ( is_home() ) {
-			$type = 'blog';
+			if ( is_home() ) {
+				$type = 'blog';
+			}
 		}
 
 		if ( is_date() ) {
-			$type = 'date';
+			$type      = 'date';
 			$reference = [
 				'year'  => get_query_var( 'year' ),
 				'month' => get_query_var( 'monthnum' ),
@@ -95,7 +97,7 @@ class Frontend {
 			];
 		}
 
-		return aioseo()->breadcrumbs->buildBreadcrumbs( $type, $reference, $paged );
+		return apply_filters( 'aioseo_breadcrumbs_trail', aioseo()->breadcrumbs->buildBreadcrumbs( $type, $reference, $paged ) );
 	}
 
 	/**
@@ -109,9 +111,33 @@ class Frontend {
 	 * @return string|void            A html breadcrumb.
 	 */
 	public function sideDisplay( $echo = true, $type = '', $reference = '' ) {
-		$this->breadcrumbs = aioseo()->breadcrumbs->buildBreadcrumbs( $type, $reference );
+		// Save previously built breadcrumbs.
+		$previousCrumbs = $this->breadcrumbs;
 
-		return $this->display( $echo );
+		// Build and run the sideDisplay.
+		$this->breadcrumbs = aioseo()->breadcrumbs->buildBreadcrumbs( $type, $reference );
+		$sideDisplay       = $this->display( $echo );
+
+		// Restore previously built breadcrumbs.
+		$this->breadcrumbs = $previousCrumbs;
+
+		return $sideDisplay;
+	}
+
+	/**
+	 * Display a generic breadcrumb preview.
+	 *
+	 * @since 4.1.5
+	 *
+	 * @param  bool        $echo  Print out the breadcrumb.
+	 * @param  string      $label The preview crumb label.
+	 * @return string|void        A html breadcrumb.
+	 */
+	public function preview( $echo = true, $label = '' ) {
+		// Translators: "Crumb" refers to a part of the breadcrumb trail.
+		$label = empty( $label ) ? __( 'Sample Crumb', 'all-in-one-seo-pack' ) : $label;
+
+		return $this->sideDisplay( $echo, 'preview', $label );
 	}
 
 	/**
@@ -123,7 +149,7 @@ class Frontend {
 	 * @return string|void       A html breadcrumb.
 	 */
 	public function display( $echo = true ) {
-		if ( ! is_object( get_queried_object() ) || ! aioseo()->options->breadcrumbs->enable ) {
+		if ( ! aioseo()->options->breadcrumbs->enable || ! apply_filters( 'aioseo_breadcrumbs_output', true ) ) {
 			return;
 		}
 
@@ -143,8 +169,8 @@ class Frontend {
 			// Strip link from Last crumb.
 			if (
 				0 === $breadcrumbsCount &&
-				aioseo()->options->breadcrumbs->showCurrentItem &&
-				! aioseo()->options->breadcrumbs->linkCurrentItem &&
+				aioseo()->breadcrumbs->showCurrentItem() &&
+				! $this->linkCurrentItem() &&
 				'default' === $breadcrumbDisplay['templateType']
 			) {
 				$breadcrumbDisplay['template'] = $this->stripLink( $breadcrumbDisplay['template'] );
@@ -266,6 +292,19 @@ TEMPLATE;
 	 * @return string The separator html.
 	 */
 	public function getSeparator() {
-		return apply_filters( 'aioseo_breadcrumbs_separator', '<span class="aioseo-breadcrumb-separator">' . esc_html( aioseo()->options->breadcrumbs->separator ) . '</span>' );
+		$separator = apply_filters( 'aioseo_breadcrumbs_separator_symbol', aioseo()->options->breadcrumbs->separator );
+
+		return apply_filters( 'aioseo_breadcrumbs_separator', '<span class="aioseo-breadcrumb-separator">' . esc_html( $separator ) . '</span>' );
+	}
+
+	/**
+	 * Function to filter the linkCurrentItem option.
+	 *
+	 * @since 4.1.3
+	 *
+	 * @return bool Link current item.
+	 */
+	public function linkCurrentItem() {
+		return apply_filters( 'aioseo_breadcrumbs_link_current_item', aioseo()->options->breadcrumbs->linkCurrentItem );
 	}
 }

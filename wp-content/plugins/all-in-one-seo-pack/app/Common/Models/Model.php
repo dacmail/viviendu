@@ -166,12 +166,23 @@ class Model implements \JsonSerializable {
 			trim( $key );
 			$this->$key = $value;
 
+			if ( null === $value && in_array( $key, $this->nullFields, true ) ) {
+				continue;
+			}
+
 			if ( in_array( $key, $this->jsonFields, true ) ) {
 				$this->$key = json_decode( $value );
-			} elseif ( in_array( $key, $this->booleanFields, true ) ) {
+				continue;
+			}
+
+			if ( in_array( $key, $this->booleanFields, true ) ) {
 				$this->$key = (bool) $value;
-			} elseif ( in_array( $key, $this->numericFields, true ) ) {
+				continue;
+			}
+
+			if ( in_array( $key, $this->numericFields, true ) ) {
 				$this->$key = (int) $value;
+				continue;
 			}
 		}
 	}
@@ -236,6 +247,9 @@ class Model implements \JsonSerializable {
 
 		foreach ( $this->jsonFields as $field ) {
 			if ( isset( $data[ $field ] ) && ! aioseo()->helpers->isJsonString( $data[ $field ] ) ) {
+				if ( is_array( $data[ $field ] ) && aioseo()->helpers->isArrayNumeric( $data[ $field ] ) ) {
+					$data[ $field ] = array_values( $data[ $field ] );
+				}
 				$data[ $field ] = wp_json_encode( $data[ $field ] );
 			}
 		}
@@ -440,10 +454,26 @@ class Model implements \JsonSerializable {
 	 *
 	 * @since 4.0.0
 	 *
-	 * @return string JSON object.
+	 * @param  string $existingOptions The existing options in JSON.
+	 * @return string                  The existing options with defaults added in JSON.
 	 */
-	public static function getDefaultTabsOptions() {
-		return '{"tab":"general","tab_social":"facebook","tab_sidebar":"general","tab_modal":"general","tab_modal_social":"facebook"}';
+	public static function getDefaultTabsOptions( $existingOptions = '' ) {
+		$defaults = [
+			'tab'              => 'general',
+			'tab_social'       => 'facebook',
+			'tab_sidebar'      => 'general',
+			'tab_modal'        => 'general',
+			'tab_modal_social' => 'facebook'
+		];
+
+		if ( empty( $existingOptions ) ) {
+			return wp_json_encode( $defaults );
+		}
+
+		$existingOptions = json_decode( $existingOptions, true );
+		$existingOptions = array_replace_recursive( $defaults, $existingOptions );
+
+		return wp_json_encode( $existingOptions );
 	}
 
 	/**
@@ -494,120 +524,5 @@ class Model implements \JsonSerializable {
 		$existingOptions = array_replace_recursive( $defaults, $existingOptions );
 
 		return wp_json_encode( $existingOptions );
-	}
-
-	/**
-	 * Returns a JSON object with default local seo options.
-	 *
-	 * @since 4.0.0
-	 *
-	 * @param  string $existingOptions The existing options in JSON.
-	 * @return string                  The existing options with defaults added in JSON.
-	 */
-	public static function getDefaultLocalSeoOptions( $existingOptions = '' ) {
-		$defaults = [
-			'locations'    => [
-				'business' => [
-					'name'         => '',
-					'businessType' => '',
-					'image'        => '',
-					'areaServed'   => '',
-					'urls'         => [
-						'website'     => '',
-						'aboutPage'   => '',
-						'contactPage' => ''
-					],
-					'address'      => [
-						'streetLine1'   => '',
-						'streetLine2'   => '',
-						'zipCode'       => '',
-						'city'          => '',
-						'state'         => '',
-						'country'       => '',
-						'addressFormat' => '#streetLineOne\n#streetLineTwo\n#city, #state #zipCode'
-					],
-					'contact'      => [
-						'email'          => '',
-						'phone'          => '',
-						'phoneFormatted' => '',
-						'fax'            => '',
-						'faxFormatted'   => ''
-					],
-					'ids'          => [
-						'vat'               => '',
-						'tax'               => '',
-						'chamberOfCommerce' => ''
-					],
-					'payment'      => [
-						'priceRange'         => '',
-						'currenciesAccepted' => '',
-						'methods'            => ''
-					],
-				],
-			],
-			'openingHours' => [
-				'useDefaults'  => true,
-				'show'         => true,
-				'alwaysOpen'   => false,
-				'use24hFormat' => false,
-				'timezone'     => '',
-				'labels'       => [
-					'closed'     => '',
-					'alwaysOpen' => ''
-				],
-				'days'         => [
-					'monday'    => [
-						'open24h'   => false,
-						'closed'    => false,
-						'openTime'  => '09:00',
-						'closeTime' => '17:00'
-					],
-					'tuesday'   => [
-						'open24h'   => false,
-						'closed'    => false,
-						'openTime'  => '09:00',
-						'closeTime' => '17:00'
-					],
-					'wednesday' => [
-						'open24h'   => false,
-						'closed'    => false,
-						'openTime'  => '09:00',
-						'closeTime' => '17:00'
-					],
-					'thursday'  => [
-						'open24h'   => false,
-						'closed'    => false,
-						'openTime'  => '09:00',
-						'closeTime' => '17:00'
-					],
-					'friday'    => [
-						'open24h'   => false,
-						'closed'    => false,
-						'openTime'  => '09:00',
-						'closeTime' => '17:00'
-					],
-					'saturday'  => [
-						'open24h'   => false,
-						'closed'    => false,
-						'openTime'  => '09:00',
-						'closeTime' => '17:00'
-					],
-					'sunday'    => [
-						'open24h'   => false,
-						'closed'    => false,
-						'openTime'  => '09:00',
-						'closeTime' => '17:00'
-					]
-				]
-			]
-		];
-
-		if ( empty( $existingOptions ) ) {
-			$defaults = wp_json_encode( $defaults );
-			return str_replace( '\\\n', '\n', $defaults );
-		}
-
-		$existingOptions = json_decode( $existingOptions, true );
-		return array_replace_recursive( $defaults, $existingOptions );
 	}
 }

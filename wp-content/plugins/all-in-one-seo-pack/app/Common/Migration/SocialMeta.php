@@ -135,12 +135,14 @@ class SocialMeta {
 				}
 				aioseo()->options->social->facebook->homePage->title = aioseo()->helpers->sanitizeOption( aioseo()->migration->helpers->macrosToSmartTags( $ogTitle ) );
 				aioseo()->options->social->twitter->homePage->title  = aioseo()->helpers->sanitizeOption( aioseo()->migration->helpers->macrosToSmartTags( $ogTitle ) );
+
 				return;
 			}
 			$title   = aioseo()->options->searchAppearance->global->siteTitle;
 			$ogTitle = $title ? $title : $ogTitle;
 			aioseo()->options->social->facebook->homePage->title = aioseo()->helpers->sanitizeOption( $ogTitle );
 			aioseo()->options->social->twitter->homePage->title  = aioseo()->helpers->sanitizeOption( $ogTitle );
+
 			return;
 		}
 
@@ -218,12 +220,14 @@ class SocialMeta {
 				}
 				aioseo()->options->social->facebook->homePage->description = aioseo()->helpers->sanitizeOption( aioseo()->migration->helpers->macrosToSmartTags( $ogDescription ) );
 				aioseo()->options->social->twitter->homePage->description = aioseo()->helpers->sanitizeOption( aioseo()->migration->helpers->macrosToSmartTags( $ogDescription ) );
+
 				return;
 			}
 			$description   = aioseo()->options->searchAppearance->global->metaDescription;
 			$ogDescription = $description ? $description : $ogDescription;
 			aioseo()->options->social->facebook->homePage->description = aioseo()->helpers->sanitizeOption( $ogDescription );
 			aioseo()->options->social->twitter->homePage->description  = aioseo()->helpers->sanitizeOption( $ogDescription );
+
 			return;
 		}
 
@@ -376,9 +380,9 @@ class SocialMeta {
 				continue;
 			}
 
-			$options = aioseo()->options->noConflict();
-			if ( $options->social->facebook->general->dynamic->postTypes->has( $postType ) ) {
-				aioseo()->options->social->facebook->general->dynamic->postTypes->$postType->objectType =
+			$dynamicOptions = aioseo()->dynamicOptions->noConflict();
+			if ( $dynamicOptions->social->facebook->general->postTypes->has( $postType ) ) {
+				aioseo()->dynamicOptions->social->facebook->general->postTypes->$postType->objectType =
 					aioseo()->helpers->sanitizeOption( $this->oldOptions['modules']['aiosp_opengraph_options'][ $settingName ] );
 			}
 
