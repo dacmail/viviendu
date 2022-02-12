@@ -1,5 +1,10 @@
 <?php
 
+if (! defined('ABSPATH')) {
+    http_response_code(404);
+    exit();
+}
+
 if ( ! function_exists( 'kksr_freemius' ) ) {
     // Create a helper function for easy SDK access.
     function kksr_freemius() {
@@ -12,16 +17,16 @@ if ( ! function_exists( 'kksr_freemius' ) ) {
             $kksr_freemius = fs_dynamic_init( array(
                 'id'                  => '3890',
                 'slug'                => 'kk-star-ratings',
-                'premium_slug'        => '',
                 'type'                => 'plugin',
                 'public_key'          => 'pk_e6d3c068ac8b44274990af9fc9eeb',
                 'is_premium'          => false,
+                'has_premium_version' => true,
                 'has_addons'          => false,
-                'has_paid_plans'      => false,
+                'has_paid_plans'      => true,
                 'menu'                => array(
                     'slug'           => 'kk-star-ratings',
-                    'support'        => false,
                 ),
+                
             ) );
         }
 

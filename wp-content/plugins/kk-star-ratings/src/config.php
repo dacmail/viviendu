@@ -9,41 +9,34 @@
  * the LICENSE file that was distributed with this source code.
  */
 
-namespace Bhittani\StarRating;
+use function Bhittani\StarRating\functions\autoload;
 
-if (! defined('ABSPATH')) {
+if (! defined('KK_STAR_RATINGS')) {
     http_response_code(404);
     exit();
 }
 
-function config($keyOrValues = null, $default = null)
-{
-    static $config = [];
+$ns = 'Bhittani\StarRating\\';
+$path = plugin_dir_path(KK_STAR_RATINGS);
+$src = $path.'src/';
 
-    if (! $config) {
-        $file = KK_STAR_RATINGS;
-
-        $url = plugin_dir_url($file);
-        $path = plugin_dir_path($file);
-        $signature = plugin_basename($file);
-
-        $meta = get_file_data($file, [
-            'name' => 'Plugin Name',
-            'nick' => 'Plugin Nick',
-            'slug' => 'Plugin Slug',
-            'version' => 'Version',
-        ]);
-
-        $config = compact('file', 'signature', 'url', 'path') + $meta;
-    }
-
-    if (is_array($keyOrValues)) {
-        return $config = $keyOrValues + $config;
-    }
-
-    if (is_null($keyOrValues)) {
-        return $config;
-    }
-
-    return isset($config[$keyOrValues]) ? $config[$keyOrValues] : $default;
-}
+return [
+    // Manifest
+    'file' => KK_STAR_RATINGS,
+    'namespace' => rtrim($ns, '\\'),
+    'path' => $path,
+    'signature' => plugin_basename(KK_STAR_RATINGS),
+    'url' => plugin_dir_url(KK_STAR_RATINGS),
+] + get_file_data(KK_STAR_RATINGS, [
+    // Metadata
+    'author' => 'Author',
+    'author_url' => 'Author URI',
+    'domain' => 'Text Domain',
+    'name' => 'Plugin Name',
+    'nick' => 'Plugin Nick',
+    'slug' => 'Plugin Slug',
+    'version' => 'Version',
+]) + [
+    'classes' => autoload($ns.'classes', $src.'classes'),
+    'functions' => autoload($ns.'functions', $src.'functions'),
+];
