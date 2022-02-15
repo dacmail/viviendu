@@ -1,21 +1,12 @@
-<?php 
-	$titles = get_post_meta(get_the_ID(), '_ungrynerd_link_title', true );
-	$texts = get_post_meta(get_the_ID(), '_ungrynerd_link_text', true );
-	$hrefs = get_post_meta(get_the_ID(), '_ungrynerd_link_href', true );
-	$texts_keys = array_keys($texts);
-	$hrefs_keys = array_keys($hrefs);
-?>
-<h2 class="title nm"><?php echo get_post_meta(get_the_ID(), '_ungrynerd_main_title', true ); ?></h2>
-<div class="subtitle tit-sep"><?php echo get_post_meta(get_the_ID(), '_ungrynerd_subtitle', true ); ?></div>
+<h2 class="title nm"><?php echo get_post_meta(get_the_ID(), '_ungrynerd_main_title', true); ?></h2>
+<div class="subtitle tit-sep"><?php echo get_post_meta(get_the_ID(), '_ungrynerd_subtitle', true); ?></div>
 <div class="row">
-	<?php $i=0; ?>
-	<?php foreach ($titles as $key => $title) : ?>
+	<?php while (have_rows('block', get_the_ID())) : the_row();  ?>
 		<div class="link col-sm-4">
-			<h3 class="link-title"><a href="<?php echo $hrefs[$hrefs_keys[$i]]; ?>"><?php echo $title ?></a></h3>
-			<p class="text"><?php echo $texts[$texts_keys[$i]]; ?></p>
-			<p><a class="more" href="<?php echo $hrefs[$hrefs_keys[$i]]; ?>">Ver más <i class="fa fa-angle-right"></i></a></p>
+			<h3 class="link-title"><a href="<?php echo get_sub_field('_untrynerd_link_href'); ?>"><?php echo get_sub_field('_ungrynerd_link_title') ?></a></h3>
+			<p class="text"><?php echo get_sub_field('_ungrynerd_link_text'); ?></p>
+			<p><a class="more" href="<?php echo get_sub_field('_untrynerd_link_href'); ?>">Ver más <i class="fa fa-angle-right"></i></a></p>
 		</div>
-		<?php $i++; ?>
-	<?php endforeach; ?>
+	<?php endwhile ?>
 </div>
 <?php wp_reset_query(); ?>

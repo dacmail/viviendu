@@ -86,8 +86,8 @@
 
 	function viviendu_slideshow($size='full', $link='', $limit=0, $counter=false) {
 		$return = '';
+		global $post;
 		if ($limit==1) {
-			global $post;
 			$thumb = get_the_post_thumbnail($post->ID, $size);
 			if (empty($thumb)) {
 				viviendu_set_post_thumb($post->ID);
@@ -98,7 +98,7 @@
 			$return .= empty($link) ? '' : "</a>";
 			return $return;
 		} else {
-			$images = rwmb_meta('_ungrynerd_images', 'type=image&size=' . $size);
+			$images = get_field('_ungrynerd_images_new', $post->ID);
 
 			if (!empty($images)) {
 				if ($limit) {$images = array_slice($images, 0, $limit); }
@@ -108,7 +108,7 @@
 	    		data-cycle-swipe-fx=scrollHorz>';
 				foreach ( $images as $image ) {
 					$return .= empty($link) ? '' : "<a class='slide' href='{$link}'>";
-				    $return .=  "<img src='{$image['url']}' width='{$image['width']}' height='{$image['height']}' alt='" . get_the_title() . " " .$image['ID'] . "'/>";
+				    $return .= wp_get_attachment_image($image, $size);
 				    $return .= empty($link) ? '' : "</a>";
 				}
 				if ($counter) {
@@ -125,10 +125,10 @@
 	}
 
 	function viviendu_set_post_thumb($post_id) {
-		$images = rwmb_meta('_ungrynerd_images', 'type=image', $post_id);
+		$images = get_field('_ungrynerd_images_new', $post_id);
 		if (!empty($images)) {
 			foreach ( $images as $image ) {
-				set_post_thumbnail($post_id, $image['ID']);
+				set_post_thumbnail($post_id, $image);
 				break;
 			}
 		}
