@@ -123,4 +123,19 @@ class Module_Sharing_Settings extends Setting {
 		return $settings;
 	}
 
+	/**
+	 * Unsets the settings for a given module.
+	 *
+	 * @since 1.68.0
+	 *
+	 * @param string $slug Module slug.
+	 */
+	public function unset_module( $slug ) {
+		$settings = $this->get();
+
+		if ( isset( $settings[ $slug ] ) ) {
+			unset( $settings[ $slug ] );
+			$this->set( $settings );
+		}
+	}
 }
