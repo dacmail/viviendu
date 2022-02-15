@@ -3,10 +3,10 @@
     "title": "Enlace sección_provincia",
     "fields": [
         {
-            "key": "field_6207f508074d6",
-            "label": "viviendu_seccion_provincia_seccion",
-            "name": "viviendu_seccion_provincia_seccion",
-            "type": "text",
+            "key": "field_620bc41834e93",
+            "label": "",
+            "name": "",
+            "type": "clone",
             "instructions": "",
             "required": 0,
             "conditional_logic": 0,
@@ -15,17 +15,41 @@
                 "class": "",
                 "id": ""
             },
-            "default_value": "",
-            "placeholder": "",
-            "prepend": "",
-            "append": "",
-            "maxlength": ""
+            "clone": [
+                "field_620bc3ae3bd94"
+            ],
+            "display": "seamless",
+            "layout": "block",
+            "prefix_label": 0,
+            "prefix_name": 0
+        },
+        {
+            "key": "field_6207f508074d6",
+            "label": "viviendu_seccion_provincia_seccion",
+            "name": "viviendu_seccion_provincia_seccion",
+            "type": "taxonomy",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "taxonomy": "category",
+            "field_type": "select",
+            "allow_null": 0,
+            "add_term": 1,
+            "save_terms": 0,
+            "load_terms": 0,
+            "return_format": "id",
+            "multiple": 0
         },
         {
             "key": "field_6207f518074d7",
             "label": "viviendu_seccion_provincia_provincia",
             "name": "viviendu_seccion_provincia_provincia",
-            "type": "text",
+            "type": "taxonomy",
             "instructions": "",
             "required": 0,
             "conditional_logic": 0,
@@ -34,11 +58,14 @@
                 "class": "",
                 "id": ""
             },
-            "default_value": "",
-            "placeholder": "",
-            "prepend": "",
-            "append": "",
-            "maxlength": ""
+            "taxonomy": "provincia",
+            "field_type": "select",
+            "allow_null": 0,
+            "add_term": 1,
+            "save_terms": 0,
+            "load_terms": 0,
+            "return_format": "id",
+            "multiple": 0
         }
     ],
     "location": [
@@ -59,5 +86,5 @@
     "active": true,
     "description": "",
     "show_in_rest": 0,
-    "modified": 1644688670
+    "modified": 1644938318
 }

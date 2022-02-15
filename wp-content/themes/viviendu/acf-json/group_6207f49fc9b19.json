@@ -3,10 +3,10 @@
     "title": "Enlaces comercio_provincia",
     "fields": [
         {
-            "key": "field_6207f4c9a3c0e",
-            "label": "viviendu_comercio_provincia_provincia",
-            "name": "viviendu_comercio_provincia_provincia",
-            "type": "text",
+            "key": "field_620bc3ae3bd94",
+            "label": "AVISO",
+            "name": "",
+            "type": "message",
             "instructions": "",
             "required": 0,
             "conditional_logic": 0,
@@ -15,17 +15,37 @@
                 "class": "",
                 "id": ""
             },
-            "default_value": "",
-            "placeholder": "",
-            "prepend": "",
-            "append": "",
-            "maxlength": ""
+            "message": "AVISO: No establecer estos campos manualmente",
+            "new_lines": "wpautop",
+            "esc_html": 0
+        },
+        {
+            "key": "field_6207f4c9a3c0e",
+            "label": "viviendu_comercio_provincia_provincia",
+            "name": "viviendu_comercio_provincia_provincia",
+            "type": "taxonomy",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "taxonomy": "provincia",
+            "field_type": "select",
+            "allow_null": 0,
+            "add_term": 1,
+            "save_terms": 0,
+            "load_terms": 0,
+            "return_format": "id",
+            "multiple": 0
         },
         {
             "key": "field_6207f4cfa3c0f",
             "label": "viviendu_comercio_provincia_comercio",
             "name": "viviendu_comercio_provincia_comercio",
-            "type": "text",
+            "type": "taxonomy",
             "instructions": "",
             "required": 0,
             "conditional_logic": 0,
@@ -34,11 +54,14 @@
                 "class": "",
                 "id": ""
             },
-            "default_value": "",
-            "placeholder": "",
-            "prepend": "",
-            "append": "",
-            "maxlength": ""
+            "taxonomy": "comercio",
+            "field_type": "select",
+            "allow_null": 0,
+            "add_term": 1,
+            "save_terms": 0,
+            "load_terms": 0,
+            "return_format": "id",
+            "multiple": 0
         }
     ],
     "location": [
@@ -59,5 +82,5 @@
     "active": true,
     "description": "",
     "show_in_rest": 0,
-    "modified": 1644688596
+    "modified": 1644938227
 }
