@@ -166,3 +166,42 @@
 	}
 	add_action('init','custom_taxonomies_rewrite');
 
+
+	// sync premium fields between taxonomies
+	add_action('acf/update_value/name=featured_companies', function ($featured_companies, $tax) {
+		$old = get_field('featured_companies', $tax);
+		$tmp = explode('_', $tax);
+		$term_id = end($tmp);
+		if (is_array($featured_companies)) {
+			foreach ($featured_companies as $company) {
+				$featured_in_categories = get_term_meta($company, 'featured_in_categories', true);
+				if (is_array($featured_in_categories)) {
+					if (!in_array($term_id, $featured_in_categories)) {
+						$featured_in_categories[] = (string) $term_id;
+						update_field('featured_in_categories', $featured_in_categories, 'comercio_'. $company);
+					}
+				} else {
+					update_field('featured_in_categories', [(string) $term_id], 'comercio_'. $company);
+				}
+			}
+
+			$old = array_diff($old, $featured_companies);
+		}
+
+		if (is_array($old)) {
+			foreach ($old as $company) {
+				//companies removed from featured
+				$featured_in_categories = get_term_meta($company, 'featured_in_categories', true);
+				if (is_array($featured_in_categories)) {
+					if (($key = array_search($term_id, $featured_in_categories)) !== false) {
+						unset($featured_in_categories[$key]);
+					}
+					update_field('featured_in_categories', $featured_in_categories, 'comercio_'. $company);
+				} else {
+					update_field('featured_in_categories', '', 'comercio_'. $company);
+				}
+			}
+		}
+
+		return $featured_companies;
+	}, 10, 2);
