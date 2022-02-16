@@ -3,6 +3,32 @@
     "title": "Datos adicionales de la Empresa",
     "fields": [
         {
+            "key": "field_620d0d8ddd86d",
+            "label": "Tipo de destacado",
+            "name": "premium",
+            "type": "select",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "choices": {
+                "1": "Nivel 1",
+                "2": "Nivel 2",
+                "3": "Nivel 3"
+            },
+            "default_value": false,
+            "allow_null": 1,
+            "multiple": 0,
+            "ui": 0,
+            "return_format": "value",
+            "ajax": 0,
+            "placeholder": ""
+        },
+        {
             "key": "field_62065a082783f",
             "label": "Dirección web",
             "name": "viviendu_comercio_url",
@@ -118,5 +144,5 @@
     "active": true,
     "description": "",
     "show_in_rest": 0,
-    "modified": 1644587113
+    "modified": 1645022660
 }
