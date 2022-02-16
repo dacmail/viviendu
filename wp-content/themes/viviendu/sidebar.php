@@ -16,11 +16,11 @@
 		</div>
 		<div class="widget location">
 			<?php if (is_tax('comercio_seccion')): ?>
-				<?php $location_info = viviendu_location_info(get_tax_meta(get_queried_object()->term_id, 'viviendu_comercio_seccion_comercio', true));  ?>
+				<?php $location_info = viviendu_location_info(get_term_meta(get_queried_object()->term_id, 'viviendu_comercio_seccion_comercio', true));  ?>
 			<?php elseif (is_tax('comercio')) : ?>
 				<?php $location_info = viviendu_location_info(get_queried_object()->term_id);  ?>
 			<?php elseif (is_tag()) : ?>
-				<?php $location_info = viviendu_location_info(get_tax_meta(get_queried_object()->term_id, 'viviendu_comercio', true));  ?>
+				<?php $location_info = viviendu_location_info(get_term_meta(get_queried_object()->term_id, 'viviendu_comercio', true));  ?>
 			<?php endif ?>
 			<?php if (!empty($location_info['address'])): ?>
 				<iframe

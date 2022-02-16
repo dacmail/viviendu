@@ -4,8 +4,8 @@
 		<div class="row">
 			<div id="content" class="col-sm-7">
 				<?php while ( have_posts() ) : the_post(); ?>
-					<?php $comercio = get_term(get_tax_meta(get_queried_object()->term_id, 'viviendu_comercio', true), 'comercio' ); ?>
-					<?php $provincia = get_term(get_tax_meta(get_queried_object()->term_id, 'viviendu_provincia', true), 'provincia' ); ?>
+					<?php $comercio = get_term(get_term_meta(get_queried_object()->term_id, 'viviendu_comercio', true), 'comercio' ); ?>
+					<?php $provincia = get_term(get_term_meta(get_queried_object()->term_id, 'viviendu_provincia', true), 'provincia' ); ?>
 					<h1 class="title"><?php echo single_term_title(); ?></h1>
 					<div class="row">
 						<div class="col-sm-offset-6 col-sm-6 ratings-wrap"><?php if(function_exists("kk_star_ratings")) : echo kk_star_ratings(viviendu_post_id('post_tag',get_queried_object()->term_id)); endif; ?></div>

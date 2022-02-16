@@ -65,8 +65,8 @@
 	function viviendu_tag_content($tax_id) {
 		$tag_desc = term_description($tax_id);
 		if (empty($tag_desc)) {
-			$comercio = get_term(get_tax_meta($tax_id, 'viviendu_comercio', true), 'comercio');
-			$seccion = get_term(get_tax_meta($tax_id, 'viviendu_seccion', true), 'category');
+			$comercio = get_term(get_term_meta($tax_id, 'viviendu_comercio', true), 'comercio');
+			$seccion = get_term(get_term_meta($tax_id, 'viviendu_seccion', true), 'category');
 			$comercio_seccion = get_term_by('slug', $comercio->slug . "-" . $seccion->slug, 'comercio_seccion');
 
 			return viviendu_comercio_seccion_content($comercio_seccion->term_id);
