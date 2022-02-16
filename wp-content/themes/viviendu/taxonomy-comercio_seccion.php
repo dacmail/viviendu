@@ -5,7 +5,7 @@
 			<div id="content" class="col-sm-7">
 				<?php while ( have_posts() ) : the_post(); ?>
 					<h1 class="title"><?php echo single_term_title(); ?></h1>
-					<?php $comercio = get_term(get_field('viviendu_comercio_seccion_comercio', get_queried_object()->term_name . '_' . get_queried_object()->term_id), 'comercio' ); ?>
+					<?php $comercio = get_term(get_field('viviendu_comercio_seccion_comercio', get_queried_object()->taxonomy . '_' . get_queried_object()->term_id), 'comercio' ); ?>
 					<div class="row">
 						<div class="col-sm-6 title-category main"><?php echo viviendu_tax_anchor(get_the_ID(), 'category'); ?></div>
 						<div class="col-sm-6 ratings-wrap"><?php if(function_exists("kk_star_ratings")) : echo kk_star_ratings(viviendu_post_id('comercio_seccion',get_queried_object()->term_id)); endif; ?></div>
@@ -22,7 +22,7 @@
 					</div>
 					<?php if (!get_post_meta(get_the_ID(),'_ungrynerd_baja', true ) || !get_post_meta(get_the_ID(),'_ungrynerd_no_cta', true )) :?>
 						<div class="row voffset30">
-							<?php $location_info = viviendu_location_info(get_field('viviendu_comercio_seccion_comercio', get_queried_object()->term_name . '_' . get_queried_object()->term_id));  ?>
+							<?php $location_info = viviendu_location_info(get_field('viviendu_comercio_seccion_comercio', get_queried_object()->taxonomy . '_' . get_queried_object()->term_id));  ?>
 							<?php if (!empty($location_info['url'])): ?>
 								<div class="col-sm-12">
 									<p><a href="#popup_contacto" class="btn btn-block btn-contact btn-primary" id="btn-contact-content">Contactar con la empresa</a></p>
