@@ -3,30 +3,31 @@
 	<div class="container">
 		<div class="row">
 			<div id="content" class="col-sm-7">
-				<?php var_dump(get_term_meta(13914, 'featured_in_categories', true)) ?>
 				<?php $seccion = get_term(get_queried_object()->term_id, 'category'); ?>
 				<h1 class="title nm"><?php echo single_term_title(); ?></h1>
 				<div class="text main">
 					<?php echo viviendu_get_paragraph(apply_filters('the_content', $seccion->description)); ?>
-					<div class="row premium-featured">
-						<div class="col-sm-12">
-							<h2 class="title mini tit-sep">Empresas PREMIUM en <?php echo $seccion->name; ?></h2>
+					<?php
+					$featured_companies = get_term_meta($seccion->term_id, 'featured_companies', true);
+					?>
+					<?php if ($featured_companies): ?>
+						<div class="row premium-featured">
+							<div class="col-sm-12">
+								<h2 class="title mini tit-sep">Empresas PREMIUM en <?php echo $seccion->name; ?></h2>
+							</div>
+							<?php foreach ($featured_companies as $company) : ?>
+								<article class='catalogo col-sm-4'>
+									<h3 class="title nm">
+										<?php $company = get_term($company, 'comercio'); ?>
+										<a href="<?php echo get_term_link($company, 'comercio') ?>">
+											<?php echo $company->name; ?>
+											<span class="title-category">Empresa destacada</span>
+										</a>
+									</h3>
+								</article>
+							<?php endforeach; ?>
 						</div>
-						<?php
-						$featured_companies = get_term_meta($seccion->term_id, 'featured_companies', true);
-						?>
-						<?php foreach ($featured_companies as $company) : ?>
-							<article class='catalogo col-sm-4'>
-								<h3 class="title nm">
-									<?php $company = get_term($company, 'comercio'); ?>
-									<a href="<?php echo get_term_link($company, 'comercio') ?>">
-										<?php echo $company->name; ?>
-										<span class="title-category">Empresa destacada</span>
-									</a>
-								</h3>
-							</article>
-						<?php endforeach; ?>
-					</div>
+					<?php endif; ?>
 
 					<div class="row">
 						<?php $related = new WP_Query(array(
