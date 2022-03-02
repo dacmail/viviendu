@@ -13,15 +13,18 @@
 					<?php if ($featured_companies): ?>
 						<div class="row premium-featured">
 							<div class="col-sm-12">
-								<h2 class="title mini tit-sep">Empresas PREMIUM en <?php echo $seccion->name; ?></h2>
+								<h2 class="title mini tit-sep">Empresas destacadas en <?php echo $seccion->name; ?></h2>
 							</div>
 							<?php foreach ($featured_companies as $company) : ?>
-								<article class='catalogo col-sm-4'>
+								<article class='catalogo premium-catalogo col-sm-4'>
 									<h3 class="title nm">
 										<?php $company = get_term($company, 'comercio'); ?>
 										<a href="<?php echo get_term_link($company, 'comercio') ?>">
+											<span class="premium-logo-wrapper">
+												<?php echo wp_get_attachment_image(get_field('viviendu_comercio_logo', 'comercio_' . $company->term_id), 'medium', false, ['class' => 'premium-logo']) ?>
+											</span>
 											<?php echo $company->name; ?>
-											<span class="title-category">Empresa destacada</span>
+											<span class="premium-stamp">Selección viviendu</span>
 										</a>
 									</h3>
 								</article>
@@ -45,7 +48,7 @@
 						)); ?>
 						<?php if ($related->post_count > 0) : ?>
 							<div class="col-sm-12">
-								<h2 class="title mini tit-sep">Empresas destacadas en <?php echo $seccion->name; ?></h2>
+								<h2 class="title mini tit-sep">Empresas de <?php echo $seccion->name; ?></h2>
 							</div>
 							<?php include(locate_template('templates/related.php')); ?>
 						<?php endif ?>

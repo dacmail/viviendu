@@ -6,3 +6,36 @@
   padding-top: 30px;
   padding-bottom: 30px;
 }
+
+.premium-catalogo {
+  position: relative;
+  text-align: center;
+}
+
+.premium-logo-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 150px;
+}
+
+.premium-logo {
+  max-height: 100%;
+  object-fit: cover;
+}
+
+.premium-stamp {
+  position: absolute;
+  top: 0;
+  right: 16px;
+  width: 75px;
+  height: 75px;
+  background: rgba($brand-primary, 0.5);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  font-size: 13px;
+  color: #000;
+}
