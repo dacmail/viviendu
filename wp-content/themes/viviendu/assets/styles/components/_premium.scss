@@ -1,6 +1,4 @@
 .premium-featured {
-  background: rgba($brand-primary, 0.2);
-  border-radius: 10px;
   margin-top: 16px;
   margin-bottom: 32px;
   padding-top: 30px;
@@ -24,18 +22,30 @@
   object-fit: cover;
 }
 
+.premium-wrapper {
+  position: relative;
+  background: rgba($brand-primary, 0.2);
+  border-radius: 10px;
+  padding: 24px 16px;
+  overflow: hidden;
+}
+
 .premium-stamp {
   position: absolute;
-  top: 0;
-  right: 16px;
-  width: 75px;
-  height: 75px;
-  background: rgba($brand-primary, 0.5);
-  border-radius: 50%;
+  top: 6px;
+  right: -40px;
+  width: 150px;
+  background: $premium;
+  display: -ms-flexbox;
   display: flex;
-  align-items: center;
+  -ms-flex-align: end;
+  align-items: flex-end;
+  -ms-flex-pack: center;
   justify-content: center;
   text-align: center;
+  padding-bottom: 8px;
   font-size: 13px;
-  color: #000;
+  color: $black;
+  transform: rotate(37deg);
+  padding-top: 8px;
 }
