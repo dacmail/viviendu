@@ -37,7 +37,7 @@
             {
                 "param": "taxonomy",
                 "operator": "==",
-                "value": "post_tag"
+                "value": "oferta"
             }
         ],
         [
@@ -64,5 +64,5 @@
     "active": true,
     "description": "",
     "show_in_rest": 0,
-    "modified": 1645022866
+    "modified": 1646299083
 }
